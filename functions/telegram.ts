@@ -173,10 +173,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         await sendMessage(env.TELEGRAM_TOKEN, chatId, "⚠️ 请选择彩种", { reply_markup: MENU_KEYBOARD });
         return new Response('OK');
       }
-      // await sendMessage(env.TELEGRAM_TOKEN, chatId, `🔮 正在分析 ${targetType}...`);
       
+      // 修改：获取更多历史记录以提高预测精度 (从 50 改为 1000)
       const { results } = await env.DB.prepare(
-        "SELECT * FROM lottery_records WHERE lottery_type = ? ORDER BY expect DESC LIMIT 50"
+        "SELECT * FROM lottery_records WHERE lottery_type = ? ORDER BY expect DESC LIMIT 1000"
       ).bind(targetType).all();
 
       if (!results || results.length === 0) {
