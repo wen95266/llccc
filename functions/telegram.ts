@@ -290,21 +290,41 @@ async function syncData(env: Env, type: LotteryType): Promise<number> {
   const json: any = await resp.json();
   const list = json.data || json; 
   if (!Array.isArray(list)) return 0;
-  const records = list.slice(0, 10);
+  
+  // 修改：不再限制前10条，而是同步所有数据
+  const records = list;
   
   const stmt = env.DB.prepare(`
     INSERT OR IGNORE INTO lottery_records (lottery_type, expect, open_code, open_time, wave, zodiac)
     VALUES (?, ?, ?, ?, ?, ?)
   `);
+  
   const batch = [];
   for (const item of records) {
     if(!item.expect) continue;
     batch.push(stmt.bind(type, item.expect, item.openCode, item.openTime||'', item.wave||'', item.zodiac||''));
   }
+  
   if (batch.length > 0) {
-    const res = await env.DB.batch(batch);
-    if(Array.isArray(res)) return res.reduce((a,b:any)=>a+(b.meta?.changes||0),0);
-    return (res as any).meta?.changes || 0;
+    // 增加分批处理，防止单次 batch 超过 D1 限制 (通常建议 100 条左右)
+    const CHUNK_SIZE = 100;
+    let totalChanges = 0;
+    
+    for (let i = 0; i < batch.length; i += CHUNK_SIZE) {
+      const chunk = batch.slice(i, i + CHUNK_SIZE);
+      try {
+        const res = await env.DB.batch(chunk);
+        if(Array.isArray(res)) {
+          totalChanges += res.reduce((a, b: any) => a + (b.meta?.changes || 0), 0);
+        } else {
+          totalChanges += (res as any).meta?.changes || 0;
+        }
+      } catch (err) {
+        console.error(`Batch sync failed at chunk ${i}:`, err);
+        // 继续尝试下一个 chunk，不完全中断
+      }
+    }
+    return totalChanges;
   }
   return 0;
 }
