@@ -1,3 +1,4 @@
+
 // File: functions/telegram.ts
 import { Env, LotteryType } from './types';
 import { PredictionEngine } from './lib/prediction';
@@ -46,20 +47,53 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   
   try {
     const body: any = await request.json();
+    
+    // 忽略非消息更新
     if (!body.message) return new Response('OK');
 
     const chatId = body.message.chat.id;
     const text = body.message.text || '';
     
-    // 权限校验
-    if (String(chatId) !== String(env.ADMIN_CHAT_ID)) {
-      return new Response('Unauthorized');
-    }
-
     const args = text.trim().split(/\s+/);
     const command = args[0];
     const rawType = args[1]?.toUpperCase();
 
+    // 1. 优先处理不需要权限的命令：/start 和 /id
+    // 这样用户可以获取自己的 Chat ID 去配置环境变量
+    if (command === '/start' || command === '/id') {
+      const isAdmin = String(chatId) === String(env.ADMIN_CHAT_ID);
+      let msg = `👋 <b>欢迎使用 Lottery Prophet Bot</b>\n\n`;
+      msg += `🆔 您的 Chat ID: <code>${chatId}</code>\n`;
+      
+      if (isAdmin) {
+        msg += `✅ <b>身份验证通过 (管理员)</b>\n\n发送 /menu 查看功能菜单。`;
+        // 如果是管理员，顺便显示菜单键盘
+        const keyboard = {
+            keyboard: [
+              [{ text: "/sync HK" }, { text: "/sync NEW" }, { text: "/sync OLD" }, { text: "/sync 2230" }],
+              [{ text: "/predict HK" }, { text: "/predict NEW" }, { text: "/predict OLD" }, { text: "/predict 2230" }],
+              [{ text: "/list HK" }, { text: "/list NEW" }, { text: "/list OLD" }, { text: "/list 2230" }],
+              [{ text: "/help" }]
+            ],
+            resize_keyboard: true,
+            one_time_keyboard: false
+        };
+        await sendMessage(env.TELEGRAM_TOKEN, chatId, msg, { parse_mode: 'HTML', reply_markup: keyboard });
+      } else {
+        msg += `⚠️ <b>未授权访问</b>\n请将上面的 ID 填入 Cloudflare Pages 后台变量 <code>ADMIN_CHAT_ID</code> 中。`;
+        await sendMessage(env.TELEGRAM_TOKEN, chatId, msg, { parse_mode: 'HTML' });
+      }
+      return new Response('OK');
+    }
+
+    // 2. 权限校验 (针对其他命令)
+    if (String(chatId) !== String(env.ADMIN_CHAT_ID)) {
+      // 未授权时不回复，避免骚扰，或者可以选择回复一条拒绝信息
+      // await sendMessage(env.TELEGRAM_TOKEN, chatId, "🚫 Unauthorized");
+      return new Response('Unauthorized');
+    }
+
+    // 3. 解析彩种类型
     const resolveType = (t: string): LotteryType | null => {
       if (!t) return null;
       if (['HK', '香港'].includes(t)) return LotteryType.HK;
@@ -71,7 +105,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     const targetType = resolveType(rawType);
 
-    if (command === '/menu' || command === '/start') {
+    // 4. 业务命令处理
+    if (command === '/menu' || command === '/help') {
       const keyboard = {
         keyboard: [
           [{ text: "/sync HK" }, { text: "/sync NEW" }, { text: "/sync OLD" }, { text: "/sync 2230" }],
@@ -82,8 +117,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         resize_keyboard: true,
         one_time_keyboard: false
       };
-      await sendMessage(env.TELEGRAM_TOKEN, chatId, "🎮 <b>管理控制台已启动</b>", { parse_mode: 'HTML', reply_markup: keyboard });
-      return new Response('OK');
+      await sendMessage(env.TELEGRAM_TOKEN, chatId, "🎮 <b>管理控制台</b>\n请选择操作：", { parse_mode: 'HTML', reply_markup: keyboard });
     }
 
     else if (command === '/sync') {
@@ -205,19 +239,31 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     }
     
     else {
-      await sendMessage(env.TELEGRAM_TOKEN, chatId, "输入 /menu 打开菜单");
+      // 未知命令
+      await sendMessage(env.TELEGRAM_TOKEN, chatId, "❓ 未知命令，输入 /menu 查看菜单");
     }
     return new Response('OK');
-  } catch (err) {
+
+  } catch (err: any) {
     console.error(err);
-    return new Response('Error handled', { status: 200 }); 
+    // 只有在开发调试阶段，或者对于特定用户，才返回错误详情
+    // 为了让您能看到报错，这里先强制返回错误信息给 Telegram (如果能获取到 chatId)
+    // 这里的 context.request 读取过了，如果 body 读取流被消耗可能无法再次读取
+    // 简单起见，我们只能在 catch 中做有限处理
+    return new Response(`Error: ${err.message}`, { status: 200 }); 
   }
 };
 
 async function sendMessage(token: string, chatId: number, text: string, options: any = {}) {
   const url = `https://api.telegram.org/bot${token}/sendMessage`;
   const body: any = { chat_id: chatId, text, ...options };
-  await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  // 增加 fetch 错误处理
+  const resp = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  if (!resp.ok) {
+    const errText = await resp.text();
+    console.error('Telegram API Error:', errText);
+    throw new Error(`TG API Error: ${resp.status} ${errText}`);
+  }
 }
 
 async function syncData(env: Env, type: LotteryType): Promise<number> {
@@ -228,13 +274,18 @@ async function syncData(env: Env, type: LotteryType): Promise<number> {
     case LotteryType.MO_OLD: apiUrl = env.URL_MO_OLD; break;
     case LotteryType.MO_OLD_2230: apiUrl = env.URL_MO_OLD_2230; break;
   }
-  if (!apiUrl) throw new Error("无 URL 配置");
+  
+  if (!apiUrl) throw new Error(`未配置 ${type} 的 URL`);
+  
   const resp = await fetch(apiUrl);
-  if (!resp.ok) throw new Error(`API ${resp.status}`);
-  const json = await resp.json() as { data: any[] };
-  if (!json.data || json.data.length === 0) return 0;
+  if (!resp.ok) throw new Error(`数据源 API 错误: ${resp.status}`);
+  
+  const json: any = await resp.json();
+  const list = json.data || json; // 兼容不同的 API 格式
+  
+  if (!Array.isArray(list) || list.length === 0) return 0;
 
-  const records = json.data.slice(0, 10); 
+  const records = list.slice(0, 10); 
   const stmt = env.DB.prepare(`
     INSERT OR IGNORE INTO lottery_records (lottery_type, expect, open_code, open_time, wave, zodiac)
     VALUES (?, ?, ?, ?, ?, ?)
@@ -246,7 +297,11 @@ async function syncData(env: Env, type: LotteryType): Promise<number> {
   }
   if (batch.length > 0) {
     const results = await env.DB.batch(batch);
-    return results.reduce((acc: number, res: any) => acc + (res.meta?.changes || 0), 0);
+    // D1 batch 返回结果可能是数组
+    if (Array.isArray(results)) {
+       return results.reduce((acc: number, res: any) => acc + (res.meta?.changes || 0), 0);
+    }
+    return (results as any).meta?.changes || 0;
   }
   return 0;
 }
