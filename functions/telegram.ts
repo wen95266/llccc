@@ -28,7 +28,7 @@ const MENU_KEYBOARD = {
       { text: "🔄 同步 2230" }, { text: "🔮 预测 2230" }, { text: "📂 列表 2230" }
     ],
     [
-      { text: "❓ 帮助说明" }, { text: "🆔 查看ID" }
+      { text: "🗑 删除记录" }
     ]
   ],
   resize_keyboard: true,
@@ -99,8 +99,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if (text.includes('同步')) text = text.replace('🔄 ', '').replace('同步 ', '/sync ');
     else if (text.includes('预测')) text = text.replace('🔮 ', '').replace('预测 ', '/predict ');
     else if (text.includes('列表')) text = text.replace('📂 ', '').replace('列表 ', '/list ');
-    else if (text.includes('帮助')) text = '/help';
-    else if (text.includes('查看ID')) text = '/id';
+    else if (text.includes('删除记录')) text = '/del_help';
     
     // 兼容 "2230" 的特殊空格处理
     text = text.replace(' 2230', ' MO_OLD_2230'); // 将 "同步 2230" 转为 "/sync MO_OLD_2230"
@@ -227,9 +226,19 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     }
 
     else if (command === '/del') {
-      if (!args[2]) { await sendMessage(env.TELEGRAM_TOKEN, chatId, "❌ 格式错误", { reply_markup: MENU_KEYBOARD }); return new Response('OK'); }
+      if (!args[2]) { await sendMessage(env.TELEGRAM_TOKEN, chatId, "❌ 格式错误，需要期号", { reply_markup: MENU_KEYBOARD }); return new Response('OK'); }
       await env.DB.prepare("DELETE FROM lottery_records WHERE lottery_type = ? AND expect = ?").bind(targetType, args[2]).run();
-      await sendMessage(env.TELEGRAM_TOKEN, chatId, `🗑 已删除 #${args[2]}`, { reply_markup: MENU_KEYBOARD });
+      await sendMessage(env.TELEGRAM_TOKEN, chatId, `🗑 已删除 <b>${targetType} #${args[2]}</b>`, { parse_mode: 'HTML', reply_markup: MENU_KEYBOARD });
+    }
+
+    else if (command === '/del_help') {
+      const msg = `🗑 <b>删除记录指南</b>\n\n` +
+                  `如需删除错误数据，请发送指令：\n` +
+                  `<code>/del [彩种] [期号]</code>\n\n` +
+                  `<b>示例：</b>\n` +
+                  `删除香港第100期：\n<code>/del HK 100</code>\n` +
+                  `删除新澳第2024001期：\n<code>/del MO_NEW 2024001</code>`;
+      await sendMessage(env.TELEGRAM_TOKEN, chatId, msg, { parse_mode: 'HTML', reply_markup: MENU_KEYBOARD });
     }
     
     else {
