@@ -129,24 +129,31 @@ window.App = function App() {
   const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
-    // 1. 监听安装事件 (Android/PC)
+    // 1. 初始化时检查全局变量 (解决 Mobile Chrome 事件触发过早的问题)
+    if (window.deferredPrompt) {
+      setDeferredPrompt(window.deferredPrompt);
+    }
+
+    // 2. 监听安装事件 (Android/PC)
     const handler = (e) => {
       e.preventDefault();
+      // 更新全局变量和状态
+      window.deferredPrompt = e;
       setDeferredPrompt(e);
+      console.log("PWA install event captured in React");
     };
     window.addEventListener('beforeinstallprompt', handler);
 
-    // 2. 检测 iOS
+    // 3. 检测 iOS
     const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     setIsIos(iOS);
 
-    // 3. 检测是否已安装 (Standalone 模式)
+    // 4. 检测是否已安装 (Standalone 模式)
     const standalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator).standalone;
     setIsStandalone(standalone);
 
     // 如果是 iOS 且未安装，显示引导
     if (iOS && !standalone) {
-      // 延迟一点显示，避免干扰
       setTimeout(() => setShowIosGuide(true), 2000);
     }
 
@@ -154,11 +161,16 @@ window.App = function App() {
   }, []);
 
   const handleInstallClick = async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
+    const promptEvent = deferredPrompt || window.deferredPrompt;
+    if (!promptEvent) return;
+    
+    promptEvent.prompt();
+    const { outcome } = await promptEvent.userChoice;
+    
     if (outcome === 'accepted') {
+      console.log('User accepted the install prompt');
       setDeferredPrompt(null);
+      window.deferredPrompt = null;
     }
   };
 
@@ -227,21 +239,24 @@ window.App = function App() {
       />
 
       {/* 顶部 Header */}
-      <header className="bg-white px-4 py-3 border-b border-slate-100 flex justify-between items-center sticky top-0 z-20 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
-        <div className="flex items-center gap-2">
-           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-sm">
+      <header className="bg-white px-4 py-3 border-b border-slate-100 flex justify-between items-center sticky top-0 z-20 shadow-[0_2px_8px_rgba(0,0,0,0.02)] h-16">
+        <div className="flex items-center gap-2 overflow-hidden">
+           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-sm shrink-0">
              彩
            </div>
-           <h1 className="font-bold text-slate-800 text-lg tracking-tight">Lottery Prophet</h1>
+           {/* 在小屏幕上有安装按钮时隐藏标题，确保布局不乱 */}
+           <h1 className={`font-bold text-slate-800 text-lg tracking-tight whitespace-nowrap ${(deferredPrompt && !isStandalone) ? 'hidden sm:block' : 'block'}`}>
+             Lottery Prophet
+           </h1>
         </div>
         
         {/* 安装按钮 (仅在非安装模式且浏览器支持时显示) */}
         {!isStandalone && deferredPrompt && (
           <button 
             onClick={handleInstallClick}
-            className="flex items-center gap-1.5 bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded-full text-xs font-bold border border-indigo-100 animate-[bounce-slow_2s_infinite]"
+            className="shrink-0 flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg shadow-indigo-200 transition-all active:scale-95 animate-[bounce-slow_2s_infinite]"
           >
-            <span>⬇️</span>
+            <span className="text-base">📲</span>
             <span>安装 APP</span>
           </button>
         )}
@@ -252,7 +267,7 @@ window.App = function App() {
           <TabButton active={activeTab === LotteryType.HK} label="香港" onClick={() => setActiveTab(LotteryType.HK)} />
           <TabButton active={activeTab === LotteryType.MO_NEW} label="新澳" onClick={() => setActiveTab(LotteryType.MO_NEW)} />
           <TabButton active={activeTab === LotteryType.MO_OLD} label="老澳" onClick={() => setActiveTab(LotteryType.MO_OLD)} />
-          <TabButton active={activeTab === LotteryType.MO_OLD_2230} label="老澳22:30" onClick={() => setActiveTab(LotteryType.MO_OLD_2230)} />
+          <TabButton active={activeTab === LotteryType.MO_OLD_2230} label="22:30" onClick={() => setActiveTab(LotteryType.MO_OLD_2230)} />
         </div>
       </div>
 
