@@ -1,3 +1,4 @@
+
 // File: functions/telegram.ts
 import { Env, LotteryType } from './types';
 import { PredictionEngine } from './lib/prediction';
@@ -10,6 +11,29 @@ type PagesFunction<T = unknown> = (context: {
   next: (input?: Request | string, init?: RequestInit) => Promise<Response>;
   data: any;
 }) => Response | Promise<Response>;
+
+// --- 配置：中文菜单键盘布局 ---
+const MENU_KEYBOARD = {
+  keyboard: [
+    [
+      { text: "🔄 同步 香港" }, { text: "🔮 预测 香港" }, { text: "📂 列表 香港" }
+    ],
+    [
+      { text: "🔄 同步 新澳" }, { text: "🔮 预测 新澳" }, { text: "📂 列表 新澳" }
+    ],
+    [
+      { text: "🔄 同步 老澳" }, { text: "🔮 预测 老澳" }, { text: "📂 列表 老澳" }
+    ],
+    [
+      { text: "🔄 同步 2230" }, { text: "🔮 预测 2230" }, { text: "📂 列表 2230" }
+    ],
+    [
+      { text: "❓ 帮助说明" }, { text: "🆔 查看ID" }
+    ]
+  ],
+  resize_keyboard: true,
+  persistent_keyboard: true // 保持键盘始终显示
+};
 
 // --- 辅助逻辑：映射表 ---
 const ZODIACS_MAP: Record<number, string> = {};
@@ -62,59 +86,56 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
   
   try {
-    // 检查 Token 是否配置
-    if (!env.TELEGRAM_TOKEN) {
-      console.error("TELEGRAM_TOKEN is missing");
-      return new Response("Configuration Error", { status: 500 });
-    }
+    if (!env.TELEGRAM_TOKEN) return new Response("Configuration Error", { status: 500 });
 
     const body: any = await request.json();
-    
-    // 忽略非消息更新
     if (!body.message) return new Response('OK');
 
     const chatId = body.message.chat.id;
-    const text = body.message.text || '';
+    let text = (body.message.text || '').trim();
+
+    // --- 0. 按钮文本转换逻辑 (Router) ---
+    // 将中文按钮点击转换为内部指令
+    if (text.includes('同步')) text = text.replace('🔄 ', '').replace('同步 ', '/sync ');
+    else if (text.includes('预测')) text = text.replace('🔮 ', '').replace('预测 ', '/predict ');
+    else if (text.includes('列表')) text = text.replace('📂 ', '').replace('列表 ', '/list ');
+    else if (text.includes('帮助')) text = '/help';
+    else if (text.includes('查看ID')) text = '/id';
     
-    const args = text.trim().split(/\s+/);
+    // 兼容 "2230" 的特殊空格处理
+    text = text.replace(' 2230', ' MO_OLD_2230'); // 将 "同步 2230" 转为 "/sync MO_OLD_2230"
+    text = text.replace(' 香港', ' HK');
+    text = text.replace(' 新澳', ' MO_NEW');
+    text = text.replace(' 老澳', ' MO_OLD'); // 注意：需放在 2230 之后处理，避免误伤
+    
+    // 再次清理可能的多余空格
+    const args = text.split(/\s+/);
     const command = args[0];
     const rawType = args[1]?.toUpperCase();
 
-    // 1. 优先处理 /start 和 /id (无需权限)
+    // --- 1. 优先处理 /start 和 /id (无需权限) ---
     if (command === '/start' || command === '/id') {
       const isAdmin = String(chatId) === String(env.ADMIN_CHAT_ID);
-      let msg = `👋 <b>Lottery Bot Online</b>\n\n`;
-      msg += `🆔 Your ID: <code>${chatId}</code>\n`;
-      msg += `⚙️ System Status: ${isAdmin ? '✅ Admin' : '⚠️ Guest'}`;
+      let msg = `👋 <b>彩票助手已就绪</b>\n\n`;
+      msg += `🆔 您的ID: <code>${chatId}</code>\n`;
+      msg += `⚙️ 状态: ${isAdmin ? '✅ 管理员' : '⚠️ 访客 (只读)'}`;
       
       if (isAdmin) {
-        msg += `\n\n发送 /menu 打开菜单`;
-        const keyboard = {
-            keyboard: [
-              [{ text: "/sync HK" }, { text: "/sync NEW" }, { text: "/sync OLD" }, { text: "/sync 2230" }],
-              [{ text: "/predict HK" }, { text: "/predict NEW" }, { text: "/predict OLD" }, { text: "/predict 2230" }],
-              [{ text: "/list HK" }, { text: "/list NEW" }, { text: "/list OLD" }, { text: "/list 2230" }],
-              [{ text: "/help" }]
-            ],
-            resize_keyboard: true,
-            one_time_keyboard: false
-        };
-        await sendMessage(env.TELEGRAM_TOKEN, chatId, msg, { parse_mode: 'HTML', reply_markup: keyboard });
+        msg += `\n\n请使用下方键盘操作 👇`;
+        await sendMessage(env.TELEGRAM_TOKEN, chatId, msg, { parse_mode: 'HTML', reply_markup: MENU_KEYBOARD });
       } else {
-        msg += `\n\n请在后台配置 ADMIN_CHAT_ID 为此 ID 以使用管理功能。`;
+        msg += `\n\n请在 Cloudflare 后台配置 ADMIN_CHAT_ID 以获取操作权限。`;
         await sendMessage(env.TELEGRAM_TOKEN, chatId, msg, { parse_mode: 'HTML' });
       }
       return new Response('OK');
     }
 
-    // 2. 权限校验 (针对其他命令)
+    // --- 2. 权限校验 ---
     if (String(chatId) !== String(env.ADMIN_CHAT_ID)) {
-      // 可选：回复未授权提示
-      // await sendMessage(env.TELEGRAM_TOKEN, chatId, "🚫 Unauthorized");
-      return new Response('OK'); // 返回 OK 避免 Telegram 重试
+      return new Response('OK'); 
     }
 
-    // 3. 解析彩种
+    // --- 3. 解析彩种 ---
     const resolveType = (t: string): LotteryType | null => {
       if (!t) return null;
       if (['HK', '香港'].includes(t)) return LotteryType.HK;
@@ -126,47 +147,41 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     const targetType = resolveType(rawType);
 
-    // 4. 业务逻辑
+    // --- 4. 业务逻辑 ---
     if (command === '/menu' || command === '/help') {
-      const keyboard = {
-        keyboard: [
-          [{ text: "/sync HK" }, { text: "/sync NEW" }, { text: "/sync OLD" }, { text: "/sync 2230" }],
-          [{ text: "/predict HK" }, { text: "/predict NEW" }, { text: "/predict OLD" }, { text: "/predict 2230" }],
-          [{ text: "/list HK" }, { text: "/list NEW" }, { text: "/list OLD" }, { text: "/list 2230" }],
-          [{ text: "/help" }]
-        ],
-        resize_keyboard: true,
-        one_time_keyboard: false
-      };
-      await sendMessage(env.TELEGRAM_TOKEN, chatId, "🎮 <b>控制台</b>", { parse_mode: 'HTML', reply_markup: keyboard });
+      await sendMessage(env.TELEGRAM_TOKEN, chatId, "🎮 <b>控制面板</b>\n点击下方按钮进行操作：", { 
+        parse_mode: 'HTML', 
+        reply_markup: MENU_KEYBOARD 
+      });
     }
 
     else if (command === '/sync') {
       if (!targetType) {
-        await sendMessage(env.TELEGRAM_TOKEN, chatId, "⚠️ 格式: /sync [Type]");
+        await sendMessage(env.TELEGRAM_TOKEN, chatId, "⚠️ 请选择彩种", { reply_markup: MENU_KEYBOARD });
         return new Response('OK');
       }
-      await sendMessage(env.TELEGRAM_TOKEN, chatId, `🔄 同步 ${targetType}...`);
+      const statusMsg = await sendMessage(env.TELEGRAM_TOKEN, chatId, `🔄 正在同步 ${targetType}...`);
       try {
         const count = await syncData(env, targetType);
-        await sendMessage(env.TELEGRAM_TOKEN, chatId, `✅ 成功同步 ${count} 条`);
+        await sendMessage(env.TELEGRAM_TOKEN, chatId, `✅ <b>${targetType} 同步成功</b>\n新增/更新: ${count} 条记录`, { parse_mode: 'HTML', reply_markup: MENU_KEYBOARD });
       } catch (e: any) {
-        await sendMessage(env.TELEGRAM_TOKEN, chatId, `❌ 失败: ${e.message}`);
+        await sendMessage(env.TELEGRAM_TOKEN, chatId, `❌ 同步失败: ${e.message}`, { reply_markup: MENU_KEYBOARD });
       }
     }
 
     else if (command === '/predict') {
       if (!targetType) {
-        await sendMessage(env.TELEGRAM_TOKEN, chatId, "⚠️ 格式: /predict [Type]");
+        await sendMessage(env.TELEGRAM_TOKEN, chatId, "⚠️ 请选择彩种", { reply_markup: MENU_KEYBOARD });
         return new Response('OK');
       }
-      await sendMessage(env.TELEGRAM_TOKEN, chatId, `🔮 分析 ${targetType}...`);
+      // await sendMessage(env.TELEGRAM_TOKEN, chatId, `🔮 正在分析 ${targetType}...`);
+      
       const { results } = await env.DB.prepare(
         "SELECT * FROM lottery_records WHERE lottery_type = ? ORDER BY expect DESC LIMIT 50"
       ).bind(targetType).all();
 
       if (!results || results.length === 0) {
-        await sendMessage(env.TELEGRAM_TOKEN, chatId, `❌ 无数据，请先 /sync`);
+        await sendMessage(env.TELEGRAM_TOKEN, chatId, `❌ 数据库无 ${targetType} 记录，请先点击【同步】`, { reply_markup: MENU_KEYBOARD });
         return new Response('OK');
       }
 
@@ -178,51 +193,53 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         `INSERT OR REPLACE INTO predictions (lottery_type, target_expect, prediction_numbers, created_at) VALUES (?, ?, ?, ?)`
       ).bind(targetType, nextExpect, JSON.stringify(predictionData), Date.now()).run();
 
-      const waveName = (w: string) => w === 'red' ? '红' : w === 'blue' ? '蓝' : '绿';
-      const msg = `✅ <b>第 ${nextExpect} 期预测</b>\n` +
-                  `🐹 六肖: ${predictionData.zodiacs.join(' ')}\n` +
-                  `🌊 波色: ${waveName(predictionData.wave.main)} / ${waveName(predictionData.wave.defense)}\n` +
-                  `🔢 18码: ${predictionData.numbers.join(',')}`;
+      const waveName = (w: string) => w === 'red' ? '🟥红' : w === 'blue' ? '🟦蓝' : '🟩绿';
+      const msg = `✅ <b>${targetType} 第 ${nextExpect} 期预测</b>\n` +
+                  `------------------------------\n` +
+                  `🐹 <b>六肖:</b> ${predictionData.zodiacs.join(' ')}\n` +
+                  `🌊 <b>波色:</b> 主${waveName(predictionData.wave.main)} / 防${waveName(predictionData.wave.defense)}\n` +
+                  `🔢 <b>18码:</b> ${predictionData.numbers.join(',')}\n` +
+                  `------------------------------\n` +
+                  `💡 <i>前端页面已自动更新</i>`;
 
-      await sendMessage(env.TELEGRAM_TOKEN, chatId, msg, { parse_mode: 'HTML' });
+      await sendMessage(env.TELEGRAM_TOKEN, chatId, msg, { parse_mode: 'HTML', reply_markup: MENU_KEYBOARD });
     }
 
     else if (command === '/list') {
       if (!targetType) {
-        await sendMessage(env.TELEGRAM_TOKEN, chatId, "⚠️ 格式: /list [Type]");
+        await sendMessage(env.TELEGRAM_TOKEN, chatId, "⚠️ 请选择彩种", { reply_markup: MENU_KEYBOARD });
         return new Response('OK');
       }
       const { results } = await env.DB.prepare(
         "SELECT expect, open_code, open_time FROM lottery_records WHERE lottery_type = ? ORDER BY expect DESC LIMIT 10"
       ).bind(targetType).all();
 
-      let msg = `📂 <b>${targetType} 近10期:</b>\n`;
-      results.forEach((r: any) => msg += `#${r.expect}: ${r.open_code}\n`);
-      await sendMessage(env.TELEGRAM_TOKEN, chatId, msg, { parse_mode: 'HTML' });
+      if (!results.length) {
+        await sendMessage(env.TELEGRAM_TOKEN, chatId, `📂 ${targetType} 暂无记录`, { reply_markup: MENU_KEYBOARD });
+      } else {
+        let msg = `📂 <b>${targetType} 近10期记录:</b>\n\n`;
+        results.forEach((r: any) => {
+           // 简单格式化
+           msg += `<b>#${r.expect}</b>: <code>${r.open_code}</code>\n`;
+        });
+        await sendMessage(env.TELEGRAM_TOKEN, chatId, msg, { parse_mode: 'HTML', reply_markup: MENU_KEYBOARD });
+      }
     }
 
     else if (command === '/del') {
-      if (!args[2]) { await sendMessage(env.TELEGRAM_TOKEN, chatId, "Need expect"); return new Response('OK'); }
+      if (!args[2]) { await sendMessage(env.TELEGRAM_TOKEN, chatId, "❌ 格式错误", { reply_markup: MENU_KEYBOARD }); return new Response('OK'); }
       await env.DB.prepare("DELETE FROM lottery_records WHERE lottery_type = ? AND expect = ?").bind(targetType, args[2]).run();
-      await sendMessage(env.TELEGRAM_TOKEN, chatId, `🗑 Deleted #${args[2]}`);
-    }
-
-    else if (command === '/add') {
-      // 简化 Add 逻辑，同上
-      if (!args[3]) { await sendMessage(env.TELEGRAM_TOKEN, chatId, "Need data"); return new Response('OK'); }
-      // ... 简略实现 ...
-      await sendMessage(env.TELEGRAM_TOKEN, chatId, "暂不支持手动添加 (代码简化)"); 
+      await sendMessage(env.TELEGRAM_TOKEN, chatId, `🗑 已删除 #${args[2]}`, { reply_markup: MENU_KEYBOARD });
     }
     
     else {
-      await sendMessage(env.TELEGRAM_TOKEN, chatId, "❓ 未知命令 /menu");
+      await sendMessage(env.TELEGRAM_TOKEN, chatId, "❓ 未知命令，请使用下方菜单。", { reply_markup: MENU_KEYBOARD });
     }
 
     return new Response('OK');
 
   } catch (err: any) {
     console.error("Worker Error:", err);
-    // 即使出错也返回 200，防止 TG 无限重试
     return new Response(`Error handled: ${err.message}`, { status: 200 }); 
   }
 };
@@ -240,18 +257,16 @@ async function sendMessage(token: string, chatId: number, text: string, options:
     });
     
     if (!resp.ok) {
-      const errText = await resp.text();
-      console.error('Telegram API Failed:', errText);
-      // 不要抛出错误，否则会触发 catch 块返回 Response，
-      // 这里只需记录日志
+      console.error('Telegram API Failed:', await resp.text());
     }
+    return resp;
   } catch (e) {
     console.error('Fetch Error:', e);
   }
 }
 
 async function syncData(env: Env, type: LotteryType): Promise<number> {
-  // ... 同步逻辑保持不变 ...
+  // ... 同步逻辑 ...
   let apiUrl = '';
   switch (type) {
     case LotteryType.HK: apiUrl = env.URL_HK; break;
@@ -259,10 +274,10 @@ async function syncData(env: Env, type: LotteryType): Promise<number> {
     case LotteryType.MO_OLD: apiUrl = env.URL_MO_OLD; break;
     case LotteryType.MO_OLD_2230: apiUrl = env.URL_MO_OLD_2230; break;
   }
-  if (!apiUrl) throw new Error(`URL Not Set`);
+  if (!apiUrl) throw new Error(`未配置 API 地址`);
   
   const resp = await fetch(apiUrl);
-  if (!resp.ok) throw new Error(`API Error ${resp.status}`);
+  if (!resp.ok) throw new Error(`API 请求错误 ${resp.status}`);
   const json: any = await resp.json();
   const list = json.data || json; 
   if (!Array.isArray(list)) return 0;
