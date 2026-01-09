@@ -5,7 +5,7 @@ compatibility_date = "2024-01-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "lottery-db"
-database_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" # 请在此处替换你的 D1 数据库 ID
+database_id = "44a4bb2b-3d97-41a2-a440-6057016e05d4" # 请在此处替换你的 D1 数据库 ID
 
 [vars]
 # 这里的变量建议在 Cloudflare Pages 后台 (Settings -> Environment variables) 配置
@@ -16,3 +16,4 @@ database_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" # 请在此处替换你的 
 # URL_MO_NEW = "API地址"
 # URL_MO_OLD = "API地址"
 # URL_MO_OLD_2230 = "API地址"
+
