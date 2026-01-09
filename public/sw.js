@@ -1,5 +1,5 @@
 // File: public/sw.js
-const CACHE_NAME = "lottery-pwa-v3";
+const CACHE_NAME = "lottery-pwa-v4";
 const ASSETS = [
   "/",
   "/index.html",
