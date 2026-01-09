@@ -1,20 +1,16 @@
-# 全局 CORS 设置
 /*
   Access-Control-Allow-Origin: *
 
-# 核心修复：确保 SVG 被识别为图片，而不是文本
 /*.svg
-  Content-Type: image/svg+xml; charset=utf-8
+  Content-Type: image/svg+xml
   Cache-Control: public, max-age=31536000
 
-# 核心配置：将 TSX/TS 识别为 JavaScript，供浏览器端 Babel 编译使用
 /*.tsx
   Content-Type: text/javascript; charset=utf-8
 
 /*.ts
   Content-Type: text/javascript; charset=utf-8
 
-# 图片缓存配置
 /*.png
   Content-Type: image/png
   Cache-Control: public, max-age=31536000
@@ -23,12 +19,10 @@
   Content-Type: image/jpeg
   Cache-Control: public, max-age=31536000
 
-# Manifest 配置
 /manifest.json
   Content-Type: application/manifest+json; charset=utf-8
   Cache-Control: public, max-age=0, must-revalidate
 
-# 数据缓存控制
 /*.json
   Content-Type: application/json; charset=utf-8
   Cache-Control: public, max-age=60
