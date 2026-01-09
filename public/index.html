@@ -4,7 +4,6 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
-    <link rel="apple-touch-icon" href="/logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="theme-color" content="#f8fafc" />
     <meta name="description" content="AI Lottery Prediction System" />
@@ -31,26 +30,22 @@
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 
-    <!-- 使用 UMD 版本，确保 React 和 ReactDOM 注册为全局变量 -->
+    <!-- 1. 引入 React 和 ReactDOM (UMD 版本) -->
     <script crossorigin src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
     
-    <!-- Babel 用于在浏览器中编译 JSX -->
+    <!-- 2. 引入 Babel 用于浏览器端编译 TSX -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   </head>
   <body class="bg-slate-50 text-slate-800 antialiased min-h-screen">
     <div id="root"></div>
     
-    <!-- 按依赖顺序加载脚本 -->
-    <!-- 1. 基础类型和库 -->
+    <!-- 3. 按依赖顺序加载脚本，使用 text/babel 类型 -->
     <script type="text/babel" data-presets="typescript" src="/types.ts"></script>
     <script type="text/babel" data-presets="typescript" src="/lib/zodiac.ts"></script>
     <script type="text/babel" data-presets="typescript" src="/lib/wave.ts"></script>
     
-    <!-- 2. React 组件 -->
     <script type="text/babel" data-presets="typescript,react" src="/App.tsx"></script>
-    
-    <!-- 3. 入口文件 -->
     <script type="text/babel" data-presets="typescript,react" src="/index.tsx"></script>
 
     <script>
