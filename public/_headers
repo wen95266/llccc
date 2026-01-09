@@ -2,7 +2,7 @@
   Access-Control-Allow-Origin: *
 
 /*.svg
-  Content-Type: image/svg+xml; charset=utf-8
+  Content-Type: image/svg+xml
   Cache-Control: public, max-age=31536000
 
 /*.tsx
