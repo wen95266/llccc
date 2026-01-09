@@ -98,12 +98,69 @@ const HistoryModal = ({ isOpen, onClose, history }) => {
   );
 };
 
+// --- IOS 安装提示组件 ---
+const IosInstallGuide = ({ onClose }) => (
+  <div className="bg-slate-800 text-white p-4 rounded-xl mb-4 text-sm relative animate-[fadeIn_0.5s]">
+    <button onClick={onClose} className="absolute top-2 right-2 text-slate-400 hover:text-white">✕</button>
+    <div className="flex items-start gap-3">
+      <span className="text-2xl">📲</span>
+      <div>
+        <p className="font-bold mb-1">安装到 iPhone/iPad</p>
+        <p className="text-slate-300 text-xs leading-relaxed">
+          1. 点击底部浏览器的 <span className="font-bold text-blue-300">分享</span> 按钮<br/>
+          2. 选择 <span className="font-bold text-blue-300">添加到主屏幕</span>
+        </p>
+      </div>
+    </div>
+  </div>
+);
+
 // 挂载到全局
 window.App = function App() {
   const [activeTab, setActiveTab] = useState(LotteryType.HK);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  
+  // PWA 安装状态
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [isIos, setIsIos] = useState(false);
+  const [showIosGuide, setShowIosGuide] = useState(false);
+  const [isStandalone, setIsStandalone] = useState(false);
+
+  useEffect(() => {
+    // 1. 监听安装事件 (Android/PC)
+    const handler = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+
+    // 2. 检测 iOS
+    const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    setIsIos(iOS);
+
+    // 3. 检测是否已安装 (Standalone 模式)
+    const standalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator).standalone;
+    setIsStandalone(standalone);
+
+    // 如果是 iOS 且未安装，显示引导
+    if (iOS && !standalone) {
+      // 延迟一点显示，避免干扰
+      setTimeout(() => setShowIosGuide(true), 2000);
+    }
+
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setDeferredPrompt(null);
+    }
+  };
 
   const fetchLotteryData = async (type) => {
     setLoading(true);
@@ -160,6 +217,7 @@ window.App = function App() {
       <style>{`
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        @keyframes bounce-slow { 0%, 100% { transform: translateY(-5%); } 50% { transform: translateY(0); } }
       `}</style>
       
       <HistoryModal 
@@ -167,6 +225,27 @@ window.App = function App() {
         onClose={() => setShowHistory(false)} 
         history={data?.history || []} 
       />
+
+      {/* 顶部 Header */}
+      <header className="bg-white px-4 py-3 border-b border-slate-100 flex justify-between items-center sticky top-0 z-20 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+        <div className="flex items-center gap-2">
+           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-sm">
+             彩
+           </div>
+           <h1 className="font-bold text-slate-800 text-lg tracking-tight">Lottery Prophet</h1>
+        </div>
+        
+        {/* 安装按钮 (仅在非安装模式且浏览器支持时显示) */}
+        {!isStandalone && deferredPrompt && (
+          <button 
+            onClick={handleInstallClick}
+            className="flex items-center gap-1.5 bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded-full text-xs font-bold border border-indigo-100 animate-[bounce-slow_2s_infinite]"
+          >
+            <span>⬇️</span>
+            <span>安装 APP</span>
+          </button>
+        )}
+      </header>
 
       <div className="mx-4 mt-4 p-1 bg-slate-100 rounded-xl border border-slate-200">
         <div className="flex gap-1">
@@ -178,6 +257,11 @@ window.App = function App() {
       </div>
 
       <main className="p-4 space-y-6">
+        {/* iOS 安装提示 */}
+        {showIosGuide && !isStandalone && (
+           <IosInstallGuide onClose={() => setShowIosGuide(false)} />
+        )}
+
         {loading ? (
           <div className="flex flex-col justify-center items-center h-64 space-y-4">
              <div className="w-10 h-10 border-4 border-blue-500/30 border-t-blue-600 rounded-full animate-spin"></div>
