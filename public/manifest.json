@@ -11,18 +11,7 @@
     {
       "src": "/logo.svg",
       "type": "image/svg+xml",
-      "sizes": "any"
-    },
-    {
-      "src": "/logo.svg",
-      "type": "image/svg+xml",
-      "sizes": "192x192",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/logo.svg",
-      "type": "image/svg+xml",
-      "sizes": "512x512",
+      "sizes": "any",
       "purpose": "any maskable"
     }
   ],
