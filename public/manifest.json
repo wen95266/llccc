@@ -21,7 +21,7 @@
       "purpose": "any"
     },
     {
-      "src": "/logo-v2.svg",
+      "src": "/app-icon.svg",
       "type": "image/svg+xml",
       "sizes": "any"
     }
