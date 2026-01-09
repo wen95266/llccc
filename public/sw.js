@@ -1,9 +1,9 @@
 // File: public/sw.js
-const CACHE_NAME = "lottery-pwa-v4";
+const CACHE_NAME = "lottery-pwa-v5";
 const ASSETS = [
   "/",
   "/index.html",
-  "/logo.svg",
+  "/logo-v2.svg",
   "/manifest.json",
   "/index.tsx",
   "/App.tsx",
