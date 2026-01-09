@@ -3,12 +3,25 @@
   Access-Control-Allow-Origin: *
 
 # 核心配置：强制将 tsx 和 ts 文件识别为 JavaScript
-# 这样浏览器才能配合 index.html 中的 Babel 正确解析
 /*.tsx
   Content-Type: text/javascript; charset=utf-8
 
 /*.ts
   Content-Type: text/javascript; charset=utf-8
+
+# SVG 必须显式声明类型
+/*.svg
+  Content-Type: image/svg+xml; charset=utf-8
+  Cache-Control: public, max-age=31536000
+
+# 截图和其他图片
+/*.jpg
+  Content-Type: image/jpeg
+  Cache-Control: public, max-age=31536000
+
+/*.png
+  Content-Type: image/png
+  Cache-Control: public, max-age=31536000
 
 # 可选：缓存控制
 /*.json
