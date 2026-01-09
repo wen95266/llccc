@@ -10,27 +10,28 @@ interface DbRecord {
 
 interface NumberStat {
   num: number;
-  // 因子1: 时间衰减频率得分
-  decayScore: number; 
-  // 因子2: 马尔可夫转移得分
+  // 1. 技术面: MACD 趋势分
+  macdScore: number;
+  // 2. 关联面: 马尔可夫转移分
   markovScore: number;
-  // 因子3: 属性热度加成 (生肖+波色+尾数)
-  attributeScore: number;
-  // 因子4: 遗漏回补得分
+  // 3. 概率面: 遗漏偏离度分
   omissionScore: number;
-  // 最终总分
+  // 4. 属性面: 属性共振加成
+  resonanceScore: number;
+  // 最终得分
   finalScore: number;
   
-  // 辅助信息
+  // 辅助
   zodiac: string;
   wave: string;
   tail: number;
+  head: number;
 }
 
 /**
- * 核心预测引擎 (专业版 v3.0)
- * 采用多因子复合指数模型 (MFCI)
- * 核心逻辑：先预测大势(属性)，再锁定个股(号码)
+ * 核心预测引擎 (旗舰版 v4.0 - DCTA)
+ * Deep Composite Trend Analysis
+ * 引入 MACD 技术指标、标准差遗漏分析与属性共振逻辑
  */
 export class PredictionEngine {
 
@@ -59,194 +60,233 @@ export class PredictionEngine {
   static generate(history: DbRecord[], type: LotteryType): PredictionData {
     this.initializeMaps();
     
-    // 1. 数据预处理
-    // 截取最近 100 期进行高密度分析，过远的数据噪音太大
-    const recentHistory = history.slice(0, 100);
-    const chronological = [...recentHistory].reverse(); // Old -> New
+    // 取最近 150 期作为样本，MACD 需要一定的历史长度来稳定
+    const analysisHistory = history.slice(0, 150);
+    const chronological = [...analysisHistory].reverse(); // Old -> New
     const totalRecords = chronological.length;
 
-    // 初始化 1-49 号码的基础结构
+    // 初始化号码状态
     const stats: NumberStat[] = Array.from({ length: 49 }, (_, i) => {
       const num = i + 1;
       return {
         num,
-        decayScore: 0,
+        macdScore: 0,
         markovScore: 0,
-        attributeScore: 0,
         omissionScore: 0,
+        resonanceScore: 0,
         finalScore: 0,
         zodiac: this.NUM_TO_ZODIAC[num],
         wave: this.getNumWave(num),
-        tail: num % 10
+        tail: num % 10,
+        head: Math.floor(num / 10)
       };
     });
 
-    // ----------------------------------------------------
-    // 算法模块 A: 属性热度分析 (Attribute Heat Analysis)
-    // ----------------------------------------------------
-    const zodiacHeat: Record<string, number> = {};
-    const waveHeat: Record<string, number> = { red: 0, blue: 0, green: 0 };
-    const tailHeat: Record<number, number> = {};
-
-    // 遍历历史，计算属性热度
-    // 越近期的期数，属性得分越高 (加权: 最近1期=10分, 2期=9分...)
-    recentHistory.forEach((rec, idx) => {
-      const nums = this.parseNumbers(rec.open_code);
-      const weight = Math.max(1, 20 - idx); // 线性衰减权重
-
-      nums.forEach(n => {
-        if (n < 1 || n > 49) return;
-        const z = this.NUM_TO_ZODIAC[n];
-        const w = this.getNumWave(n);
-        const t = n % 10;
-
-        if (z) zodiacHeat[z] = (zodiacHeat[z] || 0) + weight;
-        waveHeat[w] = (waveHeat[w] || 0) + weight;
-        tailHeat[t] = (tailHeat[t] || 0) + weight;
-      });
-    });
-
-    // 将属性热度 回注 给每个号码 (Attribute Injection)
+    // ==========================================
+    // 模块 1: MACD 趋势分析 (Technical Analysis)
+    // ==========================================
+    // 计算每个号码的 MACD(12, 26, 9)
+    // 将号码出现视为 1，未出现视为 0，构建时间序列
     stats.forEach(s => {
-      // 归一化因子
-      const zScore = (zodiacHeat[s.zodiac] || 0) / 10;
-      const wScore = (waveHeat[s.wave] || 0) / 10;
-      const tScore = (tailHeat[s.tail] || 0) / 5;
-      s.attributeScore = zScore + wScore + tScore;
+      let ema12 = 0;
+      let ema26 = 0;
+      let dea = 0; // Signal line (EMA9 of MACD)
+      
+      // 预热：假设初始概率为 1/49
+      const initialProb = 1/49;
+      ema12 = initialProb;
+      ema26 = initialProb;
+
+      const k12 = 2 / (12 + 1);
+      const k26 = 2 / (26 + 1);
+      const k9 = 2 / (9 + 1);
+
+      chronological.forEach(rec => {
+        const nums = this.parseNumbers(rec.open_code);
+        const val = nums.includes(s.num) ? 1 : 0;
+        
+        // 更新 EMA
+        ema12 = val * k12 + ema12 * (1 - k12);
+        ema26 = val * k26 + ema26 * (1 - k26);
+        
+        const dif = ema12 - ema26;
+        dea = dif * k9 + dea * (1 - k9);
+      });
+
+      const dif = ema12 - ema26;
+      const macd = (dif - dea) * 2; // MACD 柱状图
+
+      // 评分逻辑：
+      // 1. MACD > 0 表示处于多头趋势 (活跃期)
+      // 2. DIF > DEA 表示正在走强
+      // 放大系数 1000 以匹配其他分数段
+      s.macdScore = (macd * 2000) + (dif * 1000);
+      
+      // 修正：如果长期不出的死号，MACD会很低，这里不干预，交给遗漏分析处理
     });
 
 
-    // ----------------------------------------------------
-    // 算法模块 B: 时间衰减频率 (Exponential Decay)
-    // ----------------------------------------------------
-    // 公式: Score += 1 / (Gap + 1)
-    // 刚出的号码得分 1.0，隔1期出的得分 0.5...
-    const appearIndices: Record<number, number[]> = {};
-    
+    // ==========================================
+    // 模块 2: 马尔可夫链 (Markov Chain)
+    // ==========================================
+    const matrix = Array.from({ length: 50 }, () => new Array(50).fill(0));
+    // 构建 1阶 转移矩阵
+    for (let i = 0; i < totalRecords - 1; i++) {
+      const cur = this.parseNumbers(chronological[i].open_code);
+      const next = this.parseNumbers(chronological[i+1].open_code);
+      cur.forEach(c => {
+        next.forEach(n => matrix[c][n]++);
+      });
+    }
+    // 投影
+    const lastDraw = this.parseNumbers(history[0].open_code);
+    stats.forEach(s => {
+      let score = 0;
+      lastDraw.forEach(prev => {
+        if (prev >= 1 && prev <= 49) {
+          // 加上转移频率
+          score += matrix[prev][s.num];
+        }
+      });
+      s.markovScore = score * 3; // 权重系数
+    });
+
+
+    // ==========================================
+    // 模块 3: 标准差遗漏分析 (Smart Omission)
+    // ==========================================
+    // 记录每个号码的所有遗漏间隔
+    const omissionGaps: Record<number, number[]> = {};
+    const lastAppearIdx: Record<number, number> = {};
+
     chronological.forEach((rec, idx) => {
       const nums = this.parseNumbers(rec.open_code);
       nums.forEach(n => {
-        if (!appearIndices[n]) appearIndices[n] = [];
-        appearIndices[n].push(idx); // 记录出现的索引 (0 start)
+        const last = lastAppearIdx[n] === undefined ? -1 : lastAppearIdx[n];
+        const gap = idx - last - 1;
+        if (!omissionGaps[n]) omissionGaps[n] = [];
+        omissionGaps[n].push(gap);
+        lastAppearIdx[n] = idx;
       });
     });
 
     stats.forEach(s => {
-      const indices = appearIndices[s.num] || [];
-      let score = 0;
-      indices.forEach(idx => {
-        const gap = (totalRecords - 1) - idx; // 距离现在的期数
-        // 指数衰减: e^(-0.1 * gap)
-        score += Math.exp(-0.1 * gap) * 100;
-      });
-      s.decayScore = score;
-    });
-
-
-    // ----------------------------------------------------
-    // 算法模块 C: 增强型马尔可夫 (Markov Matrix)
-    // ----------------------------------------------------
-    const matrix = Array.from({ length: 50 }, () => new Array(50).fill(0));
-    // 构建转移矩阵
-    for (let i = 0; i < totalRecords - 1; i++) {
-      const currentNums = this.parseNumbers(chronological[i].open_code);
-      const nextNums = this.parseNumbers(chronological[i+1].open_code);
-      currentNums.forEach(c => {
-        nextNums.forEach(n => matrix[c][n]++);
-      });
-    }
-    // 计算上一期号码对当前的投影
-    const lastNums = this.parseNumbers(history[0].open_code);
-    stats.forEach(s => {
-      let mScore = 0;
-      lastNums.forEach(prev => {
-        if (prev >= 1 && prev <= 49) {
-          mScore += matrix[prev][s.num];
-        }
-      });
-      s.markovScore = mScore * 5; // 放大权重
-    });
-
-
-    // ----------------------------------------------------
-    // 算法模块 D: 黄金遗漏点 (Golden Omission)
-    // ----------------------------------------------------
-    // 寻找那些遗漏值接近 平均遗漏值 的号码 (回补概率大)
-    // 或者遗漏值达到极值的号码 (极限反转)
-    stats.forEach(s => {
-      const indices = appearIndices[s.num];
-      const currentOmission = indices && indices.length > 0 
-        ? (totalRecords - 1) - indices[indices.length - 1] 
-        : totalRecords;
+      const gaps = omissionGaps[s.num] || [];
+      const currentOmission = (totalRecords - 1) - (lastAppearIdx[s.num] === undefined ? -1 : lastAppearIdx[s.num]);
       
-      const freq = indices ? indices.length : 0;
-      const avgOmission = totalRecords / (freq + 1);
-
-      // 逻辑：当前遗漏 在 平均遗漏的 1.5倍 到 2.5倍 之间，容易回补
-      if (currentOmission > avgOmission * 1.5 && currentOmission < avgOmission * 3.0) {
-        s.omissionScore = 50; 
+      if (gaps.length < 2) {
+        s.omissionScore = 0; // 数据不足
+        return;
       }
-      // 逻辑：如果刚出过 (重号)，给一定分数
-      if (currentOmission === 0) {
-        s.omissionScore = 30;
+
+      // 计算平均遗漏和标准差
+      const avg = gaps.reduce((a, b) => a + b, 0) / gaps.length;
+      const variance = gaps.reduce((a, b) => a + Math.pow(b - avg, 2), 0) / gaps.length;
+      const stdDev = Math.sqrt(variance);
+
+      // 评分逻辑：
+      // 1. 回补点: 当前遗漏在 (平均值) 附近，概率最大
+      // 2. 极限点: 当前遗漏在 (平均值 + 2倍标准差) 附近，博冷号反弹
+      
+      const zScore = (currentOmission - avg) / (stdDev || 1);
+
+      if (Math.abs(zScore) < 0.5) {
+        // 处于平均遗漏周期，大概率出
+        s.omissionScore = 20; 
+      } else if (zScore > 2.0 && zScore < 3.0) {
+        // 极寒反弹区 (Cold Rebound)
+        s.omissionScore = 35;
+      } else if (currentOmission === 0) {
+        // 重号惯性
+        s.omissionScore = 15;
+      } else {
+        s.omissionScore = 5;
       }
     });
 
-
-    // ----------------------------------------------------
-    // 汇总: 综合加权计算
-    // ----------------------------------------------------
-    // 权重配置 (总和不需要等于1，相对大小即可)
-    const W_ATTRIBUTE = 0.4; // 属性趋势最重要 (符合大数定律)
-    const W_DECAY = 0.3;     // 近期热号
-    const W_MARKOV = 0.2;    // 号码关联
-    const W_OMISSION = 0.1;  // 遗漏博反弹
+    // ==========================================
+    // 阶段汇总 1: 计算基础得分 (Pre-Resonance)
+    // ==========================================
+    const W_MACD = 0.4;
+    const W_MARKOV = 0.3;
+    const W_OMISSION = 0.3;
 
     stats.forEach(s => {
-      s.finalScore = 
-        (s.attributeScore * W_ATTRIBUTE) +
-        (s.decayScore * W_DECAY) +
-        (s.markovScore * W_MARKOV) +
-        (s.omissionScore * W_OMISSION);
+      s.finalScore = (s.macdScore * W_MACD) + (s.markovScore * W_MARKOV) + (s.omissionScore * W_OMISSION);
     });
 
-    // ----------------------------------------------------
-    // 结果生成
-    // ----------------------------------------------------
-    // 1. 选码 (Top 18)
-    const sortedStats = [...stats].sort((a, b) => b.finalScore - a.finalScore);
-    const top18 = sortedStats.slice(0, 18).map(s => s.num < 10 ? `0${s.num}` : `${s.num}`).sort((a, b) => parseInt(a) - parseInt(b));
-
-    // 2. 选属性 (基于 Top 25 号码的总分聚合)
-    // 为什么用 Top 25 而不是 Top 18？扩大一点样本范围能让属性预测更稳，防止 Top18 恰好漏掉某种属性的边缘号码
-    const top25Stats = sortedStats.slice(0, 25);
-    
+    // ==========================================
+    // 模块 4: 属性共振 (Attribute Resonance)
+    // ==========================================
+    // 统计当前得分下的属性盘口
     const zScores: Record<string, number> = {};
     const wScores: Record<string, number> = {};
-    const tScores: Record<string, number> = {};
-    const hScores: Record<string, number> = {};
+    const tScores: Record<number, number> = {};
 
-    top25Stats.forEach(s => {
-      const score = s.finalScore;
-      zScores[s.zodiac] = (zScores[s.zodiac] || 0) + score;
-      wScores[s.wave] = (wScores[s.wave] || 0) + score;
-      tScores[s.tail] = (tScores[s.tail] || 0) + score;
-      
-      const head = Math.floor(s.num / 10).toString();
-      hScores[head] = (hScores[head] || 0) + score;
+    stats.forEach(s => {
+      // 只有正分才贡献热度
+      if (s.finalScore > 0) {
+        zScores[s.zodiac] = (zScores[s.zodiac] || 0) + s.finalScore;
+        wScores[s.wave] = (wScores[s.wave] || 0) + s.finalScore;
+        tScores[s.tail] = (tScores[s.tail] || 0) + s.finalScore;
+      }
     });
 
-    const sortObj = (obj: Record<string, number>) => Object.entries(obj).sort((a, b) => b[1] - a[1]).map(e => e[0]);
+    // 找出最强的 3个生肖，1个波色，3个尾数
+    const sortedZ = Object.entries(zScores).sort((a, b) => b[1] - a[1]).map(e => e[0]);
+    const sortedW = Object.entries(wScores).sort((a, b) => b[1] - a[1]).map(e => e[0]);
+    const sortedT = Object.entries(tScores).sort((a, b) => b[1] - a[1]).map(e => parseInt(e[0]));
+
+    const strongZodiacs = new Set(sortedZ.slice(0, 3));
+    const strongWave = sortedW[0];
+    const strongTails = new Set(sortedT.slice(0, 3));
+
+    // 共振增强：如果号码属于强势属性，给予二次加权
+    stats.forEach(s => {
+      let boost = 1.0;
+      if (strongZodiacs.has(s.zodiac)) boost += 0.15; // +15%
+      if (s.wave === strongWave) boost += 0.15;       // +15%
+      if (strongTails.has(s.tail)) boost += 0.10;     // +10%
+      
+      // 更新最终得分
+      s.finalScore *= boost;
+      s.resonanceScore = boost;
+    });
+
+    // ==========================================
+    // 最终产出
+    // ==========================================
+    const sortedStats = [...stats].sort((a, b) => b.finalScore - a.finalScore);
+    
+    // 1. 选取 Top 18
+    const top18 = sortedStats.slice(0, 18).map(s => s.num < 10 ? `0${s.num}` : `${s.num}`).sort((a, b) => parseInt(a) - parseInt(b));
+
+    // 2. 属性反推 (严格基于加权后的 Top 20)
+    // 这样能保证展示的“推荐生肖”和“推荐号码”高度重合
+    const top20Stats = sortedStats.slice(0, 20);
+    const finalZ: Record<string, number> = {};
+    const finalW: Record<string, number> = {};
+    const finalH: Record<string, number> = {};
+    const finalT: Record<string, number> = {};
+
+    top20Stats.forEach(s => {
+      finalZ[s.zodiac] = (finalZ[s.zodiac] || 0) + s.finalScore;
+      finalW[s.wave] = (finalW[s.wave] || 0) + s.finalScore;
+      finalH[s.head] = (finalH[s.head] || 0) + s.finalScore;
+      finalT[s.tail] = (finalT[s.tail] || 0) + s.finalScore;
+    });
+
+    const sortK = (obj: Record<string, number>) => Object.entries(obj).sort((a, b) => b[1] - a[1]).map(e => e[0]);
 
     return {
-      zodiacs: sortObj(zScores).slice(0, 6),
+      zodiacs: sortK(finalZ).slice(0, 6),
       numbers: top18,
       wave: {
-        main: sortObj(wScores)[0] || 'red',
-        defense: sortObj(wScores)[1] || 'blue'
+        main: sortK(finalW)[0] || 'red',
+        defense: sortK(finalW)[1] || 'blue'
       },
-      heads: sortObj(hScores).slice(0, 2),
-      tails: sortObj(tScores).slice(0, 5)
+      heads: sortK(finalH).slice(0, 2),
+      tails: sortK(finalT).slice(0, 5)
     };
   }
 
