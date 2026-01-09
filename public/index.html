@@ -2,7 +2,8 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/app-icon.svg" />
+    <!-- 添加 ?v=2025 强制刷新缓存 -->
+    <link rel="icon" type="image/svg+xml" href="/app-icon.svg?v=2025" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="theme-color" content="#f8fafc" />
     <meta name="description" content="AI Lottery Prediction System" />
@@ -50,7 +51,11 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW Fail', err));
+          // 注册时也加上版本号，确保 SW 更新
+          navigator.serviceWorker.register('/sw.js?v=7').then(reg => {
+            // 尝试更新
+            reg.update();
+          }).catch(err => console.log('SW Fail', err));
         });
       }
     </script>
