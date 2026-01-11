@@ -8,23 +8,26 @@ interface NumberStat {
   wuxing: string;
   tail: number;
   
-  // v8.0 八大维度评分
-  scoreHistoryMirror: number;  // 历史镜像分 (权重 Max)
-  scoreSpecialTraj: number;    // 特码轨迹分 (权重 High)
-  scorePattern: number;        // 形态几何分 (邻/重/跳)
-  scoreTail: number;           // 尾数力场分
-  scoreZodiac: number;         // 生肖三合分
-  scoreWuXing: number;         // 五行平衡分
-  scoreWave: number;           // 波色惯性分
-  scoreGold: number;           // 黄金密钥分
-  scoreOmission: number;       // 遗漏回补分
+  // v9.0 九大维度评分
+  scoreHistoryMirror: number;  // 历史镜像 (整体盘面相似度)
+  scoreZodiacTrans: number;    // [NEW] 生肖转移概率 (上期开A，下期大概率开B)
+  scoreNumberTrans: number;    // [NEW] 特码转移概率 (上期特码X，下期大概率特码Y)
+  scoreSpecialTraj: number;    // 轨迹惯性
+  scorePattern: number;        // 形态几何
+  scoreTail: number;           // 尾数力场
+  scoreZodiac: number;         // 三合局势
+  scoreWuXing: number;         // 五行平衡
+  scoreWave: number;           // 波色惯性
+  scoreGold: number;           // 黄金密钥
+  scoreOmission: number;       // 遗漏回补
   
   totalScore: number;
 }
 
 /**
- * 🔮 Quantum Matrix Prediction Engine v8.0 "Cosmic Resonance" (宇宙共振版)
- * 核心理念：万物皆有引力。当 8 种不同的算法模型同时指向同一个号码时，该号码的出现具有“必然性”。
+ * 🔮 Quantum Matrix Prediction Engine v9.0 "Galaxy Statistician" (银河统计师)
+ * 核心升级：引入马尔可夫链思想，统计“状态转移概率”。
+ * 重点解决用户提问：“上期开牛后，下期一般开什么生肖几率最大？”
  */
 export class PredictionEngine {
 
@@ -36,7 +39,6 @@ export class PredictionEngine {
     '虎': [4, 16, 28, 40], '兔': [3, 15, 27, 39], '龙': [2, 14, 26, 38],
   };
 
-  // 三合局 (生肖强关联)
   static SAN_HE_MAP: Record<string, string[]> = {
     '鼠': ['龙', '猴'], '龙': ['鼠', '猴'], '猴': ['鼠', '龙'],
     '牛': ['蛇', '鸡'], '蛇': ['牛', '鸡'], '鸡': ['牛', '蛇'],
@@ -44,7 +46,6 @@ export class PredictionEngine {
     '兔': ['猪', '羊'], '猪': ['兔', '羊'], '羊': ['兔', '猪']
   };
   
-  // 五行 (平衡算法核心)
   static WU_XING_MAP: Record<string, number[]> = {
     '金': [1, 2, 9, 10, 23, 24, 31, 32, 37, 38],
     '木': [3, 4, 11, 12, 19, 20, 33, 34, 41, 42, 49],
@@ -75,18 +76,18 @@ export class PredictionEngine {
   static generate(history: DbRecord[], type: LotteryType): PredictionData {
     this.initializeMaps();
     
-    // 兜底：无数据时随机
     if (!history || history.length < 20) return this.generateRandom();
 
     // 0. 数据预处理
-    const fullHistory = history; // 全量数据
-    const recent20 = history.slice(0, 20); // 近期趋势
+    const fullHistory = history;
+    const recent20 = history.slice(0, 20);
     const recent10 = history.slice(0, 10);
     const lastDrawNums = this.parseNumbers(history[0].open_code);
     const lastSpecial = lastDrawNums[lastDrawNums.length - 1]; // 上期特码
+    const lastSpecialZodiac = this.NUM_TO_ZODIAC[lastSpecial]; // 上期特肖
     const lastDrawSum = lastDrawNums.reduce((a, b) => a + b, 0);
 
-    // 初始化 49 个号码的状态池
+    // 初始化状态池
     const stats: NumberStat[] = Array.from({ length: 49 }, (_, i) => {
       const num = i + 1;
       return {
@@ -97,6 +98,8 @@ export class PredictionEngine {
         tail: num % 10,
         
         scoreHistoryMirror: 0,
+        scoreZodiacTrans: 0,
+        scoreNumberTrans: 0,
         scoreSpecialTraj: 0,
         scorePattern: 0,
         scoreTail: 0,
@@ -110,83 +113,97 @@ export class PredictionEngine {
     });
 
     // ==========================================
-    // 算法 1: 历史镜像 (Historical Mirroring)
+    // 算法 1: [NEW] 生肖转移概率 (Zodiac Transition)
     // ==========================================
-    // 寻找历史中与"上期开奖"相似度极高的期数，统计其"下一期"开什么
-    const mirrorCounts: Record<number, number> = {};
+    // 逻辑：统计历史上当特肖是"LastZodiac"时，下一期各个生肖出现的次数
+    const zodiacTransMap: Record<string, number> = {};
+    let zodiacTransTotal = 0;
+
+    // 从 index 1 开始遍历历史 (history[0]是最新，我们不知道它的下一期，所以我们找历史上的类似情况)
     for (let i = 1; i < fullHistory.length - 1; i++) {
         const histNums = this.parseNumbers(fullHistory[i].open_code);
-        // 计算交集：如果有3个以上号码相同，视为"镜像局"
-        const common = histNums.filter(n => lastDrawNums.includes(n));
-        if (common.length >= 3) {
-            // 取下一期 (i-1)
+        const histSpecial = histNums[histNums.length - 1];
+        const histZodiac = this.NUM_TO_ZODIAC[histSpecial];
+
+        // 如果历史上某期的生肖 等于 我们上期的生肖
+        if (histZodiac === lastSpecialZodiac) {
+            // 查看它的下一期 (即 i-1)
             const nextNums = this.parseNumbers(fullHistory[i-1].open_code);
-            nextNums.forEach(n => {
-                // 相似度越高，权重越大
-                mirrorCounts[n] = (mirrorCounts[n] || 0) + (common.length * 2); 
-            });
+            const nextSpecial = nextNums[nextNums.length - 1];
+            const nextZodiac = this.NUM_TO_ZODIAC[nextSpecial];
+            
+            zodiacTransMap[nextZodiac] = (zodiacTransMap[nextZodiac] || 0) + 1;
+            zodiacTransTotal++;
         }
     }
-    stats.forEach(s => s.scoreHistoryMirror = (mirrorCounts[s.num] || 0) * 0.8);
+    
+    // 给该生肖下的所有号码加分
+    stats.forEach(s => {
+        const occurrences = zodiacTransMap[s.zodiac] || 0;
+        // 归一化评分：(出现次数 / 总样本数) * 权重系数 (例如 40分)
+        if (zodiacTransTotal > 0) {
+            s.scoreZodiacTrans = (occurrences / zodiacTransTotal) * 40; // 权重非常高
+        }
+    });
 
     // ==========================================
-    // 算法 2: 特码轨迹 (Special Code Trajectory)
+    // 算法 2: [NEW] 特码转移概率 (Number Transition)
     // ==========================================
-    // 历史上当特码是 X 时，下期通常出什么？
-    const trajCounts: Record<number, number> = {};
+    // 逻辑：更精确，直接看当特码是 X 时，下期特码是 Y 的概率
+    const numTransMap: Record<number, number> = {};
     for (let i = 1; i < fullHistory.length - 1; i++) {
         const histNums = this.parseNumbers(fullHistory[i].open_code);
         const histSpecial = histNums[histNums.length - 1];
         
         if (histSpecial === lastSpecial) {
              const nextNums = this.parseNumbers(fullHistory[i-1].open_code);
-             nextNums.forEach(n => trajCounts[n] = (trajCounts[n] || 0) + 5);
+             const nextSpecial = nextNums[nextNums.length - 1];
+             numTransMap[nextSpecial] = (numTransMap[nextSpecial] || 0) + 1;
         }
     }
-    stats.forEach(s => s.scoreSpecialTraj = trajCounts[s.num] || 0);
+    stats.forEach(s => s.scoreNumberTrans = (numTransMap[s.num] || 0) * 5); // 直接按次数加分
 
     // ==========================================
-    // 算法 3: 尾数力场 (Tail Force Field)
+    // 算法 3: 历史镜像 (Historical Mirroring)
+    // ==========================================
+    // 整体盘面相似度
+    const mirrorCounts: Record<number, number> = {};
+    for (let i = 1; i < fullHistory.length - 1; i++) {
+        const histNums = this.parseNumbers(fullHistory[i].open_code);
+        const common = histNums.filter(n => lastDrawNums.includes(n));
+        if (common.length >= 3) { // 相似度阈值
+            const nextNums = this.parseNumbers(fullHistory[i-1].open_code);
+            nextNums.forEach(n => {
+                mirrorCounts[n] = (mirrorCounts[n] || 0) + common.length; 
+            });
+        }
+    }
+    stats.forEach(s => s.scoreHistoryMirror = (mirrorCounts[s.num] || 0) * 0.5);
+
+    // ==========================================
+    // 算法 4: 尾数力场 & 形态几何
     // ==========================================
     const tailTrend: Record<number, number> = {};
     recent10.forEach(rec => {
         this.parseNumbers(rec.open_code).forEach(n => {
-            const t = n % 10;
-            tailTrend[t] = (tailTrend[t] || 0) + 1;
+            tailTrend[n % 10] = (tailTrend[n % 10] || 0) + 1;
         });
     });
-    // 排序尾数热度
     const sortedTails = Object.keys(tailTrend).map(Number).sort((a, b) => (tailTrend[b]||0) - (tailTrend[a]||0));
     const hotTails = sortedTails.slice(0, 3);
-    const coldTail = sortedTails[sortedTails.length - 1];
     
     stats.forEach(s => {
-        if (hotTails.includes(s.tail)) s.scoreTail = 15;
-        if (s.tail === coldTail) s.scoreTail = -5; // 杀最冷尾
+        // 尾数
+        if (hotTails.includes(s.tail)) s.scoreTail = 12;
+        
+        // 形态
+        if (lastDrawNums.includes(s.num)) s.scorePattern += 5; // 重号
+        if (lastDrawNums.includes(s.num - 1) || lastDrawNums.includes(s.num + 1)) s.scorePattern += 8; // 邻号
     });
 
     // ==========================================
-    // 算法 4: 生肖三合 (Zodiac Trinity)
+    // 算法 5: 五行平衡 & 生肖三合
     // ==========================================
-    const zodiacFreq: Record<string, number> = {};
-    recent20.forEach(rec => {
-        this.parseNumbers(rec.open_code).forEach(n => {
-            const z = this.NUM_TO_ZODIAC[n];
-            zodiacFreq[z] = (zodiacFreq[z] || 0) + 1;
-        });
-    });
-    const kingZodiac = Object.keys(zodiacFreq).sort((a, b) => zodiacFreq[b] - zodiacFreq[a])[0];
-    const allies = this.SAN_HE_MAP[kingZodiac] || [];
-    
-    stats.forEach(s => {
-        if (s.zodiac === kingZodiac) s.scoreZodiac += 8;
-        if (allies.includes(s.zodiac)) s.scoreZodiac += 12; // 盟友加分通常更高，因为"旺气"扩散
-    });
-
-    // ==========================================
-    // 算法 5: 五行平衡 (Wu Xing Balance)
-    // ==========================================
-    // 检查近5期五行，谁缺失补谁
     const wxCounts: Record<string, number> = { '金':0, '木':0, '水':0, '火':0, '土':0 };
     history.slice(0, 5).forEach(rec => {
         this.parseNumbers(rec.open_code).forEach(n => {
@@ -194,85 +211,56 @@ export class PredictionEngine {
             if (wx) wxCounts[wx]++;
         });
     });
-    // 找出最弱五行
     const weakWX = Object.keys(wxCounts).sort((a, b) => wxCounts[a] - wxCounts[b])[0];
-    stats.forEach(s => {
-        if (s.wuxing === weakWX) s.scoreWuXing = 18; // 强力回补
-    });
-
-    // ==========================================
-    // 算法 6: 形态几何 (Geometry Patterns)
-    // ==========================================
-    stats.forEach(s => {
-        // 重号 (Repeat)
-        if (lastDrawNums.includes(s.num)) s.scorePattern += 8;
-        // 邻号 (Neighbor)
-        if (lastDrawNums.includes(s.num - 1) || lastDrawNums.includes(s.num + 1)) s.scorePattern += 12;
-        // 隔期回补 (Jump) - 检查上上期
-        if (history[1]) {
-            const prevDraw = this.parseNumbers(history[1].open_code);
-            if (prevDraw.includes(s.num) && !lastDrawNums.includes(s.num)) {
-                s.scorePattern += 10;
-            }
-        }
-    });
-
-    // ==========================================
-    // 算法 7: 波色惯性 (Wave Momentum)
-    // ==========================================
-    // 统计近10期波色，如果某种波色连续走强(Momentum)，继续追；如果极弱，尝试反弹
-    const waveFreq: Record<string, number> = { red: 0, blue: 0, green: 0 };
-    recent10.forEach(rec => {
+    
+    // 生肖热度
+    const zodiacFreq: Record<string, number> = {};
+    recent20.forEach(rec => {
         this.parseNumbers(rec.open_code).forEach(n => {
-            waveFreq[this.getNumWave(n)]++;
+            zodiacFreq[this.NUM_TO_ZODIAC[n]] = (zodiacFreq[this.NUM_TO_ZODIAC[n]] || 0) + 1;
         });
     });
-    const bestWave = Object.keys(waveFreq).sort((a, b) => waveFreq[b as any] - waveFreq[a as any])[0];
+    const kingZodiac = Object.keys(zodiacFreq).sort((a, b) => zodiacFreq[b] - zodiacFreq[a])[0];
+    const allies = this.SAN_HE_MAP[kingZodiac] || [];
+
     stats.forEach(s => {
-        if (s.wave === bestWave) s.scoreWave = 10; // 顺势而为
+        if (s.wuxing === weakWX) s.scoreWuXing = 15; // 补弱
+        if (allies.includes(s.zodiac)) s.scoreZodiac += 10; // 三合
+        if (s.zodiac === kingZodiac) s.scoreZodiac += 5; // 旺门
     });
 
     // ==========================================
-    // 算法 8: 黄金密钥 (Golden Key) & 遗漏回补
+    // 算法 6: 黄金密钥
     // ==========================================
     const gold1 = Math.round(lastDrawSum * 0.618) % 49 || 49;
     const gold2 = (lastDrawSum + 7) % 49 || 49;
     stats.forEach(s => {
-        if (s.num === gold1 || s.num === gold2) s.scoreGold = 25;
-        
-        // 简单遗漏计算
-        let gap = 0;
-        for (const rec of fullHistory) {
-            if (this.parseNumbers(rec.open_code).includes(s.num)) break;
-            gap++;
-        }
-        if (gap >= 8 && gap <= 12) s.scoreOmission = 15; // 黄金回补期
+        if (s.num === gold1 || s.num === gold2) s.scoreGold = 20;
     });
-
+    
     // ==========================================
-    // 最终汇总 (Cosmic Resonance)
+    // 最终汇总
     // ==========================================
     stats.forEach(s => {
         s.totalScore = 
-            s.scoreHistoryMirror * 1.5 +  // 历史镜像权重最大
-            s.scoreSpecialTraj * 1.2 +    // 特码轨迹次之
-            s.scorePattern * 1.0 +
-            s.scoreTail * 1.0 +
-            s.scoreZodiac * 1.0 +
-            s.scoreWuXing * 1.0 +
-            s.scoreWave * 0.8 + 
-            s.scoreGold * 0.8 + 
-            s.scoreOmission * 0.8;
+            s.scoreZodiacTrans * 2.0 +     // 生肖转移概率 (最重要: 统计学核心)
+            s.scoreNumberTrans * 1.5 +     // 特码转移概率 (精确打击)
+            s.scoreHistoryMirror * 1.2 +   // 历史镜像
+            s.scorePattern * 0.8 +
+            s.scoreTail * 0.8 +
+            s.scoreZodiac * 0.8 +
+            s.scoreWuXing * 0.8 +
+            s.scoreGold * 0.6 +
+            s.scoreOmission * 0.5;
             
-        // 极微小的混沌因子，打破完美平局
-        s.totalScore += Math.random() * 0.2;
+        // 极微扰动
+        s.totalScore += Math.random() * 0.1;
     });
 
     // 排序
     stats.sort((a, b) => b.totalScore - a.totalScore);
 
-    // 选码策略：全能王
-    // 选取前 18 个分数最高的号码，这些号码是在所有算法维度下表现最好的
+    // 选码
     const final18 = stats.slice(0, 18);
     const resultNumbers = final18.map(s => s.num).sort((a, b) => a - b).map(n => n < 10 ? `0${n}` : `${n}`);
 
@@ -281,17 +269,14 @@ export class PredictionEngine {
     final18.forEach(s => zMap[s.zodiac] = (zMap[s.zodiac] || 0) + s.totalScore);
     const recZodiacs = Object.keys(zMap).sort((a, b) => zMap[b] - zMap[a]).slice(0, 6);
 
-    // 计算推荐波 (基于前18码的数量)
+    // 计算推荐波
     const wMap: Record<string, number> = { red: 0, blue: 0, green: 0 };
     final18.forEach(s => wMap[s.wave]++);
     const recWaves = Object.keys(wMap).sort((a, b) => wMap[b as any] - wMap[a as any]);
 
     // 计算推荐头尾
     const hSet = new Set(final18.map(s => Math.floor(s.num / 10)));
-    const recTails = Object.keys(tailTrend)
-        .sort((a, b) => tailTrend[parseInt(b)] - tailTrend[parseInt(a)])
-        .slice(0, 5)
-        .map(String);
+    const recTails = sortedTails.slice(0, 5).map(String);
 
     return {
         zodiacs: recZodiacs,
