@@ -174,7 +174,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         return new Response('OK');
       }
       
-      // 修改：大幅增加查询限制，由 1000 改为 2000，确保"历史跟随算法"有足够的数据进行全量分析
+      // 修改：大幅增加查询限制，由 1000 改为 2000，确保"生肖转移概率"和"历史跟随"有足够的数据进行全量分析
+      // 深度统计需要大量历史样本
       const { results } = await env.DB.prepare(
         "SELECT * FROM lottery_records WHERE lottery_type = ? ORDER BY expect DESC LIMIT 2000"
       ).bind(targetType).all();
@@ -184,22 +185,27 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         return new Response('OK');
       }
 
+      // 生成复杂预测数据结构
       const predictionData = PredictionEngine.generate(results as any[], targetType);
+      
       const lastExpect = (results[0] as any).expect;
       const nextExpect = String(BigInt(lastExpect) + 1n);
       
+      // 存入数据库 (JSON stringify)
       await env.DB.prepare(
         `INSERT OR REPLACE INTO predictions (lottery_type, target_expect, prediction_numbers, created_at) VALUES (?, ?, ?, ?)`
       ).bind(targetType, nextExpect, JSON.stringify(predictionData), Date.now()).run();
 
       const waveName = (w: string) => w === 'red' ? '🟥红' : w === 'blue' ? '🟦蓝' : '🟩绿';
+      
+      // 构建 Telegram 消息
       const msg = `✅ <b>${targetType} 第 ${nextExpect} 期预测</b>\n` +
                   `------------------------------\n` +
-                  `🐹 <b>六肖:</b> ${predictionData.zodiacs.join(' ')}\n` +
+                  `🐹 <b>统计生肖:</b> ${predictionData.zodiacs.join(' ')}\n` +
                   `🌊 <b>波色:</b> 主${waveName(predictionData.wave.main)} / 防${waveName(predictionData.wave.defense)}\n` +
                   `🔢 <b>18码:</b> ${predictionData.numbers.join(',')}\n` +
                   `------------------------------\n` +
-                  `💡 <i>前端页面已自动更新</i>`;
+                  `💡 <i>基于全量历史转移概率分析</i>`;
 
       await sendMessage(env.TELEGRAM_TOKEN, chatId, msg, { parse_mode: 'HTML', reply_markup: MENU_KEYBOARD });
     }
