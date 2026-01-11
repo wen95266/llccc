@@ -174,9 +174,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         return new Response('OK');
       }
       
-      // 修改：获取更多历史记录以提高预测精度 (从 50 改为 1000)
+      // 修改：大幅增加查询限制，由 1000 改为 2000，确保"历史跟随算法"有足够的数据进行全量分析
       const { results } = await env.DB.prepare(
-        "SELECT * FROM lottery_records WHERE lottery_type = ? ORDER BY expect DESC LIMIT 1000"
+        "SELECT * FROM lottery_records WHERE lottery_type = ? ORDER BY expect DESC LIMIT 2000"
       ).bind(targetType).all();
 
       if (!results || results.length === 0) {
