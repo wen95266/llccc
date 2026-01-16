@@ -36,6 +36,18 @@
     
     <!-- 2. 引入 Babel 用于浏览器端编译 TSX -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- PWA Install Event Capture -->
+    <script>
+      window.deferredPrompt = null;
+      window.addEventListener('beforeinstallprompt', (e) => {
+        // Prevent Chrome 67 and earlier from automatically showing the prompt
+        e.preventDefault();
+        // Stash the event so it can be triggered later.
+        window.deferredPrompt = e;
+        console.log("PWA install event captured globally");
+      });
+    </script>
   </head>
   <body class="bg-slate-50 text-slate-800 antialiased min-h-screen">
     <div id="root"></div>
@@ -52,7 +64,7 @@
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           // 注册时也加上版本号，确保 SW 更新
-          navigator.serviceWorker.register('/sw.js?v=7').then(reg => {
+          navigator.serviceWorker.register('/sw.js?v=10').then(reg => {
             // 尝试更新
             reg.update();
           }).catch(err => console.log('SW Fail', err));

@@ -15,6 +15,16 @@ export interface LotteryRecord {
   type?: string;
 }
 
+export interface DbRecord {
+  id: number;
+  lottery_type: LotteryType;
+  expect: string;
+  open_code: string;
+  open_time: string;
+  wave: string;
+  zodiac: string;
+}
+
 export interface PredictionData {
   zodiacs: string[];
   numbers: string[];

@@ -1,3 +1,4 @@
+
 // @ts-nocheck
 const { useState, useEffect, useRef } = React;
 // 从全局对象获取依赖
@@ -63,6 +64,36 @@ const NumberBall = ({ num, size = 'md', showZodiac = false, highlight = false, d
   );
 };
 
+// --- 通用验证函数 ---
+const verifyResult = (record, pred) => {
+    if (!record || !pred) return null;
+    const nums = record.open_code.split(',');
+    const specialCode = nums[nums.length - 1];
+    const specialZodiac = getZodiac(specialCode);
+    const specialWave = (() => {
+      const c = getWaveColor(specialCode);
+      if (c.includes('red')) return 'red';
+      if (c.includes('blue')) return 'blue';
+      return 'green';
+    })();
+    const specialHead = specialCode.length === 2 ? specialCode[0] : '0';
+    const specialTail = specialCode[specialCode.length - 1];
+
+    const hits = pred.numbers.filter(n => nums.includes(n));
+    const isSpecialHit = pred.numbers.includes(specialCode);
+    
+    return {
+      specialCode,
+      specialZodiac,
+      zodiacHit: pred.zodiacs.includes(specialZodiac),
+      waveHit: pred.wave.main === specialWave || pred.wave.defense === specialWave,
+      headHit: pred.heads.includes(specialHead),
+      tailHit: pred.tails.includes(specialTail),
+      numbersHits: hits,
+      isSpecialHit
+    };
+};
+
 const HistoryModal = ({ isOpen, onClose, history }) => {
   if (!isOpen) return null;
 
@@ -98,6 +129,78 @@ const HistoryModal = ({ isOpen, onClose, history }) => {
   );
 };
 
+// --- 新增：预测历史弹窗 ---
+const PredictionHistoryModal = ({ isOpen, onClose, predHistory, resultHistory }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity animate-[fadeIn_0.2s_ease-out]">
+      <div className="bg-white w-full max-w-md h-[85vh] sm:h-[80vh] rounded-t-2xl sm:rounded-2xl flex flex-col shadow-2xl animate-[slideUp_0.3s_ease-out]">
+        <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/80 rounded-t-2xl">
+          <h3 className="font-bold text-slate-700">历史预测复盘</h3>
+          <button onClick={onClose} className="p-2 bg-slate-200 rounded-full hover:bg-slate-300 transition-colors">
+            <svg className="w-4 h-4 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div className="overflow-y-auto p-4 space-y-4 flex-1 no-scrollbar">
+          {predHistory && predHistory.map((predRecord) => {
+             const predData = parsePrediction(predRecord.prediction_numbers);
+             // 查找对应的开奖结果
+             const resultRecord = resultHistory.find(r => r.expect === predRecord.target_expect);
+             const verify = resultRecord ? verifyResult(resultRecord, predData) : null;
+
+             return (
+              <div key={predRecord.id} className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
+                <div className="px-3 py-2 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
+                   <span className="font-bold text-slate-700 text-sm">目标: 第 {predRecord.target_expect} 期</span>
+                   {verify ? (
+                      <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${verify.isSpecialHit ? 'bg-yellow-100 text-yellow-700' : 'bg-slate-200 text-slate-500'}`}>
+                        {verify.isSpecialHit ? '特码命中' : `18码中${verify.numbersHits.length}`}
+                      </span>
+                   ) : (
+                      <span className="text-[10px] px-2 py-0.5 rounded bg-blue-50 text-blue-500">待开奖</span>
+                   )}
+                </div>
+                <div className="p-3">
+                   {verify ? (
+                      <div className="flex gap-2 text-xs mb-2 justify-center">
+                         <span className={verify.zodiacHit ? 'text-red-500 font-bold' : 'text-slate-400'}>
+                           六肖{verify.zodiacHit?'中':'挂'}
+                         </span>
+                         <span className="text-slate-300">|</span>
+                         <span className={verify.waveHit ? 'text-blue-500 font-bold' : 'text-slate-400'}>
+                           波色{verify.waveHit?'中':'挂'}
+                         </span>
+                         <span className="text-slate-300">|</span>
+                         <span className="text-slate-500">
+                           特: {verify.specialCode}
+                         </span>
+                      </div>
+                   ) : (
+                      <div className="text-center text-xs text-slate-400 mb-2">等待开奖结果...</div>
+                   )}
+                   
+                   {/* 简略显示18码 */}
+                   <div className="flex flex-wrap gap-1 justify-center opacity-70">
+                      {predData?.numbers.map((n, i) => (
+                         <span key={i} className={`text-[10px] w-5 h-5 flex items-center justify-center rounded-full ${verify?.isSpecialHit && n === verify.specialCode ? 'bg-yellow-400 text-white font-bold' : 'bg-slate-100 text-slate-500'}`}>
+                           {n}
+                         </span>
+                      ))}
+                   </div>
+                </div>
+              </div>
+             );
+          })}
+          {(!predHistory || predHistory.length === 0) && <p className="text-center text-slate-400 py-10">暂无预测记录</p>}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // --- IOS 安装提示组件 ---
 const IosInstallGuide = ({ onClose }) => (
   <div className="bg-slate-800 text-white p-4 rounded-xl mb-4 text-sm relative animate-[fadeIn_0.5s]">
@@ -121,6 +224,7 @@ window.App = function App() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const [showPredHistory, setShowPredHistory] = useState(false); // 新增状态
   
   // PWA 安装状态
   const [deferredPrompt, setDeferredPrompt] = useState(null);
@@ -196,34 +300,6 @@ window.App = function App() {
   const nextPred = data?.latestPrediction ? parsePrediction(data.latestPrediction.prediction_numbers) : null;
   const lastPred = data?.lastPrediction ? parsePrediction(data.lastPrediction.prediction_numbers) : null;
 
-  const verifyResult = (record, pred) => {
-    const nums = record.open_code.split(',');
-    const specialCode = nums[nums.length - 1];
-    const specialZodiac = getZodiac(specialCode);
-    const specialWave = (() => {
-      const c = getWaveColor(specialCode);
-      if (c.includes('red')) return 'red';
-      if (c.includes('blue')) return 'blue';
-      return 'green';
-    })();
-    const specialHead = specialCode.length === 2 ? specialCode[0] : '0';
-    const specialTail = specialCode[specialCode.length - 1];
-
-    const hits = pred.numbers.filter(n => nums.includes(n));
-    const isSpecialHit = pred.numbers.includes(specialCode);
-    
-    return {
-      specialCode,
-      specialZodiac,
-      zodiacHit: pred.zodiacs.includes(specialZodiac),
-      waveHit: pred.wave.main === specialWave || pred.wave.defense === specialWave,
-      headHit: pred.heads.includes(specialHead),
-      tailHit: pred.tails.includes(specialTail),
-      numbersHits: hits,
-      isSpecialHit
-    };
-  };
-
   return (
     <div className="max-w-md mx-auto min-h-screen bg-slate-50 pb-20 relative font-sans">
       <style>{`
@@ -232,10 +308,19 @@ window.App = function App() {
         @keyframes bounce-slow { 0%, 100% { transform: translateY(-5%); } 50% { transform: translateY(0); } }
       `}</style>
       
+      {/* 历史开奖弹窗 */}
       <HistoryModal 
         isOpen={showHistory} 
         onClose={() => setShowHistory(false)} 
         history={data?.history || []} 
+      />
+
+      {/* 新增：历史预测弹窗 */}
+      <PredictionHistoryModal
+        isOpen={showPredHistory}
+        onClose={() => setShowPredHistory(false)}
+        predHistory={data?.predictionHistory || []}
+        resultHistory={data?.history || []}
       />
 
       {/* 顶部 Header */}
@@ -411,10 +496,19 @@ window.App = function App() {
 
             {/* 上期成绩验证 (详细版) */}
             <div className="space-y-3 pt-2">
-              <h3 className="text-slate-400 text-xs font-bold uppercase ml-1 flex items-center gap-2">
-                <span>上期成绩单</span>
-                <span className="h-px flex-1 bg-slate-200"></span>
-              </h3>
+              <div className="flex justify-between items-center">
+                  <h3 className="text-slate-400 text-xs font-bold uppercase ml-1 flex items-center gap-2">
+                    <span>上期成绩单</span>
+                    <span className="h-px w-10 bg-slate-200"></span>
+                  </h3>
+                  {/* 新增查看历史按钮 */}
+                  <button 
+                     onClick={() => setShowPredHistory(true)}
+                     className="text-xs text-indigo-500 font-bold hover:text-indigo-600 transition-colors flex items-center gap-1"
+                   >
+                     查看记录 &rarr;
+                   </button>
+              </div>
               
               {data?.latestRecord && lastPred ? (
                  (() => {

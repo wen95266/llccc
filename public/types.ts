@@ -1,3 +1,4 @@
+
 // @ts-nocheck
 // 定义全局变量，供前端无构建环境使用
 window.LotteryType = {
@@ -43,4 +44,5 @@ export interface ApiResponse {
   latestPrediction: DbPrediction | null;
   lastPrediction: DbPrediction | null;
   history: DbRecord[];
+  predictionHistory: DbPrediction[]; // 新增字段
 }
