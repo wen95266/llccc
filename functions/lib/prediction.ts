@@ -15,12 +15,12 @@ interface StrategyResult {
 }
 
 /**
- * 🌌 Nebula Self-Correcting Engine v16.0 (Cosmic Web)
+ * 🌌 Nebula Self-Correcting Engine v17.0 (Quantum Field)
  * 
  * 核心特性：
- * 1. 20大确定性算法矩阵：涵盖数论、几何、物理波动力学、统计回归。
- * 2. 波动率修正 (Volatility Adjustment)：在市场不稳定时自动增加热度权重。
- * 3. 新增物理/统计算法：Wave Interference (波的干涉), Auto-Regression (自回归)。
+ * 1. 23大确定性算法矩阵：矩阵-统计-几何-数论-空间-物理-信息论 七维一体。
+ * 2. 混沌吸引子 (Strange Attractor)：引入 Lorenz 系统模拟号码轨迹。
+ * 3. 熵流 (Entropy Flow)：利用信息熵增减规律预测。
  */
 export class PredictionEngine {
 
@@ -127,7 +127,7 @@ export class PredictionEngine {
   }
 
   /**
-   * 自动回测内核 v2.2
+   * 自动回测内核 v2.3
    */
   static runBacktest(history: DbRecord[], windowSize: number): StrategyResult[] {
     const strategyDefinitions = [
@@ -155,9 +155,13 @@ export class PredictionEngine {
       { name: 'N-Gram (Pattern)', func: this.strategyNGram.bind(this) },
       { name: '质合平衡 (Prime)', func: this.strategyPrimeComposite.bind(this) },
       { name: '象限流动 (Quadrant)', func: this.strategyQuadrantFlow.bind(this) },
-      // 物理/自回归 (New)
+      // 物理/自回归
       { name: '波的干涉 (Interference)', func: this.strategyInterference.bind(this) },
-      { name: '自回归 (AutoReg)', func: this.strategyAutoregression.bind(this) }
+      { name: '自回归 (AutoReg)', func: this.strategyAutoregression.bind(this) },
+      // 量子/混沌/信息论 (New)
+      { name: '奇异吸引子 (Attractor)', func: this.strategyStrangeAttractor.bind(this) },
+      { name: '谐波共振 (Harmonic)', func: this.strategyHarmonicResonance.bind(this) },
+      { name: '熵流 (Entropy)', func: this.strategyEntropyFlow.bind(this) }
     ];
 
     const results = strategyDefinitions.map(s => ({ name: s.name, score: 0 }));
@@ -229,7 +233,10 @@ export class PredictionEngine {
       '质合平衡 (Prime)': this.strategyPrimeComposite.bind(this),
       '象限流动 (Quadrant)': this.strategyQuadrantFlow.bind(this),
       '波的干涉 (Interference)': this.strategyInterference.bind(this),
-      '自回归 (AutoReg)': this.strategyAutoregression.bind(this)
+      '自回归 (AutoReg)': this.strategyAutoregression.bind(this),
+      '奇异吸引子 (Attractor)': this.strategyStrangeAttractor.bind(this),
+      '谐波共振 (Harmonic)': this.strategyHarmonicResonance.bind(this),
+      '熵流 (Entropy)': this.strategyEntropyFlow.bind(this)
     };
 
     strategies.forEach(strat => {
@@ -251,32 +258,162 @@ export class PredictionEngine {
   }
 
   // ==========================================
-  // v16.0 新增算法 (New Strategies)
+  // v17.0 新增算法 (New Strategies)
   // ==========================================
 
-  // 19. 波的干涉 (Wave Interference)
-  // 将近期开奖号码视为波源，计算在 1-49 环形空间中的干涉强度
+  // 21. 奇异吸引子 (Strange Attractor)
+  // 利用简化版 Lorenz 方程将最近 3 期号码映射到混沌空间，计算轨迹
+  static strategyStrangeAttractor(history: DbRecord[]): Record<number, number> {
+      const scores: Record<number, number> = {};
+      if (history.length < 3) return scores;
+
+      // 取最近 3 个特码作为 x, y, z 的初始状态
+      let x = this.parseNumbers(history[0].open_code).pop() || 1;
+      let y = this.parseNumbers(history[1].open_code).pop() || 1;
+      let z = this.parseNumbers(history[2].open_code).pop() || 1;
+
+      // 归一化到 [-20, 20] 区间模拟 Lorenz 尺度
+      x = (x - 25) * 0.8;
+      y = (y - 25) * 0.8;
+      z = (z - 25) * 0.8;
+
+      // Lorenz 参数
+      const sigma = 10;
+      const rho = 28;
+      const beta = 8/3;
+      const dt = 0.01;
+
+      // 演化 50 步
+      for(let i=0; i<50; i++) {
+          const dx = sigma * (y - x);
+          const dy = x * (rho - z) - y;
+          const dz = x * y - beta * z;
+          x += dx * dt;
+          y += dy * dt;
+          z += dz * dt;
+      }
+
+      // 将最终状态映射回 1-49
+      const mapBack = (v: number) => {
+          let n = Math.round((v / 0.8) + 25);
+          n = Math.abs(n) % 49;
+          return n === 0 ? 49 : n;
+      };
+
+      const predX = mapBack(x);
+      const predY = mapBack(y);
+      const predZ = mapBack(z);
+
+      scores[predX] = (scores[predX]||0) + 6;
+      scores[predY] = (scores[predY]||0) + 6;
+      scores[predZ] = (scores[predZ]||0) + 6;
+
+      return scores;
+  }
+
+  // 22. 谐波共振 (Harmonic Resonance)
+  // 将号码视为频率，寻找共振补全点 (倍频/分频)
+  static strategyHarmonicResonance(history: DbRecord[]): Record<number, number> {
+      const scores: Record<number, number> = {};
+      const fundamental = 49; // 基频
+      
+      const lastNum = this.parseNumbers(history[0].open_code).pop() || 25;
+      
+      // 1. 倍频共振 (Harmonics)
+      // 如果出现了 12，可能激发 24, 36, 48
+      for(let m=2; m<=4; m++) {
+          const harmonic = lastNum * m;
+          if (harmonic <= 49) scores[harmonic] = (scores[harmonic]||0) + 5;
+      }
+
+      // 2. 分频共振 (Sub-harmonics)
+      // 如果出现了 48，可能回归 24, 12
+      if (lastNum % 2 === 0) scores[lastNum / 2] = (scores[lastNum / 2]||0) + 5;
+      if (lastNum % 3 === 0) scores[lastNum / 3] = (scores[lastNum / 3]||0) + 5;
+
+      // 3. 补全共振 (Completion)
+      // 寻找简单的加减共振：n + prev = 49 (互补)
+      const prevNum = this.parseNumbers(history[1].open_code).pop() || 1;
+      const complement = 49 - lastNum;
+      if (complement > 0) scores[complement] = (scores[complement]||0) + 3;
+      
+      const diff = Math.abs(lastNum - prevNum);
+      if (diff > 0) scores[diff] = (scores[diff]||0) + 3;
+
+      return scores;
+  }
+
+  // 23. 熵流 (Entropy Flow)
+  // 计算近期窗口的尾数熵，预测能使熵值趋向平衡的号码
+  static strategyEntropyFlow(history: DbRecord[]): Record<number, number> {
+      const scores: Record<number, number> = {};
+      const window = 10;
+      if (history.length < window) return scores;
+
+      // 获取当前窗口的尾数分布
+      const tails = [];
+      for(let i=0; i<window; i++) {
+          const n = this.parseNumbers(history[i].open_code).pop() || 0;
+          tails.push(n % 10);
+      }
+
+      // 计算香农熵
+      const calcEntropy = (arr: number[]) => {
+          const freq: Record<number, number> = {};
+          arr.forEach(t => freq[t] = (freq[t]||0) + 1);
+          let entropy = 0;
+          Object.values(freq).forEach(count => {
+              const p = count / arr.length;
+              entropy -= p * Math.log2(p);
+          });
+          return entropy;
+      };
+
+      const currentEntropy = calcEntropy(tails);
+      
+      // 假设最大熵 (均匀分布) 约为 3.32 (log2(10))
+      // 如果当前熵较低 (有序)，系统倾向于增加熵 (变得无序) -> 出冷门尾数
+      // 如果当前熵较高 (无序)，系统可能稍微回调 -> 出热门尾数
+      
+      const targetHighEntropy = currentEntropy < 2.5;
+
+      // 模拟下一个号码，看谁能让熵增加/减少
+      for(let n=1; n<=49; n++) {
+          const t = n % 10;
+          const nextTails = [t, ...tails.slice(0, window-1)];
+          const nextEntropy = calcEntropy(nextTails);
+          
+          if (targetHighEntropy) {
+              // 追求熵增
+              if (nextEntropy > currentEntropy) scores[n] = 5;
+          } else {
+              // 维持或熵减
+              if (nextEntropy <= currentEntropy) scores[n] = 5;
+          }
+      }
+
+      return scores;
+  }
+
+  // ==========================================
+  // 保留原有算法 (1-20)
+  // ==========================================
+  
   static strategyInterference(history: DbRecord[]): Record<number, number> {
       const scores: Record<number, number> = {};
       const sources: number[] = [];
-      // 取最近 8 期作为波源
       for(let i=0; i<Math.min(history.length, 8); i++) {
           const n = this.parseNumbers(history[i].open_code).pop();
           if (n) sources.push(n);
       }
-
-      // 1-49 视为环
       const getDist = (a: number, b: number) => {
           const d = Math.abs(a - b);
-          return Math.min(d, 49 - d); // 最短圆弧距离
+          return Math.min(d, 49 - d);
       };
-
       for(let n=1; n<=49; n++) {
           let amplitude = 0;
           for(const src of sources) {
               const d = getDist(n, src);
-              // 距离越近，能量越强 (平方反比模拟)
-              // 加上 0.5 防止除零，且让自身位置能量最大
               amplitude += 1 / (d * d + 0.5); 
           }
           scores[n] = amplitude * 5; 
@@ -284,24 +421,17 @@ export class PredictionEngine {
       return scores;
   }
 
-  // 20. 线性自回归 (Linear Auto-Regression)
-  // 简化版 AR(2) 模型：Next = (w1 * T-1 + w2 * T-2) % 49
-  // 暴力搜索最近 20 期拟合最好的系数 w1, w2
   static strategyAutoregression(history: DbRecord[]): Record<number, number> {
       const scores: Record<number, number> = {};
       const trainSet = [];
       const window = Math.min(history.length, 30);
-      
       for(let i=0; i<window-2; i++) {
-          const y = this.parseNumbers(history[i].open_code).pop() || 0;     // T
-          const x1 = this.parseNumbers(history[i+1].open_code).pop() || 0;  // T-1
-          const x2 = this.parseNumbers(history[i+2].open_code).pop() || 0;  // T-2
+          const y = this.parseNumbers(history[i].open_code).pop() || 0;     
+          const x1 = this.parseNumbers(history[i+1].open_code).pop() || 0;  
+          const x2 = this.parseNumbers(history[i+2].open_code).pop() || 0;  
           trainSet.push({y, x1, x2});
       }
-
-      // 暴力搜索系数范围 -3 到 3
       let bestW1 = 1, bestW2 = 1, bestScore = -1;
-      
       for(let w1 = -3; w1 <= 3; w1++) {
           for(let w2 = -3; w2 <= 3; w2++) {
               if (w1===0 && w2===0) continue;
@@ -309,7 +439,6 @@ export class PredictionEngine {
               trainSet.forEach(item => {
                    let pred = (w1 * item.x1 + w2 * item.x2) % 49;
                    if (pred <= 0) pred += 49;
-                   // 允许误差 ±1
                    const dist = Math.abs(pred - item.y);
                    if (dist <= 1 || dist >= 48) hit++;
               });
@@ -320,25 +449,15 @@ export class PredictionEngine {
               }
           }
       }
-
-      // 使用最佳系数预测下期
       const currT1 = this.parseNumbers(history[0].open_code).pop() || 0;
       const currT2 = this.parseNumbers(history[1].open_code).pop() || 0;
-      
       let pred = (bestW1 * currT1 + bestW2 * currT2) % 49;
       if (pred <= 0) pred += 49;
-      
       scores[pred] = 10;
-      // 邻近号防守
       scores[pred-1 > 0 ? pred-1 : 49] = 5;
       scores[pred+1 <= 49 ? pred+1 : 1] = 5;
-
       return scores;
   }
-
-  // ==========================================
-  // 保留原有算法 (1-18)
-  // ==========================================
   
   static strategyNGram(history: DbRecord[]): Record<number, number> {
       const scores: Record<number, number> = {};
