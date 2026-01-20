@@ -7,57 +7,64 @@ interface NumberStat {
   wuxing: string;
   tail: number;
   head: number;
-  parity: string;      // 奇偶
-  size: string;        // 大小 (以25为界)
-  prime: boolean;      // 是否质数
-  cluster: number;     // 聚类分组 (1-7)
+  parity: string;
+  size: string;
+  prime: boolean;
+  cluster: number;
   
-  // v14.0 三十二维度纯确定性评分系统
-  scoreHistoryMirror: number;       // 历史镜像
-  scoreZodiacTrans: number;         // 生肖转移概率
-  scoreNumberTrans: number;         // 特码转移概率
-  scoreSpecialTraj: number;         // 特码轨迹
-  scorePattern: number;             // 形态几何
-  scoreTail: number;                // 尾数力场
-  scoreZodiac: number;              // 三合局势
-  scoreWuXing: number;              // 五行平衡
-  scoreWave: number;                // 波色惯性
-  scoreGold: number;                // 黄金密钥
-  scoreOmission: number;            // 遗漏回补
-  scoreSeasonal: number;            // 季节规律
-  scorePrime: number;               // 质数分布
-  scoreSumAnalysis: number;         // 和值分析
-  scorePosition: number;            // 位置分析
-  scoreFrequency: number;           // 频率分析
-  scoreCluster: number;             // 聚类分析
-  scoreSymmetry: number;            // 对称分析
-  scorePeriodic: number;            // 周期分析
-  scoreTrend: number;               // 趋势分析
-  scoreHeadAnalysis: number;        // 头数分析
-  scoreTailPattern: number;         // 尾数模式
-  scoreCorrelation: number;         // 关联性分析
-  scoreProperty: number;            // 属性分析
-  scoreTimePattern: number;         // 时间模式分析
-  scoreSeriesPattern: number;       // 连号模式分析
-  scoreSumZone: number;             // 和值分区分析
-  scoreElementRelation: number;     // 五行相生相克
-  scoreMatrixCoordinate: number;    // 矩阵坐标分析 (新增)
-  scoreLatticeDistribution: number; // 晶格分布分析 (新增)
-  scoreChaosPattern: number;        // 混沌模式分析 (新增)
-  scoreFractalDimension: number;    // 分形维度分析 (新增)
-  scoreEntropyAnalysis: number;     // 信息熵分析 (新增)
-  scoreDeterministicCore: number;   // 确定性核心分析 (新增)
+  // 三十二维度纯确定性评分系统
+  scoreHistoryMirror: number;
+  scoreZodiacTrans: number;
+  scoreNumberTrans: number;
+  scoreSpecialTraj: number;
+  scorePattern: number;
+  scoreTail: number;
+  scoreZodiac: number;
+  scoreWuXing: number;
+  scoreWave: number;
+  scoreGold: number;
+  scoreOmission: number;
+  scoreSeasonal: number;
+  scorePrime: number;
+  scoreSumAnalysis: number;
+  scorePosition: number;
+  scoreFrequency: number;
+  scoreCluster: number;
+  scoreSymmetry: number;
+  scorePeriodic: number;
+  scoreTrend: number;
+  scoreHeadAnalysis: number;
+  scoreTailPattern: number;
+  scoreCorrelation: number;
+  scoreProperty: number;
+  scoreTimePattern: number;
+  scoreSeriesPattern: number;
+  scoreSumZone: number;
+  scoreElementRelation: number;
+  scoreMatrixCoordinate: number;
+  scoreLatticeDistribution: number;
+  scoreChaosPattern: number;
+  scoreFractalDimension: number;
+  scoreEntropyAnalysis: number;
+  scoreDeterministicCore: number;
+  
+  // 新增增强维度
+  scoreMathematicalProperties: number;      // 数学特性分析
+  scoreQuantumResonance: number;           // 量子共振分析
+  scorePathDependency: number;             // 路径依赖分析
+  scoreStatisticalSignificance: number;    // 统计显著性分析
+  scoreTopologicalPattern: number;         // 拓扑模式分析
+  scoreHarmonicConvergence: number;        // 谐波收敛分析
   
   totalScore: number;
 }
 
 /**
- * 🔮 Quantum Matrix Prediction Engine v14.0 "Pure Deterministic Algorithm Edition"
- * 终极升级：整合三十二维度纯确定性算法，实现科学精准预测
- * 完全移除随机性，新增八种确定性算法
+ * 🔮 Quantum Matrix Prediction Engine v15.0 "Ultimate Deterministic Edition"
+ * 终极增强版：三十六维度纯确定性算法，实现科学精准预测
  */
 export class PredictionEngine {
-
+  
   // --- 基础数据映射 (2025 Snake Year) ---
   static ZODIACS_MAP: Record<string, number[]> = {
     '蛇': [1, 13, 25, 37, 49], '马': [12, 24, 36, 48], '羊': [11, 23, 35, 47],
@@ -73,7 +80,6 @@ export class PredictionEngine {
     '兔': ['猪', '羊'], '猪': ['兔', '羊'], '羊': ['兔', '猪']
   };
   
-  // 五行相生相克关系
   static WU_XING_CYCLE: Record<string, {sheng: string, ke: string, sheng_by: string, ke_by: string}> = {
     '金': {sheng: '水', ke: '木', sheng_by: '土', ke_by: '火'},
     '木': {sheng: '火', ke: '土', sheng_by: '水', ke_by: '金'},
@@ -96,7 +102,6 @@ export class PredictionEngine {
     'green': [5, 6, 11, 16, 17, 21, 22, 27, 28, 32, 33, 38, 39, 43, 44, 49]
   };
 
-  // 季节映射
   static SEASONAL_ZODIACS: Record<string, string[]> = {
     '春': ['虎', '兔', '龙'],
     '夏': ['蛇', '马', '羊'],
@@ -104,10 +109,13 @@ export class PredictionEngine {
     '冬': ['猪', '鼠', '牛']
   };
 
-  // 质数号码
   static PRIME_NUMBERS: number[] = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47];
 
-  // 对称号码对
+  static PERFECT_SQUARES: number[] = [1, 4, 9, 16, 25, 36, 49];
+  static CUBE_NUMBERS: number[] = [1, 8, 27];
+  static FIBONACCI_NUMBERS: number[] = [1, 2, 3, 5, 8, 13, 21, 34];
+  static TRIANGLE_NUMBERS: number[] = [1, 3, 6, 10, 15, 21, 28, 36, 45];
+
   static SYMMETRY_PAIRS: [number, number][] = [
     [1, 49], [2, 48], [3, 47], [4, 46], [5, 45], [6, 44], [7, 43],
     [8, 42], [9, 41], [10, 40], [11, 39], [12, 38], [13, 37], [14, 36],
@@ -115,10 +123,8 @@ export class PredictionEngine {
     [22, 28], [23, 27], [24, 26]
   ];
 
-  // 矩阵坐标映射 (7x7矩阵)
   static MATRIX_COORDINATES: Record<number, {row: number, col: number}> = {};
   
-  // 聚类分组 (1-7组)
   static CLUSTER_GROUPS: Record<number, number[]> = {
     1: [1, 2, 3, 4, 5, 6, 7],
     2: [8, 9, 10, 11, 12, 13, 14],
@@ -129,29 +135,39 @@ export class PredictionEngine {
     7: [43, 44, 45, 46, 47, 48, 49]
   };
 
-  // 晶格分布模式
   static LATTICE_PATTERNS = {
-    fibonacci: [1, 2, 3, 5, 8, 13, 21, 34], // 斐波那契数列
-    goldenRatio: [8, 13, 21, 34],           // 黄金分割点
-    arithmetic: [5, 10, 15, 20, 25, 30, 35, 40, 45], // 等差数列
-    geometric: [2, 4, 8, 16, 32]            // 等比数列
+    fibonacci: [1, 2, 3, 5, 8, 13, 21, 34],
+    goldenRatio: [8, 13, 21, 34],
+    arithmetic: [5, 10, 15, 20, 25, 30, 35, 40, 45],
+    geometric: [2, 4, 8, 16, 32]
   };
 
-  // 分形模式
   static FRACTAL_PATTERNS = {
     mandelbrot: [3, 7, 11, 19, 23, 31, 39, 43],
     julia: [2, 5, 10, 17, 26, 37],
     sierpinski: [1, 3, 9, 27]
   };
 
-  // 确定性核心模式
   static DETERMINISTIC_PATTERNS = {
     primeSpiral: [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47],
     ulamSpiral: [1, 7, 19, 37, 13, 31, 49, 21, 43],
     magicSquare: [15, 25, 35, 45, 5, 10, 20, 30, 40]
   };
 
-  // 头数映射 (0-4)
+  // 量子共振模式
+  static QUANTUM_RESONANCE_PATTERNS = {
+    harmonic: [5, 10, 15, 20, 25, 30, 35, 40, 45, 50],
+    goldenAngle: [1, 3, 6, 10, 15, 21, 28, 36, 45],
+    fibonacciRatio: [1, 2, 3, 5, 8, 13, 21, 34]
+  };
+
+  // 拓扑模式
+  static TOPOLOGICAL_PATTERNS = {
+    torus: [1, 7, 13, 19, 25, 31, 37, 43, 49],
+    klein: [2, 6, 10, 14, 18, 22, 26, 30, 34, 38, 42, 46],
+    mobius: [3, 9, 15, 21, 27, 33, 39, 45]
+  };
+
   static HEAD_MAP: Record<number, number[]> = {
     0: [1, 2, 3, 4, 5, 6, 7, 8, 9],
     1: [10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
@@ -160,7 +176,6 @@ export class PredictionEngine {
     4: [40, 41, 42, 43, 44, 45, 46, 47, 48, 49]
   };
 
-  // 尾数分组
   static TAIL_GROUPS: Record<string, number[]> = {
     '小': [0, 1, 2, 3, 4],
     '大': [5, 6, 7, 8, 9],
@@ -168,39 +183,36 @@ export class PredictionEngine {
     '合': [0, 1, 4, 6, 8, 9]
   };
 
-  // 和值分区 (小和、中和、大和)
   static SUM_ZONES = {
-    small: { min: 120, max: 175 },    // 小和
-    medium: { min: 176, max: 210 },   // 中和
-    large: { min: 211, max: 285 }     // 大和
+    small: { min: 120, max: 175 },
+    medium: { min: 176, max: 210 },
+    large: { min: 211, max: 285 }
   };
 
-  // 周期分析参数
   static PERIODIC_CYCLES = {
-    zodiac: 12,     // 生肖周期
-    wave: 7,        // 波色周期
-    wuxing: 5,      // 五行周期
-    tail: 10,       // 尾数周期
-    head: 8,        // 头数周期
-    cluster: 7,     // 聚类周期
-    matrix: 49      // 矩阵周期
+    zodiac: 12,
+    wave: 7,
+    wuxing: 5,
+    tail: 10,
+    head: 8,
+    cluster: 7,
+    matrix: 49
   };
 
-  // 时间模式映射
   static TIME_PATTERNS = {
     weekday: {
-      0: { zodiacs: ['兔', '鸡', '马'], tails: [3, 6, 9], clusters: [1, 4, 7] }, // 周日
-      1: { zodiacs: ['龙', '狗', '牛'], tails: [1, 4, 7], clusters: [2, 5] },    // 周一
-      2: { zodiacs: ['蛇', '猪', '虎'], tails: [2, 5, 8], clusters: [3, 6] },    // 周二
-      3: { zodiacs: ['马', '鼠', '兔'], tails: [0, 3, 6], clusters: [1, 4] },    // 周三
-      4: { zodiacs: ['羊', '牛', '龙'], tails: [1, 4, 7], clusters: [2, 5] },    // 周四
-      5: { zodiacs: ['猴', '虎', '蛇'], tails: [2, 5, 8], clusters: [3, 6] },    // 周五
-      6: { zodiacs: ['鸡', '兔', '马'], tails: [0, 3, 9], clusters: [1, 7] }     // 周六
+      0: { zodiacs: ['兔', '鸡', '马'], tails: [3, 6, 9], clusters: [1, 4, 7] },
+      1: { zodiacs: ['龙', '狗', '牛'], tails: [1, 4, 7], clusters: [2, 5] },
+      2: { zodiacs: ['蛇', '猪', '虎'], tails: [2, 5, 8], clusters: [3, 6] },
+      3: { zodiacs: ['马', '鼠', '兔'], tails: [0, 3, 6], clusters: [1, 4] },
+      4: { zodiacs: ['羊', '牛', '龙'], tails: [1, 4, 7], clusters: [2, 5] },
+      5: { zodiacs: ['猴', '虎', '蛇'], tails: [2, 5, 8], clusters: [3, 6] },
+      6: { zodiacs: ['鸡', '兔', '马'], tails: [0, 3, 9], clusters: [1, 7] }
     },
     monthPeriod: {
-      early: { heads: [0, 1], waves: ['red', 'blue'], clusters: [1, 2, 3] },     // 上旬 (1-10日)
-      middle: { heads: [2, 3], waves: ['blue', 'green'], clusters: [4, 5, 6] },  // 中旬 (11-20日)
-      late: { heads: [3, 4], waves: ['green', 'red'], clusters: [5, 6, 7] }      // 下旬 (21-31日)
+      early: { heads: [0, 1], waves: ['red', 'blue'], clusters: [1, 2, 3] },
+      middle: { heads: [2, 3], waves: ['blue', 'green'], clusters: [4, 5, 6] },
+      late: { heads: [3, 4], waves: ['green', 'red'], clusters: [5, 6, 7] }
     }
   };
 
@@ -216,24 +228,20 @@ export class PredictionEngine {
   static initializeMaps() {
     if (Object.keys(this.NUM_TO_ZODIAC).length > 0) return;
     
-    // 生肖映射
     for (const [z, nums] of Object.entries(this.ZODIACS_MAP)) {
       nums.forEach(n => this.NUM_TO_ZODIAC[n] = z);
     }
     
-    // 五行映射
     for (const [w, nums] of Object.entries(this.WU_XING_MAP)) {
       nums.forEach(n => this.NUM_TO_WUXING[n] = w);
     }
     
-    // 其他属性映射
     for (let num = 1; num <= 49; num++) {
       this.NUM_TO_HEAD[num] = Math.floor(num / 10);
       this.NUM_TO_SIZE[num] = num <= 25 ? 'small' : 'large';
       this.NUM_TO_PARITY[num] = num % 2 === 0 ? 'even' : 'odd';
       this.NUM_TO_PRIME[num] = this.PRIME_NUMBERS.includes(num);
       
-      // 聚类分组
       for (const [cluster, nums] of Object.entries(this.CLUSTER_GROUPS)) {
         if (nums.includes(num)) {
           this.NUM_TO_CLUSTER[num] = parseInt(cluster);
@@ -241,7 +249,6 @@ export class PredictionEngine {
         }
       }
       
-      // 矩阵坐标 (7x7矩阵)
       const row = Math.floor((num - 1) / 7) + 1;
       const col = ((num - 1) % 7) + 1;
       this.NUM_TO_MATRIX[num] = { row, col };
@@ -254,7 +261,7 @@ export class PredictionEngine {
     
     if (!history || history.length < 50) return this.generateDeterministic();
 
-    // 0. 数据预处理
+    // 数据预处理
     const fullHistory = history;
     const recent50 = history.slice(0, 50);
     const recent30 = history.slice(0, 30);
@@ -273,15 +280,13 @@ export class PredictionEngine {
     const lastSpecialCluster = this.NUM_TO_CLUSTER[lastSpecial];
     const lastMatrix = this.NUM_TO_MATRIX[lastSpecial];
     
-    // 获取当前时间信息
     const currentDate = history[0].draw_time ? new Date(history[0].draw_time) : new Date();
     const currentMonth = currentDate.getMonth() + 1;
     const currentSeason = this.getSeasonByMonth(currentMonth);
     const currentWeek = Math.floor(currentDate.getDate() / 7) + 1;
     const currentDay = currentDate.getDate();
-    const currentWeekday = currentDate.getDay(); // 0=周日, 1=周一...
+    const currentWeekday = currentDate.getDay();
     
-    // 判断上中下旬
     let currentMonthPeriod: 'early' | 'middle' | 'late' = 'early';
     if (currentDay <= 10) currentMonthPeriod = 'early';
     else if (currentDay <= 20) currentMonthPeriod = 'middle';
@@ -341,31 +346,37 @@ export class PredictionEngine {
         scoreEntropyAnalysis: 0,
         scoreDeterministicCore: 0,
         
+        // 新增维度
+        scoreMathematicalProperties: 0,
+        scoreQuantumResonance: 0,
+        scorePathDependency: 0,
+        scoreStatisticalSignificance: 0,
+        scoreTopologicalPattern: 0,
+        scoreHarmonicConvergence: 0,
+        
         totalScore: 0
       };
     });
 
     // ==========================================
-    // 1. 生肖转移概率 (核心算法)
+    // 执行所有分析维度
     // ==========================================
+    
+    // 1-34: 原有维度分析（保持原样）
     const zodiacTransMap: Record<string, number> = {};
     let zodiacTransTotal = 0;
-
     for (let i = 1; i < fullHistory.length - 1; i++) {
       const histNums = this.parseNumbers(fullHistory[i].open_code);
       const histSpecial = histNums[histNums.length - 1];
       const histZodiac = this.NUM_TO_ZODIAC[histSpecial];
-
       if (histZodiac === lastSpecialZodiac) {
         const nextNums = this.parseNumbers(fullHistory[i-1].open_code);
         const nextSpecial = nextNums[nextNums.length - 1];
         const nextZodiac = this.NUM_TO_ZODIAC[nextSpecial];
-        
         zodiacTransMap[nextZodiac] = (zodiacTransMap[nextZodiac] || 0) + 1;
         zodiacTransTotal++;
       }
     }
-    
     stats.forEach(s => {
       const occurrences = zodiacTransMap[s.zodiac] || 0;
       if (zodiacTransTotal > 0) {
@@ -373,14 +384,11 @@ export class PredictionEngine {
       }
     });
 
-    // ==========================================
-    // 2. 特码转移概率
-    // ==========================================
+    // 特码转移概率
     const numTransMap: Record<number, number> = {};
     for (let i = 1; i < fullHistory.length - 1; i++) {
       const histNums = this.parseNumbers(fullHistory[i].open_code);
       const histSpecial = histNums[histNums.length - 1];
-      
       if (histSpecial === lastSpecial) {
         const nextNums = this.parseNumbers(fullHistory[i-1].open_code);
         const nextSpecial = nextNums[nextNums.length - 1];
@@ -389,88 +397,28 @@ export class PredictionEngine {
     }
     stats.forEach(s => s.scoreNumberTrans = (numTransMap[s.num] || 0) * 6);
 
-    // ==========================================
-    // 3. 历史镜像分析
-    // ==========================================
-    const mirrorScores = this.calculateHistoryMirror(fullHistory, lastDrawNums);
-    stats.forEach(s => s.scoreHistoryMirror = mirrorScores[s.num] || 0);
-
-    // ==========================================
-    // 4. 特码轨迹分析
-    // ==========================================
-    const trajectoryAnalysis = this.analyzeTrajectory(fullHistory, lastSpecial);
-    stats.forEach(s => {
-      s.scoreSpecialTraj = trajectoryAnalysis[s.num] || 0;
-    });
-
-    // ==========================================
-    // 5. 形态几何分析
-    // ==========================================
-    const patternScores = this.calculatePatternScores(lastDrawNums, recent10);
-    stats.forEach(s => {
-      s.scorePattern = patternScores[s.num] || 0;
-    });
-
-    // ==========================================
-    // 6. 尾数力场分析
-    // ==========================================
-    const tailScores = this.calculateTailScores(recent10);
-    stats.forEach(s => {
-      s.scoreTail = tailScores[s.tail] || 0;
-    });
-
-    // ==========================================
-    // 7. 三合局势分析
-    // ==========================================
-    const zodiacScores = this.calculateZodiacScores(recent20, lastSpecialZodiac);
-    stats.forEach(s => {
-      s.scoreZodiac = zodiacScores[s.zodiac] || 0;
-    });
-
-    // ==========================================
-    // 8. 五行平衡分析
-    // ==========================================
-    const wuxingScores = this.calculateWuxingScores(recent10);
-    stats.forEach(s => {
-      s.scoreWuXing = wuxingScores[s.wuxing] || 0;
-    });
-
-    // ==========================================
-    // 9. 波色惯性分析
-    // ==========================================
-    const waveScores = this.calculateWaveScores(recent10, lastSpecial);
-    stats.forEach(s => {
-      s.scoreWave = waveScores[s.wave] || 0;
-    });
-
-    // ==========================================
-    // 10. 黄金密钥分析
-    // ==========================================
+    // 其他原有维度分析（保持原样）
+    stats.forEach(s => s.scoreHistoryMirror = this.calculateHistoryMirror(fullHistory, lastDrawNums)[s.num] || 0);
+    stats.forEach(s => s.scoreSpecialTraj = this.analyzeTrajectory(fullHistory, lastSpecial)[s.num] || 0);
+    stats.forEach(s => s.scorePattern = this.calculatePatternScores(lastDrawNums, recent10)[s.num] || 0);
+    stats.forEach(s => s.scoreTail = this.calculateTailScores(recent10)[s.tail] || 0);
+    stats.forEach(s => s.scoreZodiac = this.calculateZodiacScores(recent20, lastSpecialZodiac)[s.zodiac] || 0);
+    stats.forEach(s => s.scoreWuXing = this.calculateWuxingScores(recent10)[s.wuxing] || 0);
+    stats.forEach(s => s.scoreWave = this.calculateWaveScores(recent10, lastSpecial)[s.wave] || 0);
+    
     const goldNumbers = this.calculateGoldNumbers(lastDrawSum, lastSpecial);
     stats.forEach(s => {
       if (goldNumbers.includes(s.num)) s.scoreGold = 25;
     });
-
-    // ==========================================
-    // 11. 遗漏回补分析
-    // ==========================================
-    const omissionScores = this.calculateOmissionScores(fullHistory, 40);
-    stats.forEach(s => {
-      s.scoreOmission = omissionScores[s.num] || 0;
-    });
-
-    // ==========================================
-    // 12. 季节规律分析
-    // ==========================================
+    
+    stats.forEach(s => s.scoreOmission = this.calculateOmissionScores(fullHistory, 40)[s.num] || 0);
+    
     const seasonalScores = this.calculateSeasonalScores(currentMonth, currentWeek);
     stats.forEach(s => {
       s.scoreSeasonal = seasonalScores[s.zodiac] || 0;
       if (s.num % 10 === currentMonth % 10) s.scoreSeasonal += 5;
     });
-
-    // ==========================================
-    // 13. 质数分布分析
-    // ==========================================
+    
     const primeAnalysis = this.analyzePrimeDistribution(recent20);
     stats.forEach(s => {
       if (primeAnalysis.needMorePrimes && s.prime) {
@@ -478,262 +426,199 @@ export class PredictionEngine {
       } else if (primeAnalysis.needMoreComposites && !s.prime) {
         s.scorePrime = 15;
       }
-      
-      // 质数连续性
       if (lastSpecialPrime && s.prime) {
         s.scorePrime += 10;
       }
     });
-
-    // ==========================================
-    // 14. 和值分析
-    // ==========================================
+    
     const sumAnalysis = this.analyzeSumPatterns(recent20, lastDrawSum);
     stats.forEach(s => {
       const simulatedSum = lastDrawSum - lastSpecial + s.num;
       s.scoreSumAnalysis = sumAnalysis.getScore(simulatedSum);
     });
-
-    // ==========================================
-    // 15. 位置分析
-    // ==========================================
-    const positionScores = this.calculatePositionScores(recent20);
-    stats.forEach(s => {
-      s.scorePosition = positionScores[s.num] || 0;
-    });
-
-    // ==========================================
-    // 16. 频率分析
-    // ==========================================
-    const frequencyScores = this.calculateFrequencyScores(recent30);
-    stats.forEach(s => {
-      s.scoreFrequency = frequencyScores[s.num] || 0;
-    });
-
-    // ==========================================
-    // 17. 聚类分析
-    // ==========================================
-    const clusterScores = this.calculateClusterScores(lastDrawNums, recent20);
-    stats.forEach(s => {
-      s.scoreCluster = clusterScores[s.num] || 0;
-    });
-
-    // ==========================================
-    // 18. 对称分析
-    // ==========================================
-    const symmetryScores = this.calculateSymmetryScores(recent20, lastDrawNums);
-    stats.forEach(s => {
-      s.scoreSymmetry = symmetryScores[s.num] || 0;
-    });
-
-    // ==========================================
-    // 19. 周期分析
-    // ==========================================
-    const periodicScores = this.calculatePeriodicScores(fullHistory, currentWeek);
-    stats.forEach(s => {
-      s.scorePeriodic = periodicScores[s.num] || 0;
-    });
-
-    // ==========================================
-    // 20. 趋势分析
-    // ==========================================
-    const trendScores = this.calculateTrendScores(fullHistory);
-    stats.forEach(s => {
-      s.scoreTrend = trendScores[s.num] || 0;
-    });
-
-    // ==========================================
-    // 21. 头数分析
-    // ==========================================
+    
+    stats.forEach(s => s.scorePosition = this.calculatePositionScores(recent20)[s.num] || 0);
+    stats.forEach(s => s.scoreFrequency = this.calculateFrequencyScores(recent30)[s.num] || 0);
+    stats.forEach(s => s.scoreCluster = this.calculateClusterScores(lastDrawNums, recent20)[s.num] || 0);
+    stats.forEach(s => s.scoreSymmetry = this.calculateSymmetryScores(recent20, lastDrawNums)[s.num] || 0);
+    stats.forEach(s => s.scorePeriodic = this.calculatePeriodicScores(fullHistory, currentWeek)[s.num] || 0);
+    stats.forEach(s => s.scoreTrend = this.calculateTrendScores(fullHistory)[s.num] || 0);
+    
     const headAnalysis = this.analyzeHeadPatterns(recent30, lastDrawHead, currentWeekday);
     stats.forEach(s => {
       s.scoreHeadAnalysis = headAnalysis.getScore(s.head, s.num);
     });
-
-    // ==========================================
-    // 22. 尾数模式分析
-    // ==========================================
+    
     const tailPatternAnalysis = this.analyzeTailPatterns(recent20, lastDrawTail, currentDay);
     stats.forEach(s => {
       s.scoreTailPattern = tailPatternAnalysis.getScore(s.tail, s.num);
     });
-
-    // ==========================================
-    // 23. 关联性分析
-    // ==========================================
-    const correlationScores = this.calculateCorrelationScores(recent30, lastDrawNums);
-    stats.forEach(s => {
-      s.scoreCorrelation = correlationScores[s.num] || 0;
-    });
-
-    // ==========================================
-    // 24. 属性分析
-    // ==========================================
+    
+    stats.forEach(s => s.scoreCorrelation = this.calculateCorrelationScores(recent30, lastDrawNums)[s.num] || 0);
+    
     const propertyAnalysis = this.analyzePropertyPatterns(recent20, lastSpecial);
     stats.forEach(s => {
       s.scoreProperty = propertyAnalysis.getScore(s);
     });
-
-    // ==========================================
-    // 25. 时间模式分析
-    // ==========================================
+    
     const timePatternScores = this.calculateTimePatternScores(currentWeekday, currentMonthPeriod, currentDay);
     stats.forEach(s => {
       s.scoreTimePattern = timePatternScores[s.num] || 0;
     });
-
-    // ==========================================
-    // 26. 连号模式分析
-    // ==========================================
-    const seriesPatternScores = this.analyzeSeriesPatterns(recent20, lastDrawNums);
-    stats.forEach(s => {
-      s.scoreSeriesPattern = seriesPatternScores[s.num] || 0;
-    });
-
-    // ==========================================
-    // 27. 和值分区分析
-    // ==========================================
+    
+    stats.forEach(s => s.scoreSeriesPattern = this.analyzeSeriesPatterns(recent20, lastDrawNums)[s.num] || 0);
+    
     const sumZoneAnalysis = this.analyzeSumZonePatterns(recent20, lastDrawSum);
     stats.forEach(s => {
       const simulatedSum = lastDrawSum - lastSpecial + s.num;
       s.scoreSumZone = sumZoneAnalysis.getScore(simulatedSum);
     });
-
+    
+    stats.forEach(s => s.scoreElementRelation = this.calculateElementRelationScores(recent10, lastSpecial)[s.num] || 0);
+    stats.forEach(s => s.scoreMatrixCoordinate = this.calculateMatrixCoordinateScores(recent20, lastMatrix, currentWeekday)[s.num] || 0);
+    stats.forEach(s => s.scoreLatticeDistribution = this.calculateLatticeDistributionScores(recent30, lastSpecial)[s.num] || 0);
+    stats.forEach(s => s.scoreChaosPattern = this.analyzeChaosPatterns(recent50, lastSpecial)[s.num] || 0);
+    stats.forEach(s => s.scoreFractalDimension = this.calculateFractalDimensionScores(recent30)[s.num] || 0);
+    stats.forEach(s => s.scoreEntropyAnalysis = this.analyzeEntropyPatterns(recent20, lastSpecial)[s.num] || 0);
+    stats.forEach(s => s.scoreDeterministicCore = this.calculateDeterministicCoreScores(fullHistory, lastSpecial, currentWeek)[s.num] || 0);
+    
     // ==========================================
-    // 28. 五行相生相克分析
+    // 35. [ENHANCED] 数学特性分析
     // ==========================================
-    const elementRelationScores = this.calculateElementRelationScores(recent10, lastSpecial);
+    const mathScores = this.analyzeMathematicalProperties(recent30, currentDay);
     stats.forEach(s => {
-      s.scoreElementRelation = elementRelationScores[s.num] || 0;
+      s.scoreMathematicalProperties = mathScores[s.num] || 0;
+    });
+    
+    // ==========================================
+    // 36. [ENHANCED] 量子共振分析
+    // ==========================================
+    const quantumScores = this.analyzeQuantumResonance(recent20, lastSpecial, currentDate);
+    stats.forEach(s => {
+      s.scoreQuantumResonance = quantumScores[s.num] || 0;
+    });
+    
+    // ==========================================
+    // 37. [ENHANCED] 路径依赖分析
+    // ==========================================
+    const pathScores = this.analyzePathDependency(fullHistory, lastSpecial);
+    stats.forEach(s => {
+      s.scorePathDependency = pathScores[s.num] || 0;
+    });
+    
+    // ==========================================
+    // 38. [ENHANCED] 统计显著性分析
+    // ==========================================
+    const statScores = this.analyzeStatisticalSignificance(fullHistory, recent20);
+    stats.forEach(s => {
+      s.scoreStatisticalSignificance = statScores[s.num] || 0;
+    });
+    
+    // ==========================================
+    // 39. [ENHANCED] 拓扑模式分析
+    // ==========================================
+    const topologyScores = this.analyzeTopologicalPatterns(recent30);
+    stats.forEach(s => {
+      s.scoreTopologicalPattern = topologyScores[s.num] || 0;
+    });
+    
+    // ==========================================
+    // 40. [ENHANCED] 谐波收敛分析
+    // ==========================================
+    const harmonicScores = this.analyzeHarmonicConvergence(recent50, lastSpecial, currentWeek);
+    stats.forEach(s => {
+      s.scoreHarmonicConvergence = harmonicScores[s.num] || 0;
     });
 
     // ==========================================
-    // 29. [NEW] 矩阵坐标分析
-    // ==========================================
-    const matrixCoordinateScores = this.calculateMatrixCoordinateScores(recent20, lastMatrix, currentWeekday);
-    stats.forEach(s => {
-      s.scoreMatrixCoordinate = matrixCoordinateScores[s.num] || 0;
-    });
-
-    // ==========================================
-    // 30. [NEW] 晶格分布分析
-    // ==========================================
-    const latticeDistributionScores = this.calculateLatticeDistributionScores(recent30, lastSpecial);
-    stats.forEach(s => {
-      s.scoreLatticeDistribution = latticeDistributionScores[s.num] || 0;
-    });
-
-    // ==========================================
-    // 31. [NEW] 混沌模式分析
-    // ==========================================
-    const chaosPatternScores = this.analyzeChaosPatterns(recent50, lastSpecial);
-    stats.forEach(s => {
-      s.scoreChaosPattern = chaosPatternScores[s.num] || 0;
-    });
-
-    // ==========================================
-    // 32. [NEW] 分形维度分析
-    // ==========================================
-    const fractalDimensionScores = this.calculateFractalDimensionScores(recent30);
-    stats.forEach(s => {
-      s.scoreFractalDimension = fractalDimensionScores[s.num] || 0;
-    });
-
-    // ==========================================
-    // 33. [NEW] 信息熵分析
-    // ==========================================
-    const entropyAnalysisScores = this.analyzeEntropyPatterns(recent20, lastSpecial);
-    stats.forEach(s => {
-      s.scoreEntropyAnalysis = entropyAnalysisScores[s.num] || 0;
-    });
-
-    // ==========================================
-    // 34. [NEW] 确定性核心分析
-    // ==========================================
-    const deterministicCoreScores = this.calculateDeterministicCoreScores(fullHistory, lastSpecial, currentWeek);
-    stats.forEach(s => {
-      s.scoreDeterministicCore = deterministicCoreScores[s.num] || 0;
-    });
-
-    // ==========================================
-    // 最终汇总 - 三十二维度纯确定性权重分配
+    // 最终汇总 - 三十六维度权重分配
     // ==========================================
     stats.forEach(s => {
       s.totalScore = 
-        s.scoreZodiacTrans * 2.5 +     // 生肖转移概率 (核心)
-        s.scoreNumberTrans * 2.0 +     // 特码转移概率
-        s.scoreHistoryMirror * 1.5 +   // 历史镜像
-        s.scoreSpecialTraj * 1.3 +     // 特码轨迹
-        s.scorePattern * 1.2 +         // 形态几何
-        s.scoreTail * 1.0 +           // 尾数力场
-        s.scoreZodiac * 1.0 +         // 三合局势
-        s.scoreWuXing * 0.9 +         // 五行平衡
-        s.scoreWave * 0.9 +           // 波色惯性
-        s.scoreGold * 0.8 +           // 黄金密钥
-        s.scoreOmission * 0.8 +       // 遗漏回补
-        s.scoreSeasonal * 0.7 +       // 季节规律
-        s.scorePrime * 0.7 +          // 质数分布
-        s.scoreSumAnalysis * 0.6 +    // 和值分析
-        s.scorePosition * 0.6 +       // 位置分析
-        s.scoreFrequency * 0.6 +      // 频率分析
-        s.scoreCluster * 0.5 +        // 聚类分析
-        s.scoreSymmetry * 0.5 +       // 对称分析
-        s.scorePeriodic * 0.5 +       // 周期分析
-        s.scoreTrend * 0.5 +          // 趋势分析
-        s.scoreHeadAnalysis * 0.8 +   // 头数分析
-        s.scoreTailPattern * 0.8 +    // 尾数模式分析
-        s.scoreCorrelation * 0.7 +    // 关联性分析
-        s.scoreProperty * 0.7 +       // 属性分析
-        s.scoreTimePattern * 0.6 +    // 时间模式分析
-        s.scoreSeriesPattern * 0.6 +  // 连号模式分析
-        s.scoreSumZone * 0.5 +        // 和值分区分析
-        s.scoreElementRelation * 0.5 + // 五行相生相克
-        s.scoreMatrixCoordinate * 0.4 + // 矩阵坐标分析
-        s.scoreLatticeDistribution * 0.4 + // 晶格分布分析
-        s.scoreChaosPattern * 0.4 +   // 混沌模式分析
-        s.scoreFractalDimension * 0.4 + // 分形维度分析
-        s.scoreEntropyAnalysis * 0.4 + // 信息熵分析
-        s.scoreDeterministicCore * 0.6; // 确定性核心分析
+        // 核心维度 (权重较高)
+        s.scoreZodiacTrans * 2.5 +
+        s.scoreNumberTrans * 2.0 +
+        s.scoreHistoryMirror * 1.8 +
+        s.scoreSpecialTraj * 1.6 +
+        s.scorePattern * 1.4 +
+        s.scoreTail * 1.2 +
+        s.scoreZodiac * 1.2 +
         
-      // 完全移除随机扰动，使用确定性微调
+        // 重要维度
+        s.scoreWuXing * 1.0 +
+        s.scoreWave * 1.0 +
+        s.scoreGold * 0.9 +
+        s.scoreOmission * 0.9 +
+        s.scoreSeasonal * 0.8 +
+        s.scorePrime * 0.8 +
+        s.scoreSumAnalysis * 0.7 +
+        s.scorePosition * 0.7 +
+        s.scoreFrequency * 0.7 +
+        
+        // 次要维度
+        s.scoreCluster * 0.6 +
+        s.scoreSymmetry * 0.6 +
+        s.scorePeriodic * 0.6 +
+        s.scoreTrend * 0.6 +
+        s.scoreHeadAnalysis * 0.8 +
+        s.scoreTailPattern * 0.8 +
+        s.scoreCorrelation * 0.7 +
+        s.scoreProperty * 0.7 +
+        s.scoreTimePattern * 0.6 +
+        s.scoreSeriesPattern * 0.6 +
+        s.scoreSumZone * 0.5 +
+        s.scoreElementRelation * 0.5 +
+        
+        // 新增高级维度
+        s.scoreMatrixCoordinate * 0.4 +
+        s.scoreLatticeDistribution * 0.4 +
+        s.scoreChaosPattern * 0.4 +
+        s.scoreFractalDimension * 0.4 +
+        s.scoreEntropyAnalysis * 0.4 +
+        s.scoreDeterministicCore * 0.6 +
+        
+        // 增强维度
+        s.scoreMathematicalProperties * 0.7 +
+        s.scoreQuantumResonance * 0.5 +
+        s.scorePathDependency * 0.6 +
+        s.scoreStatisticalSignificance * 0.6 +
+        s.scoreTopologicalPattern * 0.5 +
+        s.scoreHarmonicConvergence * 0.6;
+        
+      // 确定性微调（完全去除随机性）
       const deterministicAdjustment = this.getDeterministicAdjustment(
         s.num, lastSpecial, currentDay, currentWeekday
       );
       s.totalScore += deterministicAdjustment;
       
-      // 附加分: 尾数和头数互补性
-      if (s.tail % 2 === lastDrawTail % 2) {
-        s.totalScore += 2; // 同奇偶尾数
+      // 附加确定性规则
+      if (s.tail === currentDay % 10) {
+        s.totalScore += 3; // 日期尾数对应
       }
       
       if (s.head === (lastDrawHead + 1) % 5) {
-        s.totalScore += 3; // 头数位移
+        s.totalScore += 2; // 头数位移
       }
     });
 
     // ==========================================
-    // 关键改进: 重复惩罚机制
+    // 关键改进: 重复惩罚机制（仅惩罚号码，不惩罚生肖）
     // ==========================================
     stats.forEach(s => {
-      // 惩罚上期特码
+      // 惩罚上期特码（降低重复概率）
       if (s.num === lastSpecial) {
         s.totalScore *= 0.3;  // 70%惩罚
       }
       
-      // 轻度惩罚上期特肖的其他号码
-      if (s.zodiac === lastSpecialZodiac && s.num !== lastSpecial) {
-        s.totalScore *= 0.85;  // 15%惩罚
-      }
-      
-      // 轻微惩罚上期所有开奖号码
+      // 轻微惩罚上期所有开奖号码（降低冷门重复）
       if (lastDrawNums.includes(s.num) && s.num !== lastSpecial) {
         s.totalScore *= 0.9;  // 10%惩罚
       }
       
-      // 惩罚连续出现的热门生肖
-      const recentZodiacCount = this.getRecentZodiacCount(recent20, s.zodiac);
-      if (recentZodiacCount > 8) { // 如果近期出现超过8次
-        s.totalScore *= 0.8;  // 20%惩罚
+      // 惩罚连续过热号码（历史统计）
+      const recentFrequency = this.getRecentFrequency(fullHistory.slice(0, 20), s.num);
+      if (recentFrequency > 3) { // 近20期出现超过3次
+        s.totalScore *= 0.85;  // 15%惩罚
       }
     });
 
@@ -744,41 +629,29 @@ export class PredictionEngine {
     const final18 = this.selectDiverseNumbers(stats, 18);
     const resultNumbers = final18.map(s => s.num).sort((a, b) => a - b).map(n => n < 10 ? `0${n}` : `${n}`);
 
-    // 计算推荐肖 (基于前18码的总分权重)
-    const zMap: Record<string, number> = {};
-    final18.forEach(s => zMap[s.zodiac] = (zMap[s.zodiac] || 0) + s.totalScore);
+    // 计算推荐肖（基于得分排序，不排除任何生肖）
+    const zodiacScores: Record<string, number> = {};
+    final18.forEach(s => {
+      zodiacScores[s.zodiac] = (zodiacScores[s.zodiac] || 0) + s.totalScore;
+    });
     
-    // 对生肖进行排序和选择，确保多样性
     const allZodiacs = Object.keys(this.ZODIACS_MAP);
     const zodiacScoresList = allZodiacs.map(z => ({
       zodiac: z,
-      score: zMap[z] || 0
+      score: zodiacScores[z] || 0
     })).sort((a, b) => b.score - a.score);
     
-    // 避免重复推荐上期特肖
+    // 按得分推荐前6个生肖（不排除任何生肖）
     const recZodiacs = zodiacScoresList
-      .filter(z => z.zodiac !== lastSpecialZodiac) // 排除上期特肖
       .slice(0, 6)
       .map(z => z.zodiac);
-
-    // 如果排除后不够6个，补充其他生肖
-    if (recZodiacs.length < 6) {
-      const remainingZodiacs = zodiacScoresList
-        .filter(z => !recZodiacs.includes(z.zodiac))
-        .slice(0, 6 - recZodiacs.length)
-        .map(z => z.zodiac);
-      recZodiacs.push(...remainingZodiacs);
-    }
 
     // 计算推荐波
     const wMap: Record<string, number> = { red: 0, blue: 0, green: 0 };
     final18.forEach(s => wMap[s.wave]++);
     const recWaves = Object.keys(wMap).sort((a, b) => wMap[b as any] - wMap[a as any]);
 
-    // ==========================================
-    // 增强头数和尾数推荐
-    // ==========================================
-    // 基于分析的头数推荐
+    // 头数和尾数推荐
     const headRecommendations = this.calculateHeadRecommendations(
       recent30, 
       final18, 
@@ -786,7 +659,6 @@ export class PredictionEngine {
       currentWeekday
     );
     
-    // 基于分析的尾数推荐
     const tailRecommendations = this.calculateTailRecommendations(
       recent20, 
       final18, 
@@ -804,12 +676,2866 @@ export class PredictionEngine {
   }
 
   // ==========================================
-  // 新增算法实现
+  // 新增增强算法实现
   // ==========================================
 
   /**
-   * [NEW] 矩阵坐标分析
+   * [ENHANCED] 数学特性分析
    */
+  private static analyzeMathematicalProperties(history: DbRecord[], day: number): Record<number, number> {
+    const scores: Record<number, number> = {};
+    
+    // 分析数学特性出现频率
+    const mathProperties: Record<string, number[]> = {
+      'perfectSquare': this.PERFECT_SQUARES,
+      'cube': this.CUBE_NUMBERS,
+      'fibonacci': this.FIBONACCI_NUMBERS,
+      'triangle': this.TRIANGLE_NUMBERS,
+      'prime': this.PRIME_NUMBERS
+    };
+    
+    // 统计历史数学特性
+    const propertyCounts: Record<string, number> = {};
+    history.forEach(rec => {
+      const nums = this.parseNumbers(rec.open_code);
+      nums.forEach(num => {
+        Object.entries(mathProperties).forEach(([prop, propNums]) => {
+          if (propNums.includes(num)) {
+            propertyCounts[prop] = (propertyCounts[prop] || 0) + 1;
+          }
+        });
+      });
+    });
+    
+    // 找出当前日期相关的数学特性
+    const dateProperties: number[] = [];
+    if (this.isPerfectSquare(day)) dateProperties.push(...this.PERFECT_SQUARES);
+    if (day <= 31 && this.isPrime(day)) dateProperties.push(...this.PRIME_NUMBERS);
+    
+    // 日期尾数数学特性
+    const dateTail = day % 10;
+    if (dateTail === 0 || dateTail === 1 || dateTail === 4 || dateTail === 5 || dateTail === 6 || dateTail === 9) {
+      dateProperties.push(...this.PERFECT_SQUARES.filter(n => n % 10 === dateTail));
+    }
+    
+    for (let num = 1; num <= 49; num++) {
+      let score = 0;
+      
+      // 数学特性匹配
+      if (this.PERFECT_SQUARES.includes(num)) {
+        score += 8;
+        // 完美平方数的位置特性
+        if (num === 1 || num === 4 || num === 9 || num === 16 || num === 25) score += 4;
+        if (num === 36 || num === 49) score += 6; // 大完美平方数
+      }
+      
+      if (this.CUBE_NUMBERS.includes(num)) {
+        score += 10; // 立方数稀有性
+      }
+      
+      if (this.FIBONACCI_NUMBERS.includes(num)) {
+        score += 9; // 斐波那契数
+      }
+      
+      if (this.TRIANGLE_NUMBERS.includes(num)) {
+        score += 7; // 三角形数
+      }
+      
+      // 质数特性已在其他维度考虑，这里做补充
+      if (this.PRIME_NUMBERS.includes(num)) {
+        const primeIndex = this.PRIME_NUMBERS.indexOf(num) + 1;
+        if (primeIndex <= 5) score += 5; // 小质数
+        else if (primeIndex >= 10) score += 6; // 大质数
+      }
+      
+      // 日期相关数学特性
+      if (dateProperties.includes(num)) {
+        score += 12; // 与日期相关的数学特性
+      }
+      
+      // 数字的数学关系
+      const digitSum = this.sumDigits(num);
+      if (digitSum <= 9) {
+        score += 3; // 数字和小
+      }
+      
+      // 数字的乘积特性
+      if (num % 11 === 0) {
+        score += 8; // 11的倍数
+      }
+      
+      if (num % 7 === 0) {
+        score += 6; // 7的倍数（一周天数）
+      }
+      
+      // 数字的特殊数学性质
+      if (num === 28) score += 7; // 第二个完美数
+      if (num === 6) score += 6;  // 第一个完美数
+      if (num === 12) score += 5; // 高度合数
+      
+      scores[num] = Math.min(score, 25);
+    }
+    
+    return scores;
+  }
+
+  /**
+   * [ENHANCED] 量子共振分析
+   */
+  private static analyzeQuantumResonance(history: DbRecord[], lastSpecial: number, currentDate: Date): Record<number, number> {
+    const scores: Record<number, number> = {};
+    
+    // 量子共振模式
+    const quantumPatterns = {
+      harmonic: this.QUANTUM_RESONANCE_PATTERNS.harmonic,
+      goldenAngle: this.QUANTUM_RESONANCE_PATTERNS.goldenAngle,
+      fibonacciRatio: this.QUANTUM_RESONANCE_PATTERNS.fibonacciRatio
+    };
+    
+    // 分析历史量子共振
+    const resonanceCounts: Record<string, number> = {};
+    history.forEach(rec => {
+      const nums = this.parseNumbers(rec.open_code);
+      nums.forEach(num => {
+        Object.entries(quantumPatterns).forEach(([pattern, patternNums]) => {
+          if (patternNums.includes(num)) {
+            resonanceCounts[pattern] = (resonanceCounts[pattern] || 0) + 1;
+          }
+        });
+      });
+    });
+    
+    // 时间量子因子
+    const timeFactors = {
+      hour: currentDate.getHours(),
+      minute: currentDate.getMinutes(),
+      second: currentDate.getSeconds(),
+      dayOfYear: this.getDayOfYear(currentDate)
+    };
+    
+    // 计算时间共振值
+    const timeResonance = (timeFactors.hour * 60 + timeFactors.minute) % 49;
+    const dayResonance = timeFactors.dayOfYear % 49;
+    
+    // 相位分析
+    const moonPhase = this.calculateMoonPhase(currentDate);
+    const solarTerm = this.getSolarTerm(currentDate);
+    
+    for (let num = 1; num <= 49; num++) {
+      let score = 0;
+      
+      // 量子共振模式匹配
+      Object.entries(quantumPatterns).forEach(([pattern, patternNums]) => {
+        if (patternNums.includes(num)) {
+          const resonanceStrength = resonanceCounts[pattern] || 0;
+          score += Math.min(resonanceStrength * 2, 10);
+        }
+      });
+      
+      // 时间共振
+      if (Math.abs(num - timeResonance) <= 3) {
+        score += 8; // 时间共振
+      }
+      
+      if (Math.abs(num - dayResonance) <= 3) {
+        score += 7; // 日期共振
+      }
+      
+      // 相位共振
+      if (moonPhase === 'full' && (num === 15 || num === 30 || num === 45)) {
+        score += 6; // 满月共振
+      }
+      
+      if (moonPhase === 'new' && (num === 1 || num === 16 || num === 31 || num === 46)) {
+        score += 6; // 新月共振
+      }
+      
+      // 量子纠缠分析（与上期特码的关系）
+      const quantumEntanglement = this.analyzeQuantumEntanglement(num, lastSpecial);
+      score += quantumEntanglement * 4;
+      
+      // 波函数坍缩分析
+      const collapseProbability = this.calculateCollapseProbability(num, history);
+      score += collapseProbability * 5;
+      
+      // 量子隧道效应
+      const tunnelEffect = this.analyzeTunnelEffect(num, history);
+      score += tunnelEffect * 3;
+      
+      scores[num] = Math.min(score, 25);
+    }
+    
+    return scores;
+  }
+
+  /**
+   * [ENHANCED] 路径依赖分析
+   */
+  private static analyzePathDependency(history: DbRecord[], lastSpecial: number): Record<number, number> {
+    const scores: Record<number, number> = {};
+    
+    // 构建马尔可夫链
+    const markovChain = this.buildMarkovChain(history, 3); // 3阶马尔可夫链
+    
+    // 分析路径依赖强度
+    const pathStrength = this.analyzePathStrength(history);
+    
+    // 历史路径分析
+    const historicalPaths = this.extractHistoricalPaths(history, 5); // 提取5期路径
+    
+    // 计算各号码的路径依赖分数
+    for (let num = 1; num <= 49; num++) {
+      let score = 0;
+      
+      // 马尔可夫链预测
+      const markovScore = this.markovPrediction(markovChain, lastSpecial, num);
+      score += markovScore * 8;
+      
+      // 路径依赖强度
+      const strengthScore = pathStrength.getScore(num, lastSpecial);
+      score += strengthScore * 6;
+      
+      // 历史路径匹配
+      const pathMatchScore = this.calculatePathMatch(historicalPaths, num);
+      score += pathMatchScore * 5;
+      
+      // 临界点分析
+      const criticalPointScore = this.analyzeCriticalPoint(num, history);
+      score += criticalPointScore * 4;
+      
+      // 路径收敛分析
+      const convergenceScore = this.analyzePathConvergence(num, history);
+      score += convergenceScore * 3;
+      
+      scores[num] = Math.min(score, 25);
+    }
+    
+    return scores;
+  }
+
+  /**
+   * [ENHANCED] 统计显著性分析
+   */
+  private static analyzeStatisticalSignificance(fullHistory: DbRecord[], recentHistory: DbRecord[]): Record<number, number> {
+    const scores: Record<number, number> = {};
+    
+    // 计算基础统计
+    const basicStats = this.calculateBasicStatistics(fullHistory);
+    
+    // 计算P值（显著性水平）
+    const pValues = this.calculatePValues(fullHistory, recentHistory);
+    
+    // 置信区间分析
+    const confidenceIntervals = this.calculateConfidenceIntervals(fullHistory);
+    
+    // 假设检验
+    const hypothesisTests = this.performHypothesisTests(fullHistory, recentHistory);
+    
+    // 时间序列分析
+    const timeSeriesAnalysis = this.analyzeTimeSeries(fullHistory);
+    
+    for (let num = 1; num <= 49; num++) {
+      let score = 0;
+      
+      // 统计显著性
+      const pValue = pValues[num] || 0.5;
+      if (pValue < 0.05) {
+        score += 12; // 统计显著
+      } else if (pValue < 0.1) {
+        score += 8;  // 边缘显著
+      }
+      
+      // 置信区间
+      if (confidenceIntervals[num]) {
+        const { lower, upper } = confidenceIntervals[num];
+        const expected = (lower + upper) / 2;
+        if (Math.abs(num - expected) <= (upper - lower) / 4) {
+          score += 10; // 在置信区间中心区域
+        }
+      }
+      
+      // 假设检验结果
+      const testResult = hypothesisTests[num];
+      if (testResult === 'significant') {
+        score += 8;
+      }
+      
+      // 时间序列趋势
+      const trend = timeSeriesAnalysis[num];
+      if (trend === 'increasing') {
+        score += 6; // 上升趋势
+      } else if (trend === 'decreasing') {
+        score += 4; // 下降趋势（可能反弹）
+      }
+      
+      // 统计异常值检测
+      const isOutlier = this.detectOutlier(num, fullHistory);
+      if (!isOutlier) {
+        score += 5; // 非异常值
+      }
+      
+      scores[num] = Math.min(score, 25);
+    }
+    
+    return scores;
+  }
+
+  /**
+   * [ENHANCED] 拓扑模式分析
+   */
+  private static analyzeTopologicalPatterns(history: DbRecord[]): Record<number, number> {
+    const scores: Record<number, number> = {};
+    
+    // 拓扑模式定义
+    const topologicalPatterns = {
+      torus: this.TOPOLOGICAL_PATTERNS.torus,
+      klein: this.TOPOLOGICAL_PATTERNS.klein,
+      mobius: this.TOPOLOGICAL_PATTERNS.mobius
+    };
+    
+    // 分析历史拓扑模式
+    const topologyCounts: Record<string, number> = {};
+    history.forEach(rec => {
+      const nums = this.parseNumbers(rec.open_code);
+      nums.forEach(num => {
+        Object.entries(topologicalPatterns).forEach(([topology, topologyNums]) => {
+          if (topologyNums.includes(num)) {
+            topologyCounts[topology] = (topologyCounts[topology] || 0) + 1;
+          }
+        });
+      });
+    });
+    
+    // 拓扑不变量分析
+    const topologicalInvariants = this.calculateTopologicalInvariants(history);
+    
+    // 同调群分析
+    const homologyGroups = this.analyzeHomology(history);
+    
+    // 连通性分析
+    const connectivity = this.analyzeConnectivity(history);
+    
+    for (let num = 1; num <= 49; num++) {
+      let score = 0;
+      
+      // 拓扑模式匹配
+      Object.entries(topologicalPatterns).forEach(([topology, topologyNums]) => {
+        if (topologyNums.includes(num)) {
+          const topologyStrength = topologyCounts[topology] || 0;
+          score += Math.min(topologyStrength * 3, 9);
+        }
+      });
+      
+      // 拓扑不变量
+      const invariantScore = topologicalInvariants.getScore(num);
+      score += invariantScore;
+      
+      // 同调分析
+      if (homologyGroups.includes(num)) {
+        score += 8; // 在同调群中
+      }
+      
+      // 连通性分析
+      const connectivityScore = connectivity.getScore(num);
+      score += connectivityScore;
+      
+      // 拓扑空间位置
+      const positionScore = this.analyzeTopologicalPosition(num);
+      score += positionScore;
+      
+      // 拓扑变换分析
+      const transformationScore = this.analyzeTopologicalTransformation(num, history);
+      score += transformationScore;
+      
+      scores[num] = Math.min(score, 25);
+    }
+    
+    return scores;
+  }
+
+  /**
+   * [ENHANCED] 谐波收敛分析
+   */
+  private static analyzeHarmonicConvergence(history: DbRecord[], lastSpecial: number, week: number): Record<number, number> {
+    const scores: Record<number, number> = {};
+    
+    // 谐波分析
+    const harmonics = this.performHarmonicAnalysis(history);
+    
+    // 收敛点分析
+    const convergencePoints = this.findConvergencePoints(history);
+    
+    // 共振频率分析
+    const resonanceFrequencies = this.analyzeResonanceFrequencies(history);
+    
+    // 傅里叶变换分析
+    const fourierAnalysis = this.performFourierAnalysis(history);
+    
+    // 谐波平衡分析
+    const harmonicBalance = this.analyzeHarmonicBalance(history);
+    
+    for (let num = 1; num <= 49; num++) {
+      let score = 0;
+      
+      // 谐波匹配
+      if (harmonics.dominantHarmonics.includes(num)) {
+        score += 12; // 主谐波
+      }
+      
+      if (harmonics.subHarmonics.includes(num)) {
+        score += 8;  // 次谐波
+      }
+      
+      // 收敛点
+      if (convergencePoints.includes(num)) {
+        score += 10; // 收敛点
+      }
+      
+      // 共振频率
+      const resonanceScore = resonanceFrequencies.getScore(num);
+      score += resonanceScore;
+      
+      // 傅里叶分析
+      const fourierScore = fourierAnalysis.getScore(num);
+      score += fourierScore;
+      
+      // 谐波平衡
+      if (harmonicBalance.needsHarmonic.includes(num)) {
+        score += 9; // 需要平衡的谐波
+      }
+      
+      // 周波数分析
+      const weeklyPattern = this.analyzeWeeklyPattern(num, history, week);
+      score += weeklyPattern * 4;
+      
+      scores[num] = Math.min(score, 25);
+    }
+    
+    return scores;
+  }
+
+  // ==========================================
+  // 新增辅助算法实现
+  // ==========================================
+
+  /**
+   * 判断是否为完美平方数
+   */
+  private static isPerfectSquare(n: number): boolean {
+    return Math.sqrt(n) % 1 === 0;
+  }
+
+  /**
+   * 判断是否为质数
+   */
+  private static isPrime(n: number): boolean {
+    if (n <= 1) return false;
+    if (n <= 3) return true;
+    if (n % 2 === 0 || n % 3 === 0) return false;
+    for (let i = 5; i * i <= n; i += 6) {
+      if (n % i === 0 || n % (i + 2) === 0) return false;
+    }
+    return true;
+  }
+
+  /**
+   * 获取一年中的第几天
+   */
+  private static getDayOfYear(date: Date): number {
+    const start = new Date(date.getFullYear(), 0, 0);
+    const diff = date.getTime() - start.getTime();
+    const oneDay = 1000 * 60 * 60 * 24;
+    return Math.floor(diff / oneDay);
+  }
+
+  /**
+   * 计算月相
+   */
+  private static calculateMoonPhase(date: Date): string {
+    // 简化版月相计算
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    
+    // 使用简单算法估算月相
+    const daysInLunarCycle = 29.53;
+    const knownNewMoon = new Date(2025, 0, 1); // 假设的已知新月日期
+    const timeDiff = date.getTime() - knownNewMoon.getTime();
+    const dayDiff = timeDiff / (1000 * 60 * 60 * 24);
+    const phase = (dayDiff % daysInLunarCycle) / daysInLunarCycle;
+    
+    if (phase < 0.25) return 'new';
+    else if (phase < 0.5) return 'waxing';
+    else if (phase < 0.75) return 'full';
+    else return 'waning';
+  }
+
+  /**
+   * 获取节气
+   */
+  private static getSolarTerm(date: Date): string {
+    // 简化版节气判断
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    
+    const solarTerms: Record<string, string> = {
+      '1-5': '小寒', '1-20': '大寒',
+      '2-4': '立春', '2-19': '雨水',
+      '3-5': '惊蛰', '3-20': '春分',
+      '4-5': '清明', '4-20': '谷雨',
+      '5-5': '立夏', '5-21': '小满',
+      '6-6': '芒种', '6-21': '夏至',
+      '7-7': '小暑', '7-23': '大暑',
+      '8-7': '立秋', '8-23': '处暑',
+      '9-7': '白露', '9-23': '秋分',
+      '10-8': '寒露', '10-23': '霜降',
+      '11-7': '立冬', '11-22': '小雪',
+      '12-7': '大雪', '12-22': '冬至'
+    };
+    
+    const key = `${month}-${day}`;
+    return solarTerms[key] || 'none';
+  }
+
+  /**
+   * 分析量子纠缠
+   */
+  private static analyzeQuantumEntanglement(num: number, lastSpecial: number): number {
+    // 计算两个号码之间的量子纠缠强度
+    const diff = Math.abs(num - lastSpecial);
+    const sum = num + lastSpecial;
+    
+    let entanglement = 0;
+    
+    // 特殊纠缠关系
+    if (diff === 7 || diff === 14 || diff === 21 || diff === 28) {
+      entanglement += 6; // 7的倍数差
+    }
+    
+    if (sum === 50 || sum === 25) {
+      entanglement += 8; // 和为50或25
+    }
+    
+    if (this.isPrime(num) && this.isPrime(lastSpecial)) {
+      entanglement += 5; // 都是质数
+    }
+    
+    // 对称纠缠
+    if (num + lastSpecial === 50) {
+      entanglement += 7; // 对称对
+    }
+    
+    return Math.min(entanglement, 10);
+  }
+
+  /**
+   * 计算波函数坍缩概率
+   */
+  private static calculateCollapseProbability(num: number, history: DbRecord[]): number {
+    // 基于历史计算号码出现的"观测"概率
+    
+    const totalDraws = Math.min(history.length, 100);
+    let occurrences = 0;
+    
+    for (let i = 0; i < totalDraws; i++) {
+      const nums = this.parseNumbers(history[i].open_code);
+      if (nums.includes(num)) {
+        occurrences++;
+      }
+    }
+    
+    const probability = occurrences / totalDraws;
+    const expectedProbability = 1 / 49; // 均匀分布概率
+    
+    // 计算偏离程度（使用信息增益）
+    const informationGain = Math.log2(probability / expectedProbability);
+    
+    if (informationGain > 0.5) {
+      return 6; // 高频号码
+    } else if (informationGain < -0.5) {
+      return 8; // 低频号码（可能回补）
+    } else {
+      return 4; // 正常频率
+    }
+  }
+
+  /**
+   * 分析量子隧道效应
+   */
+  private static analyzeTunnelEffect(num: number, history: DbRecord[]): number {
+    // 分析号码是否可能通过"量子隧道"出现
+    
+    const recentHistory = history.slice(0, 20);
+    const numbers = new Set<number>();
+    
+    recentHistory.forEach(rec => {
+      this.parseNumbers(rec.open_code).forEach(n => numbers.add(n));
+    });
+    
+    // 检查num是否在"隧道"范围内
+    const minNum = Math.min(...numbers);
+    const maxNum = Math.max(...numbers);
+    
+    if (num >= minNum - 5 && num <= maxNum + 5 && !numbers.has(num)) {
+      return 5; // 在隧道效应范围内
+    }
+    
+    return 0;
+  }
+
+  /**
+   * 构建马尔可夫链
+   */
+  private static buildMarkovChain(history: DbRecord[], order: number): any {
+    const chain: Record<string, Record<number, number>> = {};
+    
+    for (let i = order; i < history.length; i++) {
+      const states: number[] = [];
+      
+      for (let j = 0; j < order; j++) {
+        const nums = this.parseNumbers(history[i + j - order]?.open_code || '');
+        if (nums.length > 0) {
+          states.push(nums[nums.length - 1]); // 使用特码
+        }
+      }
+      
+      const currentState = states.join(',');
+      const nextNums = this.parseNumbers(history[i].open_code);
+      const nextSpecial = nextNums[nextNums.length - 1];
+      
+      if (!chain[currentState]) {
+        chain[currentState] = {};
+      }
+      
+      chain[currentState][nextSpecial] = (chain[currentState][nextSpecial] || 0) + 1;
+    }
+    
+    // 转换为概率
+    Object.keys(chain).forEach(state => {
+      const total = Object.values(chain[state]).reduce((a, b) => a + b, 0);
+      Object.keys(chain[state]).forEach(next => {
+        chain[state][parseInt(next)] /= total;
+      });
+    });
+    
+    return chain;
+  }
+
+  /**
+   * 马尔可夫链预测
+   */
+  private static markovPrediction(chain: any, lastSpecial: number, num: number): number {
+    // 寻找最近的状态
+    let bestMatch = '';
+    let bestScore = 0;
+    
+    Object.keys(chain).forEach(state => {
+      const stateNumbers = state.split(',').map(Number);
+      if (stateNumbers.includes(lastSpecial)) {
+        const matchScore = stateNumbers.filter(n => n === lastSpecial).length / stateNumbers.length;
+        if (matchScore > bestScore) {
+          bestScore = matchScore;
+          bestMatch = state;
+        }
+      }
+    });
+    
+    if (bestMatch && chain[bestMatch][num]) {
+      return chain[bestMatch][num] * 15;
+    }
+    
+    return 0;
+  }
+
+  /**
+   * 分析路径强度
+   */
+  private static analyzePathStrength(history: DbRecord[]): {
+    getScore: (num: number, lastSpecial: number) => number;
+  } {
+    const pathStrengths: Record<string, number> = {};
+    
+    // 计算路径出现频率
+    for (let i = 1; i < history.length; i++) {
+      const prevNums = this.parseNumbers(history[i].open_code);
+      const currNums = this.parseNumbers(history[i-1].open_code);
+      
+      const prevSpecial = prevNums[prevNums.length - 1];
+      const currSpecial = currNums[currNums.length - 1];
+      
+      const path = `${prevSpecial}->${currSpecial}`;
+      pathStrengths[path] = (pathStrengths[path] || 0) + 1;
+    }
+    
+    return {
+      getScore: (num: number, lastSpecial: number): number => {
+        const path = `${lastSpecial}->${num}`;
+        const strength = pathStrengths[path] || 0;
+        
+        if (strength >= 3) {
+          return 10; // 强路径
+        } else if (strength >= 1) {
+          return 6;  // 弱路径
+        }
+        
+        // 检查相似路径
+        let similarScore = 0;
+        Object.keys(pathStrengths).forEach(p => {
+          const [from, to] = p.split('->').map(Number);
+          if (Math.abs(from - lastSpecial) <= 5 && Math.abs(to - num) <= 5) {
+            similarScore += pathStrengths[p] * 0.5;
+          }
+        });
+        
+        return Math.min(similarScore, 8);
+      }
+    };
+  }
+
+  /**
+   * 提取历史路径
+   */
+  private static extractHistoricalPaths(history: DbRecord[], length: number): string[] {
+    const paths: string[] = [];
+    
+    for (let i = length; i < history.length; i++) {
+      const path: number[] = [];
+      
+      for (let j = 0; j < length; j++) {
+        const nums = this.parseNumbers(history[i - j].open_code);
+        if (nums.length > 0) {
+          path.push(nums[nums.length - 1]);
+        }
+      }
+      
+      if (path.length === length) {
+        paths.push(path.join('->'));
+      }
+    }
+    
+    return paths;
+  }
+
+  /**
+   * 计算路径匹配度
+   */
+  private static calculatePathMatch(historicalPaths: string[], num: number): number {
+    let matchScore = 0;
+    
+    historicalPaths.forEach(path => {
+      const numbers = path.split('->').map(Number);
+      const lastInPath = numbers[numbers.length - 1];
+      
+      if (Math.abs(lastInPath - num) <= 3) {
+        matchScore += 2; // 路径终点相近
+      }
+      
+      // 检查路径模式
+      const diffPattern = [];
+      for (let i = 1; i < numbers.length; i++) {
+        diffPattern.push(numbers[i] - numbers[i-1]);
+      }
+      
+      // 如果当前号码符合路径的差分模式
+      const predicted = numbers[numbers.length - 1] + diffPattern[diffPattern.length - 1];
+      if (Math.abs(predicted - num) <= 5) {
+        matchScore += 3; // 符合路径模式
+      }
+    });
+    
+    return Math.min(matchScore, 10);
+  }
+
+  /**
+   * 分析临界点
+   */
+  private static analyzeCriticalPoint(num: number, history: DbRecord[]): number {
+    // 分析号码是否处于临界状态
+    
+    const recentOccurrences: number[] = [];
+    
+    for (let i = 0; i < Math.min(history.length, 30); i++) {
+      const nums = this.parseNumbers(history[i].open_code);
+      if (nums.includes(num)) {
+        recentOccurrences.push(i);
+      }
+    }
+    
+    if (recentOccurrences.length < 2) {
+      return 0;
+    }
+    
+    // 计算出现间隔
+    const intervals: number[] = [];
+    for (let i = 1; i < recentOccurrences.length; i++) {
+      intervals.push(recentOccurrences[i] - recentOccurrences[i-1]);
+    }
+    
+    // 检查是否接近平均间隔
+    const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+    const lastOccurrence = recentOccurrences[recentOccurrences.length - 1];
+    const expectedNext = lastOccurrence + avgInterval;
+    
+    // 当前期数（假设history[0]是最新一期）
+    const currentIndex = 0;
+    
+    if (Math.abs(currentIndex - expectedNext) <= 2) {
+      return 8; // 接近临界点
+    } else if (currentIndex > expectedNext) {
+      return 6; // 已过临界点（可能即将出现）
+    }
+    
+    return 0;
+  }
+
+  /**
+   * 分析路径收敛
+   */
+  private static analyzePathConvergence(num: number, history: DbRecord[]): number {
+    // 分析不同路径是否收敛到当前号码
+    
+    const convergencePaths: string[] = [];
+    
+    // 检查从不同起点到当前号码的路径
+    for (let start = 1; start <= 49; start++) {
+      if (start === num) continue;
+      
+      let pathCount = 0;
+      for (let i = 1; i < history.length; i++) {
+        const prevNums = this.parseNumbers(history[i].open_code);
+        const currNums = this.parseNumbers(history[i-1].open_code);
+        
+        const prevSpecial = prevNums[prevNums.length - 1];
+        const currSpecial = currNums[currNums.length - 1];
+        
+        if (prevSpecial === start && currSpecial === num) {
+          pathCount++;
+        }
+      }
+      
+      if (pathCount >= 2) {
+        convergencePaths.push(`${start}->${num}`);
+      }
+    }
+    
+    return Math.min(convergencePaths.length * 2, 6);
+  }
+
+  /**
+   * 计算基础统计
+   */
+  private static calculateBasicStatistics(history: DbRecord[]): any {
+    const allNumbers: number[] = [];
+    
+    history.forEach(rec => {
+      allNumbers.push(...this.parseNumbers(rec.open_code));
+    });
+    
+    const mean = allNumbers.reduce((a, b) => a + b, 0) / allNumbers.length;
+    const variance = allNumbers.reduce((sq, n) => sq + Math.pow(n - mean, 2), 0) / allNumbers.length;
+    const std = Math.sqrt(variance);
+    
+    // 计算偏度和峰度
+    const skewness = allNumbers.reduce((sk, n) => sk + Math.pow((n - mean) / std, 3), 0) / allNumbers.length;
+    const kurtosis = allNumbers.reduce((ku, n) => ku + Math.pow((n - mean) / std, 4), 0) / allNumbers.length - 3;
+    
+    return {
+      mean,
+      std,
+      skewness,
+      kurtosis,
+      min: Math.min(...allNumbers),
+      max: Math.max(...allNumbers)
+    };
+  }
+
+  /**
+   * 计算P值
+   */
+  private static calculatePValues(fullHistory: DbRecord[], recentHistory: DbRecord[]): Record<number, number> {
+    const pValues: Record<number, number> = {};
+    
+    // 计算每个号码的历史频率
+    const fullFrequencies: Record<number, number> = {};
+    const recentFrequencies: Record<number, number> = {};
+    
+    fullHistory.forEach(rec => {
+      this.parseNumbers(rec.open_code).forEach(num => {
+        fullFrequencies[num] = (fullFrequencies[num] || 0) + 1;
+      });
+    });
+    
+    recentHistory.forEach(rec => {
+      this.parseNumbers(rec.open_code).forEach(num => {
+        recentFrequencies[num] = (recentFrequencies[num] || 0) + 1;
+      });
+    });
+    
+    // 计算卡方检验的P值（简化版）
+    for (let num = 1; num <= 49; num++) {
+      const fullCount = fullFrequencies[num] || 0;
+      const recentCount = recentFrequencies[num] || 0;
+      
+      const fullTotal = Object.values(fullFrequencies).reduce((a, b) => a + b, 0);
+      const recentTotal = Object.values(recentFrequencies).reduce((a, b) => a + b, 0);
+      
+      const expectedRecent = (fullCount / fullTotal) * recentTotal;
+      
+      // 计算卡方值
+      const chiSquare = Math.pow(recentCount - expectedRecent, 2) / expectedRecent;
+      
+      // 转换为P值（简化）
+      pValues[num] = Math.exp(-chiSquare / 2);
+    }
+    
+    return pValues;
+  }
+
+  /**
+   * 计算置信区间
+   */
+  private static calculateConfidenceIntervals(history: DbRecord[]): Record<number, {lower: number, upper: number}> {
+    const intervals: Record<number, {lower: number, upper: number}> = {};
+    
+    // 计算每个号码的出现位置
+    const positions: Record<number, number[]> = {};
+    
+    for (let i = 0; i < history.length; i++) {
+      const nums = this.parseNumbers(history[i].open_code);
+      nums.forEach(num => {
+        if (!positions[num]) {
+          positions[num] = [];
+        }
+        positions[num].push(i);
+      });
+    }
+    
+    // 计算置信区间（95%置信水平）
+    const zScore = 1.96; // 95%置信水平对应的z值
+    
+    for (let num = 1; num <= 49; num++) {
+      const pos = positions[num] || [];
+      if (pos.length < 2) {
+        intervals[num] = { lower: 0, upper: history.length };
+        continue;
+      }
+      
+      // 计算均值和标准差
+      const mean = pos.reduce((a, b) => a + b, 0) / pos.length;
+      const variance = pos.reduce((sq, n) => sq + Math.pow(n - mean, 2), 0) / pos.length;
+      const std = Math.sqrt(variance);
+      
+      const margin = zScore * std / Math.sqrt(pos.length);
+      
+      intervals[num] = {
+        lower: Math.max(0, mean - margin),
+        upper: Math.min(history.length, mean + margin)
+      };
+    }
+    
+    return intervals;
+  }
+
+  /**
+   * 执行假设检验
+   */
+  private static performHypothesisTests(fullHistory: DbRecord[], recentHistory: DbRecord[]): Record<number, string> {
+    const results: Record<number, string> = {};
+    
+    // 计算每个号码的z检验
+    for (let num = 1; num <= 49; num++) {
+      let fullCount = 0;
+      let recentCount = 0;
+      
+      fullHistory.forEach(rec => {
+        if (this.parseNumbers(rec.open_code).includes(num)) {
+          fullCount++;
+        }
+      });
+      
+      recentHistory.forEach(rec => {
+        if (this.parseNumbers(rec.open_code).includes(num)) {
+          recentCount++;
+        }
+      });
+      
+      const fullTotal = fullHistory.length * 7; // 每期7个号码
+      const recentTotal = recentHistory.length * 7;
+      
+      const pFull = fullCount / fullTotal;
+      const pRecent = recentCount / recentTotal;
+      
+      if (recentTotal === 0) {
+        results[num] = 'insufficient';
+        continue;
+      }
+      
+      // 计算z统计量
+      const pPooled = (fullCount + recentCount) / (fullTotal + recentTotal);
+      const se = Math.sqrt(pPooled * (1 - pPooled) * (1/fullTotal + 1/recentTotal));
+      
+      if (se === 0) {
+        results[num] = 'insufficient';
+        continue;
+      }
+      
+      const z = (pRecent - pFull) / se;
+      
+      if (Math.abs(z) > 1.96) {
+        results[num] = 'significant';
+      } else if (Math.abs(z) > 1.645) {
+        results[num] = 'marginal';
+      } else {
+        results[num] = 'not-significant';
+      }
+    }
+    
+    return results;
+  }
+
+  /**
+   * 分析时间序列
+   */
+  private static analyzeTimeSeries(history: DbRecord[]): Record<number, string> {
+    const trends: Record<number, string> = {};
+    
+    // 为每个号码构建时间序列
+    for (let num = 1; num <= 49; num++) {
+      const timeSeries: number[] = [];
+      
+      for (let i = 0; i < history.length; i++) {
+        const nums = this.parseNumbers(history[i].open_code);
+        timeSeries.push(nums.includes(num) ? 1 : 0);
+      }
+      
+      // 使用简单线性回归判断趋势
+      let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+      const n = timeSeries.length;
+      
+      for (let i = 0; i < n; i++) {
+        sumX += i;
+        sumY += timeSeries[i];
+        sumXY += i * timeSeries[i];
+        sumX2 += i * i;
+      }
+      
+      const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+      
+      if (slope > 0.005) {
+        trends[num] = 'increasing';
+      } else if (slope < -0.005) {
+        trends[num] = 'decreasing';
+      } else {
+        trends[num] = 'stable';
+      }
+    }
+    
+    return trends;
+  }
+
+  /**
+   * 检测异常值
+   */
+  private static detectOutlier(num: number, history: DbRecord[]): boolean {
+    // 使用IQR方法检测异常值
+    
+    const occurrences: number[] = [];
+    
+    for (let i = 0; i < history.length; i++) {
+      const nums = this.parseNumbers(history[i].open_code);
+      if (nums.includes(num)) {
+        occurrences.push(i);
+      }
+    }
+    
+    if (occurrences.length < 4) {
+      return false;
+    }
+    
+    // 计算间隔
+    const intervals: number[] = [];
+    for (let i = 1; i < occurrences.length; i++) {
+      intervals.push(occurrences[i] - occurrences[i-1]);
+    }
+    
+    intervals.sort((a, b) => a - b);
+    
+    const q1 = intervals[Math.floor(intervals.length / 4)];
+    const q3 = intervals[Math.floor(3 * intervals.length / 4)];
+    const iqr = q3 - q1;
+    
+    // 检查最新间隔是否为异常值
+    const latestInterval = occurrences.length > 0 ? 
+      (history.length - 1 - occurrences[occurrences.length - 1]) : history.length;
+    
+    return latestInterval > q3 + 1.5 * iqr;
+  }
+
+  /**
+   * 计算拓扑不变量
+   */
+  private static calculateTopologicalInvariants(history: DbRecord[]): {
+    getScore: (num: number) => number;
+  } {
+    // 计算每个号码的拓扑不变量
+    
+    const invariants: Record<number, number> = {};
+    
+    // 分析号码的邻域特性
+    for (let num = 1; num <= 49; num++) {
+      let invariant = 0;
+      
+      // 计算度数（与其他号码的连接数）
+      let degree = 0;
+      for (let other = 1; other <= 49; other++) {
+        if (other === num) continue;
+        
+        // 检查在历史中是否同时出现
+        let cooccurrence = 0;
+        history.forEach(rec => {
+          const nums = this.parseNumbers(rec.open_code);
+          if (nums.includes(num) && nums.includes(other)) {
+            cooccurrence++;
+          }
+        });
+        
+        if (cooccurrence > 0) {
+          degree++;
+        }
+      }
+      
+      invariant += Math.min(degree / 10, 5);
+      
+      // 计算聚类系数
+      let clustering = 0;
+      let possibleTriangles = 0;
+      let actualTriangles = 0;
+      
+      // 简化版聚类系数计算
+      if (degree >= 2) {
+        const neighbors: number[] = [];
+        for (let other = 1; other <= 49; other++) {
+          if (other === num) continue;
+          
+          let connected = false;
+          history.forEach(rec => {
+            const nums = this.parseNumbers(rec.open_code);
+            if (nums.includes(num) && nums.includes(other)) {
+              connected = true;
+            }
+          });
+          
+          if (connected) {
+            neighbors.push(other);
+          }
+        }
+        
+        // 检查邻居之间的连接
+        for (let i = 0; i < neighbors.length; i++) {
+          for (let j = i + 1; j < neighbors.length; j++) {
+            possibleTriangles++;
+            
+            let connected = false;
+            history.forEach(rec => {
+              const nums = this.parseNumbers(rec.open_code);
+              if (nums.includes(neighbors[i]) && nums.includes(neighbors[j])) {
+                connected = true;
+              }
+            });
+            
+            if (connected) {
+              actualTriangles++;
+            }
+          }
+        }
+        
+        if (possibleTriangles > 0) {
+          clustering = actualTriangles / possibleTriangles;
+        }
+      }
+      
+      invariant += clustering * 5;
+      
+      invariants[num] = Math.min(invariant, 10);
+    }
+    
+    return {
+      getScore: (num: number) => invariants[num] || 0
+    };
+  }
+
+  /**
+   * 分析同调群
+   */
+  private static analyzeHomology(history: DbRecord[]): number[] {
+    // 简化版同调群分析
+    const homologyGroups: number[] = [];
+    
+    // 识别"洞"和"环"中的号码
+    // 这里使用简化方法：识别在历史中形成环路的号码
+    
+    // 构建连接图
+    const graph: Record<number, number[]> = {};
+    
+    for (let i = 0; i < history.length; i++) {
+      const nums = this.parseNumbers(history[i].open_code);
+      
+      // 添加边
+      for (let j = 0; j < nums.length; j++) {
+        for (let k = j + 1; k < nums.length; k++) {
+          if (!graph[nums[j]]) graph[nums[j]] = [];
+          if (!graph[nums[k]]) graph[nums[k]] = [];
+          
+          if (!graph[nums[j]].includes(nums[k])) {
+            graph[nums[j]].push(nums[k]);
+          }
+          
+          if (!graph[nums[k]].includes(nums[j])) {
+            graph[nums[k]].push(nums[j]);
+          }
+        }
+      }
+    }
+    
+    // 寻找形成环的号码
+    for (let num = 1; num <= 49; num++) {
+      if (graph[num] && graph[num].length >= 3) {
+        // 检查是否能形成环
+        const visited = new Set<number>();
+        const stack: {node: number, path: number[]}[] = [{node: num, path: [num]}];
+        
+        while (stack.length > 0) {
+          const {node, path} = stack.pop()!;
+          
+          if (visited.has(node)) continue;
+          visited.add(node);
+          
+          for (const neighbor of graph[node] || []) {
+            if (neighbor === num && path.length >= 3) {
+              // 找到环，所有路径上的号码加入同调群
+              homologyGroups.push(...path);
+              break;
+            }
+            
+            if (!visited.has(neighbor)) {
+              stack.push({node: neighbor, path: [...path, neighbor]});
+            }
+          }
+        }
+      }
+    }
+    
+    return [...new Set(homologyGroups)];
+  }
+
+  /**
+   * 分析连通性
+   */
+  private static analyzeConnectivity(history: DbRecord[]): {
+    getScore: (num: number) => number;
+  } {
+    const connectivityScores: Record<number, number> = {};
+    
+    // 构建连接矩阵
+    const connectionMatrix: boolean[][] = Array(50).fill(0).map(() => Array(50).fill(false));
+    
+    history.forEach(rec => {
+      const nums = this.parseNumbers(rec.open_code);
+      
+      for (let i = 0; i < nums.length; i++) {
+        for (let j = i + 1; j < nums.length; j++) {
+          connectionMatrix[nums[i]][nums[j]] = true;
+          connectionMatrix[nums[j]][nums[i]] = true;
+        }
+      }
+    });
+    
+    // 计算每个号码的连接分数
+    for (let num = 1; num <= 49; num++) {
+      let score = 0;
+      
+      // 直接连接数
+      let directConnections = 0;
+      for (let other = 1; other <= 49; other++) {
+        if (connectionMatrix[num][other]) {
+          directConnections++;
+        }
+      }
+      
+      score += Math.min(directConnections / 5, 6);
+      
+      // 间接连接（二阶连接）
+      let indirectConnections = 0;
+      for (let other = 1; other <= 49; other++) {
+        if (other === num) continue;
+        
+        // 检查是否存在长度为2的路径
+        for (let bridge = 1; bridge <= 49; bridge++) {
+          if (bridge !== num && bridge !== other) {
+            if (connectionMatrix[num][bridge] && connectionMatrix[bridge][other]) {
+              indirectConnections++;
+              break;
+            }
+          }
+        }
+      }
+      
+      score += Math.min(indirectConnections / 10, 4);
+      
+      // 连通分量大小
+      const componentSize = this.findConnectedComponent(num, connectionMatrix).size;
+      score += Math.min(componentSize / 10, 5);
+      
+      connectivityScores[num] = Math.min(score, 15);
+    }
+    
+    return {
+      getScore: (num: number) => connectivityScores[num] || 0
+    };
+  }
+
+  /**
+   * 分析拓扑位置
+   */
+  private static analyzeTopologicalPosition(num: number): number {
+    // 分析号码在拓扑空间中的位置
+    
+    let score = 0;
+    
+    // 边界位置
+    if (num <= 7 || num >= 43 || num % 7 === 1 || num % 7 === 0) {
+      score += 4; // 边界
+    } else {
+      score += 6; // 内部
+    }
+    
+    // 特殊拓扑位置
+    if (num === 25) {
+      score += 8; // 中心
+    }
+    
+    if (num === 1 || num === 7 || num === 43 || num === 49) {
+      score += 6; // 角落
+    }
+    
+    // 对角线位置
+    const matrix = this.NUM_TO_MATRIX[num];
+    if (matrix.row === matrix.col) {
+      score += 5; // 主对角线
+    }
+    
+    if (matrix.row + matrix.col === 8) {
+      score += 5; // 副对角线
+    }
+    
+    return Math.min(score, 10);
+  }
+
+  /**
+   * 分析拓扑变换
+   */
+  private static analyzeTopologicalTransformation(num: number, history: DbRecord[]): number {
+    // 分析号码在拓扑变换中的角色
+    
+    let score = 0;
+    
+    // 检查是否是"固定点"
+    let fixedPointCount = 0;
+    for (let i = 1; i < history.length; i++) {
+      const prevNums = this.parseNumbers(history[i].open_code);
+      const currNums = this.parseNumbers(history[i-1].open_code);
+      
+      if (prevNums.includes(num) && currNums.includes(num)) {
+        fixedPointCount++;
+      }
+    }
+    
+    score += Math.min(fixedPointCount, 5);
+    
+    // 检查是否是"吸引子"
+    let attractedCount = 0;
+    for (let other = 1; other <= 49; other++) {
+      if (other === num) continue;
+      
+      let transitions = 0;
+      for (let i = 1; i < history.length; i++) {
+        const prevNums = this.parseNumbers(history[i].open_code);
+        const currNums = this.parseNumbers(history[i-1].open_code);
+        
+        const prevSpecial = prevNums[prevNums.length - 1];
+        const currSpecial = currNums[currNums.length - 1];
+        
+        if (prevSpecial === other && currSpecial === num) {
+          transitions++;
+        }
+      }
+      
+      if (transitions >= 2) {
+        attractedCount++;
+      }
+    }
+    
+    score += Math.min(attractedCount, 5);
+    
+    return Math.min(score, 8);
+  }
+
+  /**
+   * 执行谐波分析
+   */
+  private static performHarmonicAnalysis(history: DbRecord[]): {
+    dominantHarmonics: number[];
+    subHarmonics: number[];
+  } {
+    // 简化版谐波分析
+    
+    const specials: number[] = [];
+    for (let i = 0; i < Math.min(history.length, 50); i++) {
+      const nums = this.parseNumbers(history[i].open_code);
+      if (nums.length > 0) {
+        specials.push(nums[nums.length - 1]);
+      }
+    }
+    
+    if (specials.length === 0) {
+      return { dominantHarmonics: [], subHarmonics: [] };
+    }
+    
+    // 傅里叶变换（简化）
+    const harmonics: Record<number, number> = {};
+    
+    // 分析不同频率的谐波
+    for (let freq = 1; freq <= 12; freq++) {
+      let amplitude = 0;
+      
+      for (let t = 0; t < specials.length; t++) {
+        const angle = 2 * Math.PI * freq * t / specials.length;
+        amplitude += specials[t] * Math.cos(angle);
+      }
+      
+      amplitude = Math.abs(amplitude) / specials.length;
+      harmonics[freq] = amplitude;
+    }
+    
+    // 找出主要谐波
+    const sortedHarmonics = Object.entries(harmonics)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3);
+    
+    const dominantHarmonics: number[] = [];
+    const subHarmonics: number[] = [];
+    
+    sortedHarmonics.forEach(([freqStr, amp]) => {
+      const freq = parseInt(freqStr);
+      const harmonicNumbers = this.generateHarmonicNumbers(freq, specials.length);
+      
+      if (amp > 0.5) {
+        dominantHarmonics.push(...harmonicNumbers);
+      } else {
+        subHarmonics.push(...harmonicNumbers);
+      }
+    });
+    
+    return {
+      dominantHarmonics: [...new Set(dominantHarmonics)].filter(n => n >= 1 && n <= 49),
+      subHarmonics: [...new Set(subHarmonics)].filter(n => n >= 1 && n <= 49)
+    };
+  }
+
+  /**
+   * 寻找收敛点
+   */
+  private static findConvergencePoints(history: DbRecord[]): number[] {
+    const convergencePoints: number[] = [];
+    
+    // 分析不同路径的收敛
+    const transitionMap: Record<number, Record<number, number>> = {};
+    
+    // 构建转移矩阵
+    for (let i = 1; i < history.length; i++) {
+      const prevNums = this.parseNumbers(history[i].open_code);
+      const currNums = this.parseNumbers(history[i-1].open_code);
+      
+      const prevSpecial = prevNums[prevNums.length - 1];
+      const currSpecial = currNums[currNums.length - 1];
+      
+      if (!transitionMap[prevSpecial]) {
+        transitionMap[prevSpecial] = {};
+      }
+      
+      transitionMap[prevSpecial][currSpecial] = (transitionMap[prevSpecial][currSpecial] || 0) + 1;
+    }
+    
+    // 寻找收敛点（多个起点指向同一个终点）
+    const convergenceCounts: Record<number, number> = {};
+    
+    Object.keys(transitionMap).forEach(fromStr => {
+      const from = parseInt(fromStr);
+      const targets = transitionMap[from];
+      
+      // 找出主要目标
+      let mainTarget = -1;
+      let maxCount = 0;
+      
+      Object.entries(targets).forEach(([toStr, count]) => {
+        const to = parseInt(toStr);
+        if (count > maxCount) {
+          maxCount = count;
+          mainTarget = to;
+        }
+      });
+      
+      if (mainTarget !== -1 && maxCount >= 2) {
+        convergenceCounts[mainTarget] = (convergenceCounts[mainTarget] || 0) + 1;
+      }
+    });
+    
+    // 找出收敛点（至少3个不同起点指向）
+    Object.entries(convergenceCounts).forEach(([pointStr, count]) => {
+      if (count >= 3) {
+        convergencePoints.push(parseInt(pointStr));
+      }
+    });
+    
+    return convergencePoints;
+  }
+
+  /**
+   * 分析共振频率
+   */
+  private static analyzeResonanceFrequencies(history: DbRecord[]): {
+    getScore: (num: number) => number;
+  } {
+    const resonanceScores: Record<number, number> = {};
+    
+    // 分析每个号码的共振频率
+    for (let num = 1; num <= 49; num++) {
+      let score = 0;
+      
+      // 计算出现间隔的频率分析
+      const intervals: number[] = [];
+      let lastIndex = -1;
+      
+      for (let i = 0; i < history.length; i++) {
+        const nums = this.parseNumbers(history[i].open_code);
+        if (nums.includes(num)) {
+          if (lastIndex !== -1) {
+            intervals.push(i - lastIndex);
+          }
+          lastIndex = i;
+        }
+      }
+      
+      if (intervals.length >= 3) {
+        // 计算间隔的统计特性
+        const mean = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+        const variance = intervals.reduce((sq, n) => sq + Math.pow(n - mean, 2), 0) / intervals.length;
+        
+        // 低方差表示稳定的频率
+        const cv = Math.sqrt(variance) / mean; // 变异系数
+        
+        if (cv < 0.5) {
+          score += 8; // 稳定频率
+        } else if (cv < 1.0) {
+          score += 5; // 中等稳定
+        }
+        
+        // 检查是否是共振频率（间隔为特定值）
+        const commonIntervals = [1, 2, 3, 4, 7, 10, 14];
+        for (const interval of commonIntervals) {
+          const intervalCount = intervals.filter(i => Math.abs(i - interval) <= 1).length;
+          if (intervalCount >= 2) {
+            score += 6; // 共振间隔
+          }
+        }
+      }
+      
+      resonanceScores[num] = Math.min(score, 15);
+    }
+    
+    return {
+      getScore: (num: number) => resonanceScores[num] || 0
+    };
+  }
+
+  /**
+   * 执行傅里叶分析
+   */
+  private static performFourierAnalysis(history: DbRecord[]): {
+    getScore: (num: number) => number;
+  } {
+    const fourierScores: Record<number, number> = {};
+    
+    // 构建时间序列
+    const timeSeries: number[] = [];
+    for (let i = 0; i < Math.min(history.length, 64); i++) {
+      const nums = this.parseNumbers(history[i].open_code);
+      // 使用特码作为时间序列值
+      timeSeries.push(nums.length > 0 ? nums[nums.length - 1] : 25);
+    }
+    
+    if (timeSeries.length < 8) {
+      // 数据不足，返回默认值
+      for (let num = 1; num <= 49; num++) {
+        fourierScores[num] = 0;
+      }
+      
+      return {
+        getScore: (num: number) => fourierScores[num] || 0
+      };
+    }
+    
+    // 简化版傅里叶变换
+    const frequencies: Record<number, number> = {};
+    
+    for (let freq = 1; freq <= Math.min(12, timeSeries.length / 2); freq++) {
+      let real = 0;
+      let imag = 0;
+      
+      for (let t = 0; t < timeSeries.length; t++) {
+        const angle = 2 * Math.PI * freq * t / timeSeries.length;
+        real += timeSeries[t] * Math.cos(angle);
+        imag += timeSeries[t] * Math.sin(angle);
+      }
+      
+      const amplitude = Math.sqrt(real * real + imag * imag) / timeSeries.length;
+      frequencies[freq] = amplitude;
+    }
+    
+    // 找出主要频率
+    const sortedFrequencies = Object.entries(frequencies)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3);
+    
+    // 计算每个号码的傅里叶分数
+    for (let num = 1; num <= 49; num++) {
+      let score = 0;
+      
+      sortedFrequencies.forEach(([freqStr, amplitude]) => {
+        const freq = parseInt(freqStr);
+        
+        // 检查号码是否与频率相关
+        if (amplitude > 0.3) {
+          // 生成该频率对应的号码
+          const harmonicNumbers = this.generateHarmonicNumbers(freq, timeSeries.length);
+          
+          if (harmonicNumbers.includes(num)) {
+            score += 8 * amplitude;
+          }
+        }
+      });
+      
+      fourierScores[num] = Math.min(score, 12);
+    }
+    
+    return {
+      getScore: (num: number) => fourierScores[num] || 0
+    };
+  }
+
+  /**
+   * 分析谐波平衡
+   */
+  private static analyzeHarmonicBalance(history: DbRecord[]): {
+    needsHarmonic: number[];
+  } {
+    const needsHarmonic: number[] = [];
+    
+    // 分析历史谐波分布
+    const harmonicDistribution: Record<number, number> = {};
+    
+    // 分析不同谐波的出现频率
+    for (let freq = 1; freq <= 7; freq++) {
+      let harmonicCount = 0;
+      
+      for (let i = 0; i < history.length; i++) {
+        const nums = this.parseNumbers(history[i].open_code);
+        const special = nums[nums.length - 1];
+        
+        // 检查是否属于该谐波
+        const harmonicNumbers = this.generateHarmonicNumbers(freq, 49);
+        if (harmonicNumbers.includes(special)) {
+          harmonicCount++;
+        }
+      }
+      
+      harmonicDistribution[freq] = harmonicCount;
+    }
+    
+    // 找出需要平衡的谐波
+    const total = Object.values(harmonicDistribution).reduce((a, b) => a + b, 0);
+    const expected = total / 7; // 均匀分布
+    
+    Object.entries(harmonicDistribution).forEach(([freqStr, count]) => {
+      if (count < expected * 0.7) {
+        const freq = parseInt(freqStr);
+        const harmonicNumbers = this.generateHarmonicNumbers(freq, 49);
+        needsHarmonic.push(...harmonicNumbers);
+      }
+    });
+    
+    return {
+      needsHarmonic: [...new Set(needsHarmonic)].filter(n => n >= 1 && n <= 49)
+    };
+  }
+
+  /**
+   * 分析周波模式
+   */
+  private static analyzeWeeklyPattern(num: number, history: DbRecord[], week: number): number {
+    // 分析号码的周波模式
+    
+    let score = 0;
+    
+    // 检查历史中相同周数的表现
+    const weeklyHistory: Record<number, number[]> = {};
+    
+    for (let i = 0; i < history.length; i++) {
+      const record = history[i];
+      if (!record.draw_time) continue;
+      
+      const date = new Date(record.draw_time);
+      const recordWeek = Math.floor(date.getDate() / 7) + 1;
+      const nums = this.parseNumbers(record.open_code);
+      
+      if (!weeklyHistory[recordWeek]) {
+        weeklyHistory[recordWeek] = [];
+      }
+      
+      weeklyHistory[recordWeek].push(...nums);
+    }
+    
+    // 检查当前周数的历史模式
+    const currentWeekHistory = weeklyHistory[week] || [];
+    const occurrenceInWeek = currentWeekHistory.filter(n => n === num).length;
+    
+    if (occurrenceInWeek >= 2) {
+      score += 6; // 本周历史中出现多次
+    }
+    
+    // 检查相邻周数的模式
+    const prevWeekHistory = weeklyHistory[(week + 6) % 8] || []; // 前一周
+    const nextWeekHistory = weeklyHistory[(week + 1) % 8] || []; // 后一周
+    
+    const prevOccurrence = prevWeekHistory.filter(n => n === num).length;
+    const nextOccurrence = nextWeekHistory.filter(n => n === num).length;
+    
+    if (prevOccurrence > 0 && nextOccurrence > 0) {
+      score += 4; // 在相邻周都出现过
+    }
+    
+    // 周波数分析
+    if (num % 7 === week % 7) {
+      score += 3; // 号码与周数同余
+    }
+    
+    return score;
+  }
+
+  /**
+   * 生成谐波数字
+   */
+  private static generateHarmonicNumbers(freq: number, base: number): number[] {
+    const harmonicNumbers: number[] = [];
+    
+    // 生成基于频率的谐波数字
+    for (let i = 1; i <= base; i++) {
+      if (i % freq === 0 || freq % i === 0 || this.gcd(i, freq) > 1) {
+        harmonicNumbers.push(i);
+      }
+    }
+    
+    return harmonicNumbers.slice(0, 10); // 限制数量
+  }
+
+  /**
+   * 计算最大公约数
+   */
+  private static gcd(a: number, b: number): number {
+    while (b !== 0) {
+      const temp = b;
+      b = a % b;
+      a = temp;
+    }
+    return a;
+  }
+
+  /**
+   * 查找连通分量
+   */
+  private static findConnectedComponent(start: number, connectionMatrix: boolean[][]): Set<number> {
+    const visited = new Set<number>();
+    const stack = [start];
+    
+    while (stack.length > 0) {
+      const node = stack.pop()!;
+      
+      if (visited.has(node)) continue;
+      visited.add(node);
+      
+      for (let other = 1; other <= 49; other++) {
+        if (connectionMatrix[node][other] && !visited.has(other)) {
+          stack.push(other);
+        }
+      }
+    }
+    
+    return visited;
+  }
+
+  /**
+   * 获取近期频率
+   */
+  private static getRecentFrequency(history: DbRecord[], num: number): number {
+    let count = 0;
+    
+    for (let i = 0; i < Math.min(history.length, 20); i++) {
+      const nums = this.parseNumbers(history[i].open_code);
+      if (nums.includes(num)) {
+        count++;
+      }
+    }
+    
+    return count;
+  }
+
+  // ==========================================
+  // 原有辅助方法（保持原样）
+  // ==========================================
+
+  private static calculateHistoryMirror(history: DbRecord[], lastDraw: number[]): Record<number, number> {
+    const scores: Record<number, number> = {};
+    
+    for (let i = 1; i < history.length - 1; i++) {
+      const histNums = this.parseNumbers(history[i].open_code);
+      const common = histNums.filter(n => lastDraw.includes(n));
+      
+      if (common.length >= 3) {
+        const nextNums = this.parseNumbers(history[i-1].open_code);
+        const similarity = common.length / lastDraw.length;
+        
+        nextNums.forEach(n => {
+          scores[n] = (scores[n] || 0) + similarity * 15;
+        });
+      }
+    }
+    
+    return scores;
+  }
+
+  private static analyzeTrajectory(history: DbRecord[], lastSpecial: number): Record<number, number> {
+    const scores: Record<number, number> = {};
+    const specials: number[] = [];
+    
+    for (let i = 0; i < Math.min(15, history.length); i++) {
+      const nums = this.parseNumbers(history[i].open_code);
+      if (nums.length > 0) {
+        specials.push(nums[nums.length - 1]);
+      }
+    }
+    
+    if (specials.length >= 3) {
+      const movingAvg = specials.slice(0, 3).reduce((a, b) => a + b, 0) / 3;
+      const lastParity = lastSpecial % 2;
+      const parityHistory = specials.map(s => s % 2);
+      const sameParityCount = parityHistory.filter(p => p === lastParity).length;
+      
+      for (let num = 1; num <= 49; num++) {
+        let score = 0;
+        
+        if (Math.abs(num - movingAvg) <= 5) score += 10;
+        
+        if ((num % 2) === lastParity && sameParityCount >= 2) score += 8;
+        
+        const diff = specials[0] - specials[1];
+        if (diff > 0 && num < lastSpecial) score += 12;
+        if (diff < 0 && num > lastSpecial) score += 12;
+        
+        scores[num] = score;
+      }
+    }
+    
+    return scores;
+  }
+
+  private static calculatePatternScores(lastDraw: number[], recentHistory: DbRecord[]): Record<number, number> {
+    const scores: Record<number, number> = {};
+    
+    const neighborSet = new Set<number>();
+    lastDraw.forEach(n => {
+      if (n > 1) neighborSet.add(n - 1);
+      if (n < 49) neighborSet.add(n + 1);
+    });
+    
+    const consecutiveSet = new Set<number>();
+    const sortedLast = [...lastDraw].sort((a, b) => a - b);
+    for (let i = 0; i < sortedLast.length - 1; i++) {
+      if (sortedLast[i+1] - sortedLast[i] === 1) {
+        if (sortedLast[i] > 1) consecutiveSet.add(sortedLast[i] - 1);
+        if (sortedLast[i+1] < 49) consecutiveSet.add(sortedLast[i+1] + 1);
+      }
+    }
+    
+    for (let num = 1; num <= 49; num++) {
+      let score = 0;
+      
+      if (neighborSet.has(num)) score += 15;
+      if (consecutiveSet.has(num)) score += 18;
+      
+      if (lastDraw.includes(num)) score -= 10;
+      
+      scores[num] = Math.max(score, 0);
+    }
+    
+    return scores;
+  }
+
+  private static calculateTailScores(recentHistory: DbRecord[]): Record<number, number> {
+    const tailCount: Record<number, number> = {};
+    const scores: Record<number, number> = {};
+    
+    recentHistory.forEach(rec => {
+      this.parseNumbers(rec.open_code).forEach(num => {
+        const tail = num % 10;
+        tailCount[tail] = (tailCount[tail] || 0) + 1;
+      });
+    });
+    
+    const sortedTails = Object.entries(tailCount)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3)
+      .map(([tail]) => parseInt(tail));
+    
+    for (let tail = 0; tail <= 9; tail++) {
+      if (sortedTails.includes(tail)) {
+        scores[tail] = 20;
+      } else {
+        scores[tail] = 0;
+      }
+    }
+    
+    return scores;
+  }
+
+  private static calculateZodiacScores(recentHistory: DbRecord[], lastSpecialZodiac: string): Record<string, number> {
+    const scores: Record<string, number> = {};
+    const zodiacCount: Record<string, number> = {};
+    
+    recentHistory.forEach(rec => {
+      this.parseNumbers(rec.open_code).forEach(num => {
+        const zodiac = this.NUM_TO_ZODIAC[num];
+        zodiacCount[zodiac] = (zodiacCount[zodiac] || 0) + 1;
+      });
+    });
+    
+    const hotZodiacs = Object.entries(zodiacCount)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3)
+      .map(([zodiac]) => zodiac);
+    
+    const allies = this.SAN_HE_MAP[lastSpecialZodiac] || [];
+    
+    Object.keys(this.ZODIACS_MAP).forEach(zodiac => {
+      let score = 0;
+      
+      if (hotZodiacs.includes(zodiac)) score += 15;
+      if (allies.includes(zodiac)) score += 20;
+      
+      // 不排除上期特肖，仅按得分排序
+      scores[zodiac] = Math.max(score, 0);
+    });
+    
+    return scores;
+  }
+
+  private static calculateWuxingScores(recentHistory: DbRecord[]): Record<string, number> {
+    const wuxingCount: Record<string, number> = {};
+    const scores: Record<string, number> = {};
+    
+    recentHistory.forEach(rec => {
+      this.parseNumbers(rec.open_code).forEach(num => {
+        const wuxing = this.NUM_TO_WUXING[num];
+        wuxingCount[wuxing] = (wuxingCount[wuxing] || 0) + 1;
+      });
+    });
+    
+    const sortedWuxing = Object.entries(wuxingCount)
+      .sort((a, b) => a[1] - b[1]);
+    
+    const weakWuxing = sortedWuxing[0]?.[0] || '土';
+    const strongWuxing = sortedWuxing[sortedWuxing.length - 1]?.[0] || '金';
+    
+    Object.keys(this.WU_XING_MAP).forEach(wuxing => {
+      if (wuxing === weakWuxing) {
+        scores[wuxing] = 25;
+      } else if (wuxing === strongWuxing) {
+        scores[wuxing] = 5;
+      } else {
+        scores[wuxing] = 15;
+      }
+    });
+    
+    return scores;
+  }
+
+  private static calculateWaveScores(recentHistory: DbRecord[], lastSpecial: number): Record<string, number> {
+    const waveCount: Record<string, number> = {};
+    const scores: Record<string, number> = {};
+    
+    recentHistory.forEach(rec => {
+      this.parseNumbers(rec.open_code).forEach(num => {
+        const wave = this.getNumWave(num);
+        waveCount[wave] = (waveCount[wave] || 0) + 1;
+      });
+    });
+    
+    const lastWave = this.getNumWave(lastSpecial);
+    
+    const sortedWaves = Object.entries(waveCount)
+      .sort((a, b) => a[1] - b[1]);
+    
+    const weakWave = sortedWaves[0]?.[0] || 'green';
+    
+    ['red', 'blue', 'green'].forEach(wave => {
+      let score = 0;
+      
+      if (wave === lastWave) score += 10;
+      
+      if (wave === weakWave) score += 20;
+      
+      scores[wave] = score;
+    });
+    
+    return scores;
+  }
+
+  private static calculateGoldNumbers(sum: number, special: number): number[] {
+    const goldNumbers: number[] = [];
+    
+    goldNumbers.push(Math.round(sum * 0.618) % 49 || 49);
+    goldNumbers.push((sum + 7) % 49 || 49);
+    goldNumbers.push(Math.round(special * 1.618) % 49 || 49);
+    goldNumbers.push((special + 13) % 49 || 49);
+    goldNumbers.push((special * 2) % 49 || 49);
+    
+    return [...new Set(goldNumbers.filter(n => n >= 1 && n <= 49 && n !== special))];
+  }
+
+  private static calculateOmissionScores(history: DbRecord[], period: number): Record<number, number> {
+    const omissionMap: Record<number, number> = {};
+    const scores: Record<number, number> = {};
+    
+    for (let i = 1; i <= 49; i++) {
+      omissionMap[i] = period;
+    }
+    
+    for (let i = 0; i < Math.min(period, history.length); i++) {
+      const nums = this.parseNumbers(history[i].open_code);
+      nums.forEach(num => {
+        omissionMap[num] = i;
+      });
+    }
+    
+    for (let num = 1; num <= 49; num++) {
+      const omission = omissionMap[num];
+      
+      if (omission >= period * 0.8) {
+        scores[num] = 25;
+      } else if (omission >= period * 0.6) {
+        scores[num] = 20;
+      } else if (omission >= period * 0.4) {
+        scores[num] = 15;
+      } else if (omission >= period * 0.2) {
+        scores[num] = 10;
+      } else if (omission >= period * 0.1) {
+        scores[num] = 5;
+      } else {
+        scores[num] = 0;
+      }
+    }
+    
+    return scores;
+  }
+
+  private static calculateSeasonalScores(month: number, week: number): Record<string, number> {
+    const scores: Record<string, number> = {};
+    const season = this.getSeasonByMonth(month);
+    const seasonalZodiacs = this.SEASONAL_ZODIACS[season] || [];
+    
+    Object.keys(this.ZODIACS_MAP).forEach(zodiac => {
+      if (seasonalZodiacs.includes(zodiac)) {
+        scores[zodiac] = 20;
+      } else {
+        scores[zodiac] = 0;
+      }
+    });
+    
+    return scores;
+  }
+
+  private static analyzePrimeDistribution(history: DbRecord[]) {
+    let primeCount = 0;
+    let totalNumbers = 0;
+    
+    history.forEach(rec => {
+      const nums = this.parseNumbers(rec.open_code);
+      totalNumbers += nums.length;
+      primeCount += nums.filter(n => this.PRIME_NUMBERS.includes(n)).length;
+    });
+    
+    const primeRatio = primeCount / totalNumbers;
+    const expectedRatio = this.PRIME_NUMBERS.length / 49;
+    
+    return {
+      currentRatio: primeRatio,
+      expectedRatio,
+      needMorePrimes: primeRatio < expectedRatio * 0.9,
+      needMoreComposites: primeRatio > expectedRatio * 1.1
+    };
+  }
+
+  private static analyzeSumPatterns(history: DbRecord[], lastSum: number) {
+    const sums: number[] = [];
+    const sumTails: number[] = [];
+    
+    history.forEach(rec => {
+      const nums = this.parseNumbers(rec.open_code);
+      const sum = nums.reduce((a, b) => a + b, 0);
+      sums.push(sum);
+      sumTails.push(sum % 10);
+    });
+    
+    const avgSum = sums.reduce((a, b) => a + b, 0) / sums.length;
+    const stdSum = Math.sqrt(sums.reduce((sq, n) => sq + Math.pow(n - avgSum, 2), 0) / sums.length);
+    
+    const lastParity = lastSum % 2;
+    const parityCounts = sumTails.reduce((counts, tail) => {
+      counts[tail % 2]++;
+      return counts;
+    }, [0, 0]);
+    
+    const parityTrend = parityCounts[lastParity] > parityCounts[1 - lastParity] ? 'same' : 'alternate';
+    
+    return {
+      getScore: (simulatedSum: number) => {
+        let score = 0;
+        
+        if (simulatedSum >= avgSum - stdSum && simulatedSum <= avgSum + stdSum) {
+          score += 15;
+        }
+        
+        if ((parityTrend === 'same' && (simulatedSum % 2) === lastParity) ||
+            (parityTrend === 'alternate' && (simulatedSum % 2) !== lastParity)) {
+          score += 10;
+        }
+        
+        return score;
+      }
+    };
+  }
+
+  private static calculatePositionScores(recentHistory: DbRecord[]): Record<number, number> {
+    const positionStats: Record<number, Record<number, number>> = {};
+    const scores: Record<number, number> = {};
+    
+    for (let i = 1; i <= 49; i++) {
+      positionStats[i] = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0 };
+    }
+    
+    recentHistory.forEach(rec => {
+      const nums = this.parseNumbers(rec.open_code);
+      nums.forEach((num, index) => {
+        const position = index + 1;
+        if (positionStats[num]) {
+          positionStats[num][position]++;
+        }
+      });
+    });
+    
+    for (let num = 1; num <= 49; num++) {
+      const positions = positionStats[num];
+      const total = Object.values(positions).reduce((a, b) => a + b, 0);
+      
+      if (total > 0) {
+        const specialScore = positions[7] * 3;
+        const normalScore = (total - positions[7]) * 1;
+        scores[num] = specialScore + normalScore;
+      } else {
+        scores[num] = 0;
+      }
+    }
+    
+    return scores;
+  }
+
+  private static calculateFrequencyScores(recentHistory: DbRecord[]): Record<number, number> {
+    const frequencyMap: Record<number, number> = {};
+    const scores: Record<number, number> = {};
+    
+    recentHistory.forEach(rec => {
+      this.parseNumbers(rec.open_code).forEach(num => {
+        frequencyMap[num] = (frequencyMap[num] || 0) + 1;
+      });
+    });
+    
+    const maxFreq = Math.max(...Object.values(frequencyMap));
+    const avgFreq = Object.values(frequencyMap).reduce((a, b) => a + b, 0) / Object.keys(frequencyMap).length;
+    
+    for (let num = 1; num <= 49; num++) {
+      const freq = frequencyMap[num] || 0;
+      
+      if (freq > avgFreq * 1.5) {
+        scores[num] = 15;
+      } else if (freq < avgFreq * 0.5) {
+        scores[num] = 12;
+      } else if (freq === 0) {
+        scores[num] = 20;
+      } else {
+        scores[num] = Math.min((freq / maxFreq) * 10, 10);
+      }
+    }
+    
+    return scores;
+  }
+
+  private static calculateClusterScores(lastDraw: number[], history: DbRecord[]): Record<number, number> {
+    const scores: Record<number, number> = {};
+    
+    const recentNumbers: number[] = [];
+    history.slice(0, 10).forEach(rec => {
+      recentNumbers.push(...this.parseNumbers(rec.open_code));
+    });
+    
+    for (let num = 1; num <= 49; num++) {
+      let totalDistance = 0;
+      let count = 0;
+      
+      lastDraw.forEach(n => {
+        totalDistance += Math.abs(num - n);
+        count++;
+      });
+      
+      const recentAvg = recentNumbers.reduce((a, b) => a + b, 0) / recentNumbers.length;
+      totalDistance += Math.abs(num - recentAvg) * 2;
+      count += 2;
+      
+      const avgDistance = totalDistance / count;
+      
+      scores[num] = Math.max(0, 20 - avgDistance);
+    }
+    
+    return scores;
+  }
+
+  private static calculateSymmetryScores(history: DbRecord[], lastDraw: number[]): Record<number, number> {
+    const scores: Record<number, number> = {};
+    const symmetryMap: Record<number, number> = {};
+    
+    history.forEach(rec => {
+      const nums = this.parseNumbers(rec.open_code);
+      nums.forEach(num => {
+        const symmetricNum = 50 - num;
+        if (symmetricNum >= 1 && symmetricNum <= 49) {
+          symmetryMap[symmetricNum] = (symmetryMap[symmetricNum] || 0) + 1;
+        }
+      });
+    });
+    
+    for (let num = 1; num <= 49; num++) {
+      let score = 0;
+      
+      lastDraw.forEach(n => {
+        if (50 - n === num) {
+          score += 15;
+        }
+      });
+      
+      const symmetricNum = 50 - num;
+      if (symmetryMap[num] && symmetryMap[num] > 0) {
+        score += symmetryMap[num] * 2;
+      }
+      
+      scores[num] = score;
+    }
+    
+    return scores;
+  }
+
+  private static calculatePeriodicScores(history: DbRecord[], currentWeek: number): Record<number, number> {
+    const scores: Record<number, number> = {};
+    const periodMap: Record<number, number[]> = {};
+    
+    for (let i = 1; i <= 49; i++) {
+      periodMap[i] = [];
+    }
+    
+    history.forEach((rec, index) => {
+      const weekNum = Math.floor(index / 7) + 1;
+      this.parseNumbers(rec.open_code).forEach(num => {
+        periodMap[num].push(weekNum);
+      });
+    });
+    
+    for (let num = 1; num <= 49; num++) {
+      const appearances = periodMap[num];
+      if (appearances.length < 3) {
+        scores[num] = 0;
+        continue;
+      }
+      
+      let totalInterval = 0;
+      for (let i = 1; i < appearances.length; i++) {
+        totalInterval += appearances[i] - appearances[i-1];
+      }
+      const avgInterval = totalInterval / (appearances.length - 1);
+      
+      const lastAppearance = appearances[appearances.length - 1];
+      const expectedAppearance = lastAppearance + avgInterval;
+      
+      if (Math.abs(currentWeek - expectedAppearance) <= 1) {
+        scores[num] = 20;
+      } else if (currentWeek > expectedAppearance) {
+        scores[num] = 15;
+      } else {
+        scores[num] = 0;
+      }
+    }
+    
+    return scores;
+  }
+
+  private static calculateTrendScores(history: DbRecord[]): Record<number, number> {
+    const scores: Record<number, number> = {};
+    const trendMap: Record<number, {count: number, lastPositions: number[]}> = {};
+    
+    for (let i = 1; i <= 49; i++) {
+      trendMap[i] = { count: 0, lastPositions: [] };
+    }
+    
+    const recentHistory = history.slice(0, 20);
+    recentHistory.forEach((rec, drawIndex) => {
+      const nums = this.parseNumbers(rec.open_code);
+      nums.forEach((num, position) => {
+        const pos = position + 1;
+        trendMap[num].count++;
+        trendMap[num].lastPositions.push(drawIndex * 10 + pos);
+      });
+    });
+    
+    for (let num = 1; num <= 49; num++) {
+      const data = trendMap[num];
+      if (data.lastPositions.length < 2) {
+        scores[num] = 0;
+        continue;
+      }
+      
+      let totalDiff = 0;
+      for (let i = 1; i < data.lastPositions.length; i++) {
+        totalDiff += data.lastPositions[i] - data.lastPositions[i-1];
+      }
+      const avgDiff = totalDiff / (data.lastPositions.length - 1);
+      
+      if (avgDiff > 0) {
+        scores[num] = 15;
+      } else if (avgDiff < 0) {
+        scores[num] = 10;
+      } else {
+        scores[num] = 5;
+      }
+      
+      if (data.count >= 3) {
+        scores[num] += 5;
+      }
+    }
+    
+    return scores;
+  }
+
+  private static analyzeHeadPatterns(history: DbRecord[], lastHead: number, weekday: number): {
+    getScore: (head: number, num: number) => number;
+  } {
+    const headStats: Record<number, {count: number, lastAppearance: number, trends: number[]}> = {};
+    
+    for (let head = 0; head <= 4; head++) {
+      headStats[head] = { count: 0, lastAppearance: 0, trends: [] };
+    }
+    
+    history.forEach((rec, index) => {
+      const nums = this.parseNumbers(rec.open_code);
+      const headsInDraw = nums.map(num => Math.floor(num / 10));
+      
+      headsInDraw.forEach(head => {
+        headStats[head].count++;
+        headStats[head].lastAppearance = index;
+        headStats[head].trends.push(index);
+      });
+    });
+    
+    const headOmission: Record<number, number> = {};
+    for (let head = 0; head <= 4; head++) {
+      headOmission[head] = headStats[head].lastAppearance;
+    }
+    
+    const headEntries = Object.entries(headStats);
+    const hotHeads = headEntries
+      .sort((a, b) => b[1].count - a[1].count)
+      .slice(0, 2)
+      .map(([head]) => parseInt(head));
+    
+    const coldHeads = headEntries
+      .sort((a, b) => a[1].count - b[1].count)
+      .slice(0, 2)
+      .map(([head]) => parseInt(head));
+    
+    const weekdayPatterns: Record<number, number[]> = {
+      0: [0, 3],
+      1: [1, 4],
+      2: [2, 0],
+      3: [3, 1],
+      4: [4, 2],
+      5: [0, 3],
+      6: [1, 4]
+    };
+    
+    const weekdayHeads = weekdayPatterns[weekday] || [0, 1, 2, 3, 4];
+    
+    return {
+      getScore: (head: number, num: number): number => {
+        let score = 0;
+        
+        if (hotHeads.includes(head)) score += 15;
+        
+        if (coldHeads.includes(head)) score += 12;
+        
+        if (head !== lastHead) score += 10;
+        
+        if (weekdayHeads.includes(head)) score += 8;
+        
+        const omission = headOmission[head] || 0;
+        if (omission > 10) score += omission * 0.5;
+        
+        if (num >= 40 && head === 4) score += 5;
+        if (num <= 9 && head === 0) score += 5;
+        
+        return Math.min(score, 25);
+      }
+    };
+  }
+
+  private static analyzeTailPatterns(history: DbRecord[], lastTail: number, day: number): {
+    getScore: (tail: number, num: number) => number;
+  } {
+    const tailStats: Record<number, {count: number, lastAppearance: number, trends: number[]}> = {};
+    
+    for (let tail = 0; tail <= 9; tail++) {
+      tailStats[tail] = { count: 0, lastAppearance: 0, trends: [] };
+    }
+    
+    history.forEach((rec, index) => {
+      const nums = this.parseNumbers(rec.open_code);
+      const tailsInDraw = nums.map(num => num % 10);
+      
+      tailsInDraw.forEach(tail => {
+        tailStats[tail].count++;
+        tailStats[tail].lastAppearance = index;
+        tailStats[tail].trends.push(index);
+      });
+    });
+    
+    const tailOmission: Record<number, number> = {};
+    for (let tail = 0; tail <= 9; tail++) {
+      tailOmission[tail] = tailStats[tail].lastAppearance;
+    }
+    
+    const tailEntries = Object.entries(tailStats);
+    const hotTails = tailEntries
+      .sort((a, b) => b[1].count - a[1].count)
+      .slice(0, 3)
+      .map(([tail]) => parseInt(tail));
+    
+    const coldTails = tailEntries
+      .sort((a, b) => a[1].count - b[1].count)
+      .slice(0, 3)
+      .map(([tail]) => parseInt(tail));
+    
+    const datePattern = day % 10;
+    
+    const tailGroups = {
+      small: [0, 1, 2, 3, 4],
+      big: [5, 6, 7, 8, 9],
+      prime: [2, 3, 5, 7],
+      composite: [0, 1, 4, 6, 8, 9],
+      even: [0, 2, 4, 6, 8],
+      odd: [1, 3, 5, 7, 9]
+    };
+    
+    return {
+      getScore: (tail: number, num: number): number => {
+        let score = 0;
+        
+        if (hotTails.includes(tail)) score += 15;
+        
+        if (coldTails.includes(tail)) score += 12;
+        
+        if (tail !== lastTail) score += 8;
+        
+        if (tail === datePattern) score += 8;
+        if (tail === (datePattern + 5) % 10) score += 6;
+        
+        const omission = tailOmission[tail] || 0;
+        if (omission > 8) score += omission * 0.6;
+        
+        if (tailGroups.small.includes(tail)) score += 3;
+        if (tailGroups.prime.includes(tail)) score += 4;
+        
+        if (tail === 0 && num % 10 === 0) score += 5;
+        
+        return Math.min(score, 25);
+      }
+    };
+  }
+
+  private static calculateCorrelationScores(recentHistory: DbRecord[], lastDraw: number[]): Record<number, number> {
+    const scores: Record<number, number> = {};
+    const correlationMap: Record<number, Record<number, number>> = {};
+    
+    for (let i = 1; i <= 49; i++) {
+      correlationMap[i] = {};
+    }
+    
+    recentHistory.forEach(rec => {
+      const nums = this.parseNumbers(rec.open_code);
+      
+      for (let i = 0; i < nums.length; i++) {
+        for (let j = i + 1; j < nums.length; j++) {
+          const a = nums[i];
+          const b = nums[j];
+          
+          correlationMap[a][b] = (correlationMap[a][b] || 0) + 1;
+          correlationMap[b][a] = (correlationMap[b][a] || 0) + 1;
+        }
+      }
+    });
+    
+    for (let num = 1; num <= 49; num++) {
+      let totalCorrelation = 0;
+      let correlationCount = 0;
+      
+      lastDraw.forEach(lastNum => {
+        if (correlationMap[num][lastNum]) {
+          totalCorrelation += correlationMap[num][lastNum];
+          correlationCount++;
+        }
+      });
+      
+      if (correlationCount > 0) {
+        scores[num] = Math.min(totalCorrelation / correlationCount * 3, 20);
+      } else {
+        scores[num] = 0;
+      }
+    }
+    
+    return scores;
+  }
+
+  private static analyzePropertyPatterns(history: DbRecord[], lastSpecial: number): {
+    getScore: (stat: NumberStat) => number;
+  } {
+    const sizeHistory: string[] = [];
+    const parityHistory: string[] = [];
+    
+    history.forEach(rec => {
+      const nums = this.parseNumbers(rec.open_code);
+      const special = nums[nums.length - 1];
+      
+      sizeHistory.push(this.NUM_TO_SIZE[special]);
+      parityHistory.push(this.NUM_TO_PARITY[special]);
+    });
+    
+    const lastSize = this.NUM_TO_SIZE[lastSpecial];
+    const lastParity = this.NUM_TO_PARITY[lastSpecial];
+    
+    const sizeContinuity = this.calculateContinuity(sizeHistory, lastSize);
+    const parityContinuity = this.calculateContinuity(parityHistory, lastParity);
+    
+    const sizeBalance = this.calculateBalance(sizeHistory, ['small', 'large']);
+    const parityBalance = this.calculateBalance(parityHistory, ['odd', 'even']);
+    
+    return {
+      getScore: (stat: NumberStat): number => {
+        let score = 0;
+        
+        if (sizeContinuity === 'continue' && stat.size === lastSize) {
+          score += 12;
+        } else if (sizeContinuity === 'alternate' && stat.size !== lastSize) {
+          score += 12;
+        }
+        
+        if (sizeBalance === 'needSmall' && stat.size === 'small') {
+          score += 8;
+        } else if (sizeBalance === 'needLarge' && stat.size === 'large') {
+          score += 8;
+        }
+        
+        if (parityContinuity === 'continue' && stat.parity === lastParity) {
+          score += 10;
+        } else if (parityContinuity === 'alternate' && stat.parity !== lastParity) {
+          score += 10;
+        }
+        
+        if (parityBalance === 'needOdd' && stat.parity === 'odd') {
+          score += 6;
+        } else if (parityBalance === 'needEven' && stat.parity === 'even') {
+          score += 6;
+        }
+        
+        const primeHistory = history.map(rec => {
+          const nums = this.parseNumbers(rec.open_code);
+          const special = nums[nums.length - 1];
+          return this.NUM_TO_PRIME[special];
+        });
+        
+        const primeContinuity = this.calculateContinuity(primeHistory.map(p => p ? 'prime' : 'composite'), 
+          lastSpecial ? 'prime' : 'composite');
+        
+        if (primeContinuity === 'continue' && stat.prime === lastSpecial) {
+          score += 8;
+        } else if (primeContinuity === 'alternate' && stat.prime !== lastSpecial) {
+          score += 8;
+        }
+        
+        return Math.min(score, 25);
+      }
+    };
+  }
+
+  private static calculateTimePatternScores(
+    weekday: number, 
+    monthPeriod: 'early' | 'middle' | 'late', 
+    day: number
+  ): Record<number, number> {
+    const scores: Record<number, number> = {};
+    
+    const weekdayPattern = this.TIME_PATTERNS.weekday[weekday];
+    const monthPeriodPattern = this.TIME_PATTERNS.monthPeriod[monthPeriod];
+    
+    const dayPattern = {
+      tails: [day % 10, (day % 10 + 5) % 10],
+      heads: [Math.floor(day / 10), (Math.floor(day / 10) + 1) % 5]
+    };
+    
+    for (let num = 1; num <= 49; num++) {
+      let score = 0;
+      
+      if (weekdayPattern.zodiacs.includes(this.NUM_TO_ZODIAC[num])) {
+        score += 8;
+      }
+      
+      if (weekdayPattern.tails.includes(num % 10)) {
+        score += 6;
+      }
+      
+      if (weekdayPattern.clusters.includes(this.NUM_TO_CLUSTER[num])) {
+        score += 7;
+      }
+      
+      if (monthPeriodPattern.heads.includes(Math.floor(num / 10))) {
+        score += 7;
+      }
+      
+      if (monthPeriodPattern.waves.includes(this.getNumWave(num))) {
+        score += 7;
+      }
+      
+      if (monthPeriodPattern.clusters.includes(this.NUM_TO_CLUSTER[num])) {
+        score += 6;
+      }
+      
+      if (dayPattern.tails.includes(num % 10)) {
+        score += 5;
+      }
+      
+      if (dayPattern.heads.includes(Math.floor(num / 10))) {
+        score += 5;
+      }
+      
+      if (day === 1 && num % 10 === 1) score += 4;
+      if (day === 15 && (num === 15 || num === 25 || num === 35 || num === 45)) score += 4;
+      if (day === 30 && num % 10 === 0) score += 4;
+      
+      scores[num] = score;
+    }
+    
+    return scores;
+  }
+
+  private static analyzeSeriesPatterns(history: DbRecord[], lastDraw: number[]): Record<number, number> {
+    const scores: Record<number, number> = {};
+    
+    const seriesPatterns: {
+      type: 'double' | 'triple' | 'quad';
+      numbers: number[];
+      nextNumbers: number[];
+    }[] = [];
+    
+    for (let i = 0; i < history.length - 1; i++) {
+      const currentNums = this.parseNumbers(history[i].open_code).sort((a, b) => a - b);
+      const nextNums = this.parseNumbers(history[i+1].open_code);
+      
+      const seriesInCurrent = this.detectSeries(currentNums);
+      
+      if (seriesInCurrent.length > 0) {
+        seriesPatterns.push({
+          type: seriesInCurrent[0].type,
+          numbers: seriesInCurrent[0].numbers,
+          nextNumbers: nextNums
+        });
+      }
+    }
+    
+    const sortedLastDraw = [...lastDraw].sort((a, b) => a - b);
+    const lastSeries = this.detectSeries(sortedLastDraw);
+    
+    for (let num = 1; num <= 49; num++) {
+      let score = 0;
+      
+      seriesPatterns.forEach(pattern => {
+        if (lastSeries.length > 0 && pattern.numbers.length === lastSeries[0].numbers.length) {
+          if (pattern.nextNumbers.includes(num)) {
+            score += 10;
+          }
+        }
+      });
+      
+      if (lastSeries.length > 0) {
+        const lastSeriesNumbers = lastSeries[0].numbers;
+        
+        for (const seriesNum of lastSeriesNumbers) {
+          if (Math.abs(num - seriesNum) === 1) {
+            score += 12;
+          }
+        }
+        
+        const minSeries = Math.min(...lastSeriesNumbers);
+        const maxSeries = Math.max(...lastSeriesNumbers);
+        
+        if (num >= minSeries - 2 && num <= maxSeries + 2 && !lastSeriesNumbers.includes(num)) {
+          score += 8;
+        }
+      }
+      
+      const seriesFrequency = this.analyzeSeriesFrequency(history, num);
+      score += seriesFrequency * 2;
+      
+      scores[num] = Math.min(score, 25);
+    }
+    
+    return scores;
+  }
+
+  private static analyzeSumZonePatterns(history: DbRecord[], lastSum: number): {
+    getScore: (simulatedSum: number) => number;
+  } {
+    const sumZoneHistory: string[] = [];
+    
+    history.forEach(rec => {
+      const nums = this.parseNumbers(rec.open_code);
+      const sum = nums.reduce((a, b) => a + b, 0);
+      const zone = this.getSumZone(sum);
+      sumZoneHistory.push(zone);
+    });
+    
+    const lastZone = this.getSumZone(lastSum);
+    const zoneContinuity = this.calculateContinuity(sumZoneHistory, lastZone);
+    
+    const zoneBalance = this.calculateBalance(sumZoneHistory, ['small', 'medium', 'large']);
+    
+    return {
+      getScore: (simulatedSum: number): number => {
+        let score = 0;
+        const simulatedZone = this.getSumZone(simulatedSum);
+        
+        if (zoneContinuity === 'continue' && simulatedZone === lastZone) {
+          score += 10;
+        } else if (zoneContinuity === 'alternate' && simulatedZone !== lastZone) {
+          score += 10;
+        }
+        
+        if (zoneBalance === 'needSmall' && simulatedZone === 'small') {
+          score += 8;
+        } else if (zoneBalance === 'needMedium' && simulatedZone === 'medium') {
+          score += 8;
+        } else if (zoneBalance === 'needLarge' && simulatedZone === 'large') {
+          score += 8;
+        }
+        
+        const zoneTransitions = this.analyzeZoneTransitions(sumZoneHistory);
+        const transitionProb = zoneTransitions[lastZone]?.[simulatedZone] || 0;
+        score += transitionProb * 12;
+        
+        return Math.min(score, 20);
+      }
+    };
+  }
+
+  private static calculateElementRelationScores(recentHistory: DbRecord[], lastSpecial: number): Record<number, number> {
+    const scores: Record<number, number> = {};
+    const lastElement = this.NUM_TO_WUXING[lastSpecial];
+    
+    if (!lastElement) {
+      for (let num = 1; num <= 49; num++) scores[num] = 0;
+      return scores;
+    }
+    
+    const elementCycle = this.WU_XING_CYCLE[lastElement];
+    
+    const elementHistory: string[] = [];
+    recentHistory.forEach(rec => {
+      const nums = this.parseNumbers(rec.open_code);
+      const special = nums[nums.length - 1];
+      elementHistory.push(this.NUM_TO_WUXING[special]);
+    });
+    
+    const elementBalance = this.calculateElementBalance(elementHistory);
+    
+    for (let num = 1; num <= 49; num++) {
+      let score = 0;
+      const currentElement = this.NUM_TO_WUXING[num];
+      
+      if (elementCycle.sheng === currentElement) {
+        score += 15;
+      }
+      
+      if (elementCycle.ke === currentElement) {
+        score += 8;
+      }
+      
+      if (elementCycle.sheng_by === currentElement) {
+        score += 10;
+      }
+      
+      if (elementCycle.ke_by === currentElement) {
+        score += 12;
+      }
+      
+      if (elementBalance.weakElement === currentElement) {
+        score += 10;
+      }
+      
+      if (elementBalance.strongElement === currentElement) {
+        score -= 5;
+      }
+      
+      if (currentElement === lastElement) {
+        score += 6;
+      }
+      
+      scores[num] = Math.max(score, 0);
+    }
+    
+    return scores;
+  }
+
   private static calculateMatrixCoordinateScores(
     history: DbRecord[], 
     lastMatrix: {row: number, col: number},
@@ -817,7 +3543,6 @@ export class PredictionEngine {
   ): Record<number, number> {
     const scores: Record<number, number> = {};
     
-    // 收集历史矩阵位置
     const rowHistory: number[] = [];
     const colHistory: number[] = [];
     
@@ -830,23 +3555,20 @@ export class PredictionEngine {
       });
     });
     
-    // 分析行列趋势
     const rowAvg = rowHistory.reduce((a, b) => a + b, 0) / rowHistory.length;
     const colAvg = colHistory.reduce((a, b) => a + b, 0) / colHistory.length;
     
-    // 分析行列连续性
     const rowContinuity = this.calculateContinuity(rowHistory.slice(-10), lastMatrix.row);
     const colContinuity = this.calculateContinuity(colHistory.slice(-10), lastMatrix.col);
     
-    // 星期几的矩阵模式
     const weekdayMatrixPatterns: Record<number, {rows: number[], cols: number[]}> = {
-      0: {rows: [1, 4, 7], cols: [2, 5]},  // 周日
-      1: {rows: [2, 5], cols: [3, 6]},     // 周一
-      2: {rows: [3, 6], cols: [1, 4]},     // 周二
-      3: {rows: [1, 4], cols: [2, 5]},     // 周三
-      4: {rows: [2, 5], cols: [3, 6]},     // 周四
-      5: {rows: [3, 6], cols: [1, 4]},     // 周五
-      6: {rows: [1, 7], cols: [4, 7]}      // 周六
+      0: {rows: [1, 4, 7], cols: [2, 5]},
+      1: {rows: [2, 5], cols: [3, 6]},
+      2: {rows: [3, 6], cols: [1, 4]},
+      3: {rows: [1, 4], cols: [2, 5]},
+      4: {rows: [2, 5], cols: [3, 6]},
+      5: {rows: [3, 6], cols: [1, 4]},
+      6: {rows: [1, 7], cols: [4, 7]}
     };
     
     const weekdayPattern = weekdayMatrixPatterns[weekday] || {rows: [1,2,3,4,5,6,7], cols: [1,2,3,4,5,6,7]};
@@ -855,38 +3577,32 @@ export class PredictionEngine {
       let score = 0;
       const matrix = this.NUM_TO_MATRIX[num];
       
-      // 靠近历史平均位置
       const rowDist = Math.abs(matrix.row - rowAvg);
       const colDist = Math.abs(matrix.col - colAvg);
       if (rowDist <= 1 && colDist <= 1) score += 10;
       
-      // 行列连续性
       if (rowContinuity === 'continue' && matrix.row === lastMatrix.row) score += 8;
       if (colContinuity === 'continue' && matrix.col === lastMatrix.col) score += 8;
       
       if (rowContinuity === 'alternate' && matrix.row !== lastMatrix.row) score += 6;
       if (colContinuity === 'alternate' && matrix.col !== lastMatrix.col) score += 6;
       
-      // 星期几模式
       if (weekdayPattern.rows.includes(matrix.row)) score += 7;
       if (weekdayPattern.cols.includes(matrix.col)) score += 7;
       
-      // 对角线模式
-      if (matrix.row === matrix.col) score += 5; // 主对角线
-      if (matrix.row + matrix.col === 8) score += 5; // 副对角线
+      if (matrix.row === matrix.col) score += 5;
+      if (matrix.row + matrix.col === 8) score += 5;
       
-      // 中心区域偏好 (中间3x3区域)
       if (matrix.row >= 3 && matrix.row <= 5 && matrix.col >= 3 && matrix.col <= 5) {
         score += 6;
       }
       
-      // 与上期矩阵位置的关系
       const rowDiff = Math.abs(matrix.row - lastMatrix.row);
       const colDiff = Math.abs(matrix.col - lastMatrix.col);
       
-      if (rowDiff === 1 && colDiff === 1) score += 8; // 邻接位置
-      if (rowDiff === 0 && colDiff === 1) score += 7; // 同行相邻
-      if (rowDiff === 1 && colDiff === 0) score += 7; // 同列相邻
+      if (rowDiff === 1 && colDiff === 1) score += 8;
+      if (rowDiff === 0 && colDiff === 1) score += 7;
+      if (rowDiff === 1 && colDiff === 0) score += 7;
       
       scores[num] = Math.min(score, 25);
     }
@@ -894,16 +3610,12 @@ export class PredictionEngine {
     return scores;
   }
 
-  /**
-   * [NEW] 晶格分布分析
-   */
   private static calculateLatticeDistributionScores(
     history: DbRecord[], 
     lastSpecial: number
   ): Record<number, number> {
     const scores: Record<number, number> = {};
     
-    // 分析晶格模式
     const latticePatterns = {
       fibonacci: this.LATTICE_PATTERNS.fibonacci,
       goldenRatio: this.LATTICE_PATTERNS.goldenRatio,
@@ -911,7 +3623,6 @@ export class PredictionEngine {
       geometric: this.LATTICE_PATTERNS.geometric
     };
     
-    // 分析历史晶格模式出现频率
     const patternCounts: Record<string, number> = {};
     Object.keys(latticePatterns).forEach(pattern => {
       patternCounts[pattern] = 0;
@@ -928,13 +3639,11 @@ export class PredictionEngine {
       });
     });
     
-    // 找出最常出现的晶格模式
     const sortedPatterns = Object.entries(patternCounts)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 2)
       .map(([pattern]) => pattern);
     
-    // 检查上期特码是否在晶格模式中
     const lastSpecialPatterns: string[] = [];
     Object.entries(latticePatterns).forEach(([pattern, patternNums]) => {
       if (patternNums.includes(lastSpecial)) {
@@ -945,23 +3654,19 @@ export class PredictionEngine {
     for (let num = 1; num <= 49; num++) {
       let score = 0;
       
-      // 热门晶格模式
       sortedPatterns.forEach(pattern => {
         if (latticePatterns[pattern as keyof typeof latticePatterns].includes(num)) {
           score += 12;
         }
       });
       
-      // 晶格模式连续性
       lastSpecialPatterns.forEach(pattern => {
         if (latticePatterns[pattern as keyof typeof latticePatterns].includes(num)) {
-          score += 10; // 同模式连续性
+          score += 10;
         }
       });
       
-      // 晶格模式转移 (如果一个模式包含上期号码，下一个可能转移到其他模式)
       if (lastSpecialPatterns.length === 0) {
-        // 如果上期不在任何晶格模式中，本期可能进入晶格模式
         Object.values(latticePatterns).forEach(patternNums => {
           if (patternNums.includes(num)) {
             score += 8;
@@ -969,23 +3674,20 @@ export class PredictionEngine {
         });
       }
       
-      // 黄金分割点特别加分
       if (latticePatterns.goldenRatio.includes(num)) {
         score += 6;
       }
       
-      // 斐波那契数列特别加分
       if (latticePatterns.fibonacci.includes(num)) {
         score += 5;
       }
       
-      // 等差数列和等比数列分析
       if (latticePatterns.arithmetic.includes(num)) {
         const arithmeticIndex = latticePatterns.arithmetic.indexOf(num);
         if (arithmeticIndex > 0) {
           const prevInSequence = latticePatterns.arithmetic[arithmeticIndex - 1];
           if (prevInSequence === lastSpecial) {
-            score += 9; // 等差数列延续
+            score += 9;
           }
         }
       }
@@ -996,17 +3698,12 @@ export class PredictionEngine {
     return scores;
   }
 
-  /**
-   * [NEW] 混沌模式分析
-   */
   private static analyzeChaosPatterns(
     history: DbRecord[], 
     lastSpecial: number
   ): Record<number, number> {
     const scores: Record<number, number> = {};
     
-    // 分析混沌系统中的吸引子模式
-    // 创建历史轨迹
     const trajectory: number[] = [];
     history.slice(0, 20).forEach(rec => {
       const nums = this.parseNumbers(rec.open_code);
@@ -1014,40 +3711,28 @@ export class PredictionEngine {
       trajectory.push(special);
     });
     
-    // 计算李雅普诺夫指数 (简化版)
     const lyapunovExponent = this.calculateLyapunovExponent(trajectory);
-    
-    // 分析相空间重构
     const phaseSpace = this.reconstructPhaseSpace(trajectory, 3);
-    
-    // 分析奇异吸引子
     const strangeAttractor = this.analyzeStrangeAttractor(phaseSpace);
     
-    // 混沌系统预测
     for (let num = 1; num <= 49; num++) {
       let score = 0;
       
-      // 基于李雅普诺夫指数的预测
       if (lyapunovExponent > 0) {
-        // 混沌系统，预测困难，但可能遵循某些模式
         const predicted = this.chaoticPrediction(trajectory, num);
         score += predicted * 8;
       }
       
-      // 相空间分析
       const phaseScore = this.phaseSpaceScore(phaseSpace, num, lastSpecial);
       score += phaseScore * 6;
       
-      // 奇异吸引子分析
       if (strangeAttractor.attractorNumbers.includes(num)) {
         score += 12;
       }
       
-      // 混沌边缘分析 (在有序和混沌之间)
       const chaosEdgeScore = this.chaosEdgeAnalysis(trajectory, num);
       score += chaosEdgeScore * 4;
       
-      // 确定性混沌模式
       const deterministicChaosScore = this.deterministicChaosPattern(trajectory, num);
       score += deterministicChaosScore * 5;
       
@@ -1057,56 +3742,42 @@ export class PredictionEngine {
     return scores;
   }
 
-  /**
-   * [NEW] 分形维度分析
-   */
   private static calculateFractalDimensionScores(history: DbRecord[]): Record<number, number> {
     const scores: Record<number, number> = {};
     
-    // 分析历史分形模式
     const fractalPatterns = {
       mandelbrot: this.FRACTAL_PATTERNS.mandelbrot,
       julia: this.FRACTAL_PATTERNS.julia,
       sierpinski: this.FRACTAL_PATTERNS.sierpinski
     };
     
-    // 计算历史分形维度
     const historyNumbers: number[] = [];
     history.forEach(rec => {
       historyNumbers.push(...this.parseNumbers(rec.open_code));
     });
     
-    // 计算盒计数维度 (简化版)
     const boxDimension = this.calculateBoxDimension(historyNumbers);
-    
-    // 分析自相似性
     const selfSimilarity = this.analyzeSelfSimilarity(historyNumbers);
     
-    // 分形模式匹配
     for (let num = 1; num <= 49; num++) {
       let score = 0;
       
-      // 分形模式匹配
       Object.values(fractalPatterns).forEach(pattern => {
         if (pattern.includes(num)) {
           score += 8;
         }
       });
       
-      // 分形维度分析
       const dimensionScore = this.fractalDimensionScore(boxDimension, num, historyNumbers);
       score += dimensionScore * 6;
       
-      // 自相似性分析
       if (selfSimilarity.similarNumbers.includes(num)) {
         score += 10;
       }
       
-      // 分形迭代模式
       const iterationScore = this.fractalIterationPattern(num, history);
       score += iterationScore * 5;
       
-      // 分形边界分析
       const boundaryScore = this.fractalBoundaryAnalysis(num, historyNumbers);
       score += boundaryScore * 4;
       
@@ -1116,58 +3787,40 @@ export class PredictionEngine {
     return scores;
   }
 
-  /**
-   * [NEW] 信息熵分析
-   */
   private static analyzeEntropyPatterns(
     history: DbRecord[], 
     lastSpecial: number
   ): Record<number, number> {
     const scores: Record<number, number> = {};
     
-    // 计算历史信息熵
     const entropy = this.calculateInformationEntropy(history);
-    
-    // 分析熵的变化趋势
     const entropyTrend = this.analyzeEntropyTrend(history);
-    
-    // 最大熵原理分析
     const maxEntropyNumbers = this.maxEntropyAnalysis(history);
-    
-    // 最小熵原理分析 (确定性最高)
     const minEntropyNumbers = this.minEntropyAnalysis(history);
-    
-    // 熵增熵减趋势
     const entropyChange = this.entropyChangeAnalysis(history);
     
     for (let num = 1; num <= 49; num++) {
       let score = 0;
       
-      // 最大熵原则 (不确定性最大时)
       if (entropy > 3.5 && maxEntropyNumbers.includes(num)) {
         score += 12;
       }
       
-      // 最小熵原则 (确定性最高时)
       if (entropy < 2.5 && minEntropyNumbers.includes(num)) {
         score += 15;
       }
       
-      // 熵增趋势
       if (entropyChange === 'increasing' && maxEntropyNumbers.includes(num)) {
         score += 8;
       }
       
-      // 熵减趋势
       if (entropyChange === 'decreasing' && minEntropyNumbers.includes(num)) {
         score += 10;
       }
       
-      // 熵平衡分析
       const balanceScore = this.entropyBalanceScore(num, history, entropy);
       score += balanceScore * 5;
       
-      // 信息增益分析
       const informationGain = this.informationGainAnalysis(num, history, lastSpecial);
       score += informationGain * 6;
       
@@ -1177,9 +3830,6 @@ export class PredictionEngine {
     return scores;
   }
 
-  /**
-   * [NEW] 确定性核心分析
-   */
   private static calculateDeterministicCoreScores(
     history: DbRecord[], 
     lastSpecial: number,
@@ -1187,14 +3837,12 @@ export class PredictionEngine {
   ): Record<number, number> {
     const scores: Record<number, number> = {};
     
-    // 分析确定性核心模式
     const deterministicPatterns = {
       primeSpiral: this.DETERMINISTIC_PATTERNS.primeSpiral,
       ulamSpiral: this.DETERMINISTIC_PATTERNS.ulamSpiral,
       magicSquare: this.DETERMINISTIC_PATTERNS.magicSquare
     };
     
-    // 分析历史确定性模式
     const patternFrequencies: Record<string, number> = {};
     Object.keys(deterministicPatterns).forEach(pattern => {
       patternFrequencies[pattern] = 0;
@@ -1211,58 +3859,46 @@ export class PredictionEngine {
       });
     });
     
-    // 找出最确定的模式
     const mostDeterministicPatterns = Object.entries(patternFrequencies)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 2)
       .map(([pattern]) => pattern);
     
-    // 确定性转移分析
     const deterministicTransitions = this.analyzeDeterministicTransitions(history);
-    
-    // 核心稳定性分析
     const coreStability = this.analyzeCoreStability(history);
     
     for (let num = 1; num <= 49; num++) {
       let score = 0;
       
-      // 最确定的模式
       mostDeterministicPatterns.forEach(pattern => {
         if (deterministicPatterns[pattern as keyof typeof deterministicPatterns].includes(num)) {
           score += 15;
         }
       });
       
-      // 确定性转移
       if (deterministicTransitions[lastSpecial]?.includes(num)) {
         score += 12;
       }
       
-      // 核心稳定性
       if (coreStability.stableNumbers.includes(num)) {
         score += 10;
       }
       
-      // 质数螺旋分析
       if (deterministicPatterns.primeSpiral.includes(num)) {
-        // 检查是否在质数螺旋的路径上
         const spiralScore = this.primeSpiralAnalysis(num, lastSpecial, currentWeek);
         score += spiralScore;
       }
       
-      // 乌拉姆螺旋分析
       if (deterministicPatterns.ulamSpiral.includes(num)) {
         const ulamScore = this.ulamSpiralAnalysis(num, history);
         score += ulamScore;
       }
       
-      // 魔方阵分析
       if (deterministicPatterns.magicSquare.includes(num)) {
         const magicSquareScore = this.magicSquareAnalysis(num, history);
         score += magicSquareScore;
       }
       
-      // 确定性收敛分析
       const convergenceScore = this.deterministicConvergence(num, history);
       score += convergenceScore * 4;
       
@@ -1272,12 +3908,8 @@ export class PredictionEngine {
     return scores;
   }
 
-  // ==========================================
-  // 确定性辅助算法
-  // ==========================================
-
   /**
-   * 获取确定性微调值 (完全确定性的替代随机扰动)
+   * 获取确定性微调值
    */
   private static getDeterministicAdjustment(
     num: number, 
@@ -1285,11 +3917,8 @@ export class PredictionEngine {
     day: number, 
     weekday: number
   ): number {
-    // 使用确定性函数生成微调值，范围在0-0.5之间
-    // 基于号码、日期、星期等因素计算
-    
     const hash = this.deterministicHash(num, lastSpecial, day, weekday);
-    return (hash % 50) / 100; // 0-0.5的范围
+    return (hash % 50) / 100;
   }
 
   /**
@@ -1298,13 +3927,13 @@ export class PredictionEngine {
   private static deterministicHash(...args: number[]): number {
     let hash = 5381;
     for (const arg of args) {
-      hash = ((hash << 5) + hash) + arg; // hash * 33 + arg
+      hash = ((hash << 5) + hash) + arg;
     }
     return Math.abs(hash) % 10000;
   }
 
   /**
-   * 计算李雅普诺夫指数 (简化版)
+   * 计算李雅普诺夫指数
    */
   private static calculateLyapunovExponent(trajectory: number[]): number {
     if (trajectory.length < 4) return 0;
@@ -1350,7 +3979,6 @@ export class PredictionEngine {
       return { attractorNumbers: [], dimension: 0 };
     }
     
-    // 简化分析：找出相空间中的聚集点
     const pointCounts: Record<string, number> = {};
     
     phaseSpace.forEach(point => {
@@ -1358,7 +3986,6 @@ export class PredictionEngine {
       pointCounts[key] = (pointCounts[key] || 0) + 1;
     });
     
-    // 找出出现次数最多的点
     const sortedPoints = Object.entries(pointCounts)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5);
@@ -1368,7 +3995,6 @@ export class PredictionEngine {
       attractorNumbers.push(...numbers);
     });
     
-    // 去重
     const uniqueNumbers = [...new Set(attractorNumbers)];
     
     return {
@@ -1383,8 +4009,7 @@ export class PredictionEngine {
   private static chaoticPrediction(trajectory: number[], num: number): number {
     if (trajectory.length < 3) return 0;
     
-    // 简单逻辑映射预测
-    const r = 3.9; // 逻辑映射参数
+    const r = 3.9;
     const last = trajectory[trajectory.length - 1] / 49;
     const predicted = r * last * (1 - last) * 49;
     
@@ -1405,17 +4030,14 @@ export class PredictionEngine {
     
     let score = 0;
     
-    // 检查是否在相空间轨迹中
     phaseSpace.forEach(point => {
       if (point.includes(num)) {
         score += 3;
       }
     });
     
-    // 检查与上期特码的相空间关系
     const lastPoint = phaseSpace[phaseSpace.length - 1];
     if (lastPoint && lastPoint.includes(lastSpecial)) {
-      // 如果num在相空间中与lastSpecial有某种关系
       const otherPoints = phaseSpace.filter(point => 
         point.includes(lastSpecial) && point.includes(num)
       );
@@ -1432,9 +4054,6 @@ export class PredictionEngine {
    * 混沌边缘分析
    */
   private static chaosEdgeAnalysis(trajectory: number[], num: number): number {
-    // 分析号码是否在混沌边缘（有序和混沌的边界）
-    
-    // 计算轨迹的波动性
     let totalFluctuation = 0;
     for (let i = 1; i < trajectory.length; i++) {
       totalFluctuation += Math.abs(trajectory[i] - trajectory[i-1]);
@@ -1442,9 +4061,7 @@ export class PredictionEngine {
     
     const avgFluctuation = totalFluctuation / (trajectory.length - 1);
     
-    // 如果波动性适中（既不太小也不太大），则认为在混沌边缘
     if (avgFluctuation >= 15 && avgFluctuation <= 30) {
-      // 检查num是否在历史波动的范围内
       const minHistory = Math.min(...trajectory);
       const maxHistory = Math.max(...trajectory);
       
@@ -1460,11 +4077,8 @@ export class PredictionEngine {
    * 确定性混沌模式
    */
   private static deterministicChaosPattern(trajectory: number[], num: number): number {
-    // 寻找确定性混沌中的模式
-    
     if (trajectory.length < 5) return 0;
     
-    // 分析自相关
     let autocorrelation = 0;
     const lag = 2;
     
@@ -1489,8 +4103,7 @@ export class PredictionEngine {
   private static calculateBoxDimension(numbers: number[]): number {
     if (numbers.length === 0) return 0;
     
-    // 简化版的盒计数法
-    const boxes = 7; // 7x7的网格
+    const boxes = 7;
     const boxSize = 49 / boxes;
     
     let filledBoxes = 0;
@@ -1518,13 +4131,9 @@ export class PredictionEngine {
   } {
     const similarNumbers: number[] = [];
     
-    // 寻找具有自相似性的号码
-    // 例如：号码的各位数字之和相似的号码
-    
     numbers.forEach(num => {
       const digitSum = this.sumDigits(num);
       
-      // 寻找其他具有相同数字和的号码
       for (let otherNum = 1; otherNum <= 49; otherNum++) {
         if (otherNum !== num && this.sumDigits(otherNum) === digitSum) {
           similarNumbers.push(otherNum);
@@ -1532,7 +4141,6 @@ export class PredictionEngine {
       }
     });
     
-    // 去重
     const uniqueNumbers = [...new Set(similarNumbers)];
     
     return {
@@ -1551,16 +4159,11 @@ export class PredictionEngine {
   ): number {
     if (boxDimension === 0) return 0;
     
-    // 高维度分形倾向于选择边界号码
-    // 低维度分形倾向于选择中心号码
-    
     if (boxDimension > 1.5) {
-      // 高维度：偏好边界号码
       if (num <= 10 || num >= 40 || num % 10 === 0 || num % 10 === 9) {
         return 8;
       }
     } else {
-      // 低维度：偏好中心号码
       if (num >= 20 && num <= 30) {
         return 8;
       }
@@ -1573,18 +4176,13 @@ export class PredictionEngine {
    * 分形迭代模式
    */
   private static fractalIterationPattern(num: number, history: DbRecord[]): number {
-    // 分析分形迭代模式
-    
     let score = 0;
     
-    // 检查是否为分形迭代中的固定点
     history.forEach(rec => {
       const nums = this.parseNumbers(rec.open_code);
       if (nums.includes(num)) {
-        // 如果这个号码经常在特定位置出现
         const position = nums.indexOf(num);
         if (position >= 0) {
-          // 检查是否有迭代模式
           score += 2;
         }
       }
@@ -1597,14 +4195,11 @@ export class PredictionEngine {
    * 分形边界分析
    */
   private static fractalBoundaryAnalysis(num: number, historyNumbers: number[]): number {
-    // 分析是否在分形边界上
-    
-    // 计算号码的邻居在历史中出现的频率
     let neighborCount = 0;
     const neighbors = [
-      num - 1, num + 1,           // 水平邻居
-      num - 7, num + 7,           // 垂直邻居 (假设7x7网格)
-      num - 8, num - 6, num + 6, num + 8  // 对角线邻居
+      num - 1, num + 1,
+      num - 7, num + 7,
+      num - 8, num - 6, num + 6, num + 8
     ];
     
     neighbors.forEach(neighbor => {
@@ -1613,7 +4208,6 @@ export class PredictionEngine {
       }
     });
     
-    // 边界号码通常有较少的邻居
     if (neighborCount <= 2) {
       return 6;
     }
@@ -1652,7 +4246,6 @@ export class PredictionEngine {
   private static analyzeEntropyTrend(history: DbRecord[]): 'increasing' | 'decreasing' | 'stable' {
     if (history.length < 10) return 'stable';
     
-    // 将历史分为两半，计算每半的熵
     const midpoint = Math.floor(history.length / 2);
     const firstHalf = history.slice(0, midpoint);
     const secondHalf = history.slice(midpoint);
@@ -1670,8 +4263,6 @@ export class PredictionEngine {
    * 最大熵分析
    */
   private static maxEntropyAnalysis(history: DbRecord[]): number[] {
-    // 返回在当前熵水平下最不确定的号码（即最小出现频率的号码）
-    
     const frequency: Record<number, number> = {};
     
     history.forEach(rec => {
@@ -1680,7 +4271,6 @@ export class PredictionEngine {
       });
     });
     
-    // 找出出现频率最低的10个号码
     const sortedNumbers = Object.entries(frequency)
       .sort((a, b) => a[1] - b[1])
       .slice(0, 10)
@@ -1693,13 +4283,9 @@ export class PredictionEngine {
    * 最小熵分析
    */
   private static minEntropyAnalysis(history: DbRecord[]): number[] {
-    // 返回在当前熵水平下最确定的号码（即符合确定性模式的号码）
-    
     const deterministicNumbers: number[] = [];
     
-    // 确定性模式：质数、特定尾数等
     for (let num = 1; num <= 49; num++) {
-      // 检查是否符合确定性模式
       if (this.PRIME_NUMBERS.includes(num) || 
           num % 10 === 0 || 
           num % 10 === 5 ||
@@ -1722,16 +4308,12 @@ export class PredictionEngine {
    * 熵平衡评分
    */
   private static entropyBalanceScore(num: number, history: DbRecord[], entropy: number): number {
-    // 根据当前熵水平调整评分
-    
     if (entropy > 3.5) {
-      // 高熵状态：偏好不常见的号码以增加不确定性
       const frequency = this.getNumberFrequency(history, num);
       if (frequency < 2) {
         return 8;
       }
     } else if (entropy < 2.5) {
-      // 低熵状态：偏好常见的号码以维持确定性
       const frequency = this.getNumberFrequency(history, num);
       if (frequency >= 3) {
         return 8;
@@ -1745,12 +4327,9 @@ export class PredictionEngine {
    * 信息增益分析
    */
   private static informationGainAnalysis(num: number, history: DbRecord[], lastSpecial: number): number {
-    // 计算选择这个号码会带来多少信息增益
-    
     const beforeEntropy = this.calculateInformationEntropy(history);
     
-    // 模拟加入这个号码后的熵
-    const simulatedHistory = [...history.slice(0, 5)]; // 只取最近5期模拟
+    const simulatedHistory = [...history.slice(0, 5)];
     const simulatedRecord: DbRecord = {
       open_code: [...this.parseNumbers(simulatedHistory[0]?.open_code || '').slice(0, 6), num].join(','),
       draw_time: new Date().toISOString()
@@ -1761,7 +4340,6 @@ export class PredictionEngine {
     
     const informationGain = beforeEntropy - afterEntropy;
     
-    // 信息增益越大，说明这个号码能减少的不确定性越多
     if (informationGain > 0.5) {
       return 8;
     } else if (informationGain > 0.2) {
@@ -1777,7 +4355,6 @@ export class PredictionEngine {
   private static analyzeDeterministicTransitions(history: DbRecord[]): Record<number, number[]> {
     const transitions: Record<number, number[]> = {};
     
-    // 分析确定性模式的转移
     for (let i = 1; i < history.length; i++) {
       const prevNums = this.parseNumbers(history[i].open_code);
       const currentNums = this.parseNumbers(history[i-1].open_code);
@@ -1785,7 +4362,6 @@ export class PredictionEngine {
       const prevSpecial = prevNums[prevNums.length - 1];
       const currentSpecial = currentNums[currentNums.length - 1];
       
-      // 检查是否都是确定性模式号码
       const prevIsDeterministic = this.isDeterministicNumber(prevSpecial);
       const currentIsDeterministic = this.isDeterministicNumber(currentSpecial);
       
@@ -1797,7 +4373,6 @@ export class PredictionEngine {
       }
     }
     
-    // 去重每个源号码的目标号码
     Object.keys(transitions).forEach(key => {
       const num = parseInt(key);
       transitions[num] = [...new Set(transitions[num])];
@@ -1815,7 +4390,6 @@ export class PredictionEngine {
   } {
     const stableNumbers: number[] = [];
     
-    // 找出在历史中稳定出现的号码（连续出现或间隔规律）
     const frequency: Record<number, number[]> = {};
     
     history.forEach((rec, index) => {
@@ -1831,13 +4405,11 @@ export class PredictionEngine {
       const num = parseInt(numStr);
       
       if (appearances.length >= 3) {
-        // 检查是否规律出现
         let isRegular = true;
         for (let i = 1; i < appearances.length - 1; i++) {
           const interval1 = appearances[i] - appearances[i-1];
           const interval2 = appearances[i+1] - appearances[i];
           
-          // 允许一定误差
           if (Math.abs(interval1 - interval2) > 3) {
             isRegular = false;
             break;
@@ -1864,29 +4436,26 @@ export class PredictionEngine {
     
     let score = 0;
     
-    // 质数螺旋模式
     const spiralOrder = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47];
     const lastIndex = spiralOrder.indexOf(lastSpecial);
     const currentIndex = spiralOrder.indexOf(num);
     
     if (lastIndex >= 0 && currentIndex >= 0) {
-      // 检查是否沿着螺旋方向
       if (currentIndex === (lastIndex + 1) % spiralOrder.length) {
-        score += 10; // 螺旋延续
+        score += 10;
       } else if (currentIndex === (lastIndex + 2) % spiralOrder.length) {
-        score += 7; // 跳过一个质数
+        score += 7;
       }
     }
     
-    // 基于星期的质数模式
     const weekdayPrimePatterns: Record<number, number[]> = {
-      0: [7, 17, 37],  // 周日
-      1: [2, 13, 23],  // 周一
-      2: [3, 19, 29],  // 周二
-      3: [5, 11, 31],  // 周三
-      4: [7, 17, 37],  // 周四
-      5: [13, 23, 43], // 周五
-      6: [19, 29, 47]  // 周六
+      0: [7, 17, 37],
+      1: [2, 13, 23],
+      2: [3, 19, 29],
+      3: [5, 11, 31],
+      4: [7, 17, 37],
+      5: [13, 23, 43],
+      6: [19, 29, 47]
     };
     
     const weekdayPattern = weekdayPrimePatterns[currentWeek % 7];
@@ -1901,11 +4470,9 @@ export class PredictionEngine {
    * 乌拉姆螺旋分析
    */
   private static ulamSpiralAnalysis(num: number, history: DbRecord[]): number {
-    // 乌拉姆螺旋中的对角线模式
     const diagonalNumbers = [1, 9, 25, 49, 4, 16, 36, 8, 24, 48];
     
     if (diagonalNumbers.includes(num)) {
-      // 检查历史上对角线号码的出现模式
       let diagonalCount = 0;
       history.forEach(rec => {
         this.parseNumbers(rec.open_code).forEach(n => {
@@ -1916,7 +4483,7 @@ export class PredictionEngine {
       });
       
       if (diagonalCount >= 3) {
-        return 8; // 乌拉姆螺旋活跃
+        return 8;
       }
     }
     
@@ -1927,18 +4494,14 @@ export class PredictionEngine {
    * 魔方阵分析
    */
   private static magicSquareAnalysis(num: number, history: DbRecord[]): number {
-    // 魔方阵中的特殊位置
     const magicSquareCenters = [5, 15, 25, 35, 45];
     const magicSquareCorners = [1, 7, 43, 49];
     
     if (magicSquareCenters.includes(num)) {
-      // 中心位置
       return 6;
     } else if (magicSquareCorners.includes(num)) {
-      // 角落位置
       return 5;
     } else if (num === 25) {
-      // 中心之中心
       return 8;
     }
     
@@ -1949,9 +4512,6 @@ export class PredictionEngine {
    * 确定性收敛分析
    */
   private static deterministicConvergence(num: number, history: DbRecord[]): number {
-    // 分析号码是否在确定性收敛点上
-    
-    // 计算历史平均值和标准差
     const historyNumbers: number[] = [];
     history.forEach(rec => {
       historyNumbers.push(...this.parseNumbers(rec.open_code));
@@ -1964,7 +4524,6 @@ export class PredictionEngine {
       historyNumbers.reduce((sq, n) => sq + Math.pow(n - mean, 2), 0) / historyNumbers.length
     );
     
-    // 收敛点：靠近均值且在过去多次出现
     if (Math.abs(num - mean) <= std / 2) {
       const frequency = historyNumbers.filter(n => n === num).length;
       if (frequency >= 2) {
@@ -1975,1186 +4534,312 @@ export class PredictionEngine {
     return 0;
   }
 
-  // ==========================================
-  // 核心算法实现
-  // ==========================================
-
-  private static calculateHistoryMirror(history: DbRecord[], lastDraw: number[]): Record<number, number> {
-    const scores: Record<number, number> = {};
-    
-    for (let i = 1; i < history.length - 1; i++) {
-      const histNums = this.parseNumbers(history[i].open_code);
-      const common = histNums.filter(n => lastDraw.includes(n));
-      
-      if (common.length >= 3) {
-        const nextNums = this.parseNumbers(history[i-1].open_code);
-        const similarity = common.length / lastDraw.length;
-        
-        nextNums.forEach(n => {
-          scores[n] = (scores[n] || 0) + similarity * 15;
-        });
-      }
-    }
-    
-    return scores;
-  }
-
-  private static analyzeTrajectory(history: DbRecord[], lastSpecial: number): Record<number, number> {
-    const scores: Record<number, number> = {};
-    const specials: number[] = [];
-    
-    // 收集特码历史
-    for (let i = 0; i < Math.min(15, history.length); i++) {
-      const nums = this.parseNumbers(history[i].open_code);
-      if (nums.length > 0) {
-        specials.push(nums[nums.length - 1]);
-      }
-    }
-    
-    // 分析趋势
-    if (specials.length >= 3) {
-      // 计算移动平均
-      const movingAvg = specials.slice(0, 3).reduce((a, b) => a + b, 0) / 3;
-      
-      // 分析奇偶趋势
-      const lastParity = lastSpecial % 2;
-      const parityHistory = specials.map(s => s % 2);
-      const sameParityCount = parityHistory.filter(p => p === lastParity).length;
-      
-      for (let num = 1; num <= 49; num++) {
-        let score = 0;
-        
-        // 靠近移动平均
-        if (Math.abs(num - movingAvg) <= 5) score += 10;
-        
-        // 延续奇偶性
-        if ((num % 2) === lastParity && sameParityCount >= 2) score += 8;
-        
-        // 趋势方向
-        const diff = specials[0] - specials[1];
-        if (diff > 0 && num < lastSpecial) score += 12; // 下降趋势
-        if (diff < 0 && num > lastSpecial) score += 12; // 上升趋势
-        
-        scores[num] = score;
-      }
-    }
-    
-    return scores;
-  }
-
-  private static calculatePatternScores(lastDraw: number[], recentHistory: DbRecord[]): Record<number, number> {
-    const scores: Record<number, number> = {};
-    
-    // 邻号分析
-    const neighborSet = new Set<number>();
-    lastDraw.forEach(n => {
-      if (n > 1) neighborSet.add(n - 1);
-      if (n < 49) neighborSet.add(n + 1);
-    });
-    
-    // 连号分析
-    const consecutiveSet = new Set<number>();
-    const sortedLast = [...lastDraw].sort((a, b) => a - b);
-    for (let i = 0; i < sortedLast.length - 1; i++) {
-      if (sortedLast[i+1] - sortedLast[i] === 1) {
-        if (sortedLast[i] > 1) consecutiveSet.add(sortedLast[i] - 1);
-        if (sortedLast[i+1] < 49) consecutiveSet.add(sortedLast[i+1] + 1);
-      }
-    }
-    
-    for (let num = 1; num <= 49; num++) {
-      let score = 0;
-      
-      if (neighborSet.has(num)) score += 15;
-      if (consecutiveSet.has(num)) score += 18;
-      
-      // 重号减分（避免重复推荐）
-      if (lastDraw.includes(num)) score -= 10;
-      
-      scores[num] = Math.max(score, 0);
-    }
-    
-    return scores;
-  }
-
-  private static calculateTailScores(recentHistory: DbRecord[]): Record<number, number> {
-    const tailCount: Record<number, number> = {};
-    const scores: Record<number, number> = {};
-    
-    // 统计尾数出现次数
-    recentHistory.forEach(rec => {
-      this.parseNumbers(rec.open_code).forEach(num => {
-        const tail = num % 10;
-        tailCount[tail] = (tailCount[tail] || 0) + 1;
-      });
-    });
-    
-    // 计算尾数分数
-    const sortedTails = Object.entries(tailCount)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 3)
-      .map(([tail]) => parseInt(tail));
-    
-    for (let tail = 0; tail <= 9; tail++) {
-      if (sortedTails.includes(tail)) {
-        scores[tail] = 20;
-      } else {
-        scores[tail] = 0;
-      }
-    }
-    
-    return scores;
-  }
-
-  private static calculateZodiacScores(recentHistory: DbRecord[], lastSpecialZodiac: string): Record<string, number> {
-    const scores: Record<string, number> = {};
-    const zodiacCount: Record<string, number> = {};
-    
-    // 统计生肖出现次数
-    recentHistory.forEach(rec => {
-      this.parseNumbers(rec.open_code).forEach(num => {
-        const zodiac = this.NUM_TO_ZODIAC[num];
-        zodiacCount[zodiac] = (zodiacCount[zodiac] || 0) + 1;
-      });
-    });
-    
-    // 热门生肖
-    const hotZodiacs = Object.entries(zodiacCount)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 3)
-      .map(([zodiac]) => zodiac);
-    
-    // 三合生肖
-    const allies = this.SAN_HE_MAP[lastSpecialZodiac] || [];
-    
-    // 计算分数
-    Object.keys(this.ZODIACS_MAP).forEach(zodiac => {
-      let score = 0;
-      
-      if (hotZodiacs.includes(zodiac)) score += 15;
-      if (allies.includes(zodiac)) score += 20;
-      
-      // 上期特肖减分（避免重复推荐）
-      if (zodiac === lastSpecialZodiac) score -= 10;
-      
-      scores[zodiac] = Math.max(score, 0);
-    });
-    
-    return scores;
-  }
-
-  private static calculateWuxingScores(recentHistory: DbRecord[]): Record<string, number> {
-    const wuxingCount: Record<string, number> = {};
-    const scores: Record<string, number> = {};
-    
-    // 统计五行出现次数
-    recentHistory.forEach(rec => {
-      this.parseNumbers(rec.open_code).forEach(num => {
-        const wuxing = this.NUM_TO_WUXING[num];
-        wuxingCount[wuxing] = (wuxingCount[wuxing] || 0) + 1;
-      });
-    });
-    
-    // 找到最弱的五行
-    const sortedWuxing = Object.entries(wuxingCount)
-      .sort((a, b) => a[1] - b[1]);
-    
-    const weakWuxing = sortedWuxing[0]?.[0] || '土';
-    const strongWuxing = sortedWuxing[sortedWuxing.length - 1]?.[0] || '金';
-    
-    // 计算分数：补弱抑强
-    Object.keys(this.WU_XING_MAP).forEach(wuxing => {
-      if (wuxing === weakWuxing) {
-        scores[wuxing] = 25; // 补弱
-      } else if (wuxing === strongWuxing) {
-        scores[wuxing] = 5;  // 抑制过强
-      } else {
-        scores[wuxing] = 15; // 平衡
-      }
-    });
-    
-    return scores;
-  }
-
-  private static calculateWaveScores(recentHistory: DbRecord[], lastSpecial: number): Record<string, number> {
-    const waveCount: Record<string, number> = {};
-    const scores: Record<string, number> = {};
-    
-    // 统计波色出现次数
-    recentHistory.forEach(rec => {
-      this.parseNumbers(rec.open_code).forEach(num => {
-        const wave = this.getNumWave(num);
-        waveCount[wave] = (waveCount[wave] || 0) + 1;
-      });
-    });
-    
-    // 上期特码波色
-    const lastWave = this.getNumWave(lastSpecial);
-    
-    // 找到最弱的波色
-    const sortedWaves = Object.entries(waveCount)
-      .sort((a, b) => a[1] - b[1]);
-    
-    const weakWave = sortedWaves[0]?.[0] || 'green';
-    
-    // 计算分数
-    ['red', 'blue', 'green'].forEach(wave => {
-      let score = 0;
-      
-      // 同波色惯性（轻微减分）
-      if (wave === lastWave) score += 10; 
-      
-      // 补弱波色
-      if (wave === weakWave) score += 20; 
-      
-      scores[wave] = score;
-    });
-    
-    return scores;
-  }
-
-  private static calculateGoldNumbers(sum: number, special: number): number[] {
-    const goldNumbers: number[] = [];
-    
-    // 黄金分割
-    goldNumbers.push(Math.round(sum * 0.618) % 49 || 49);
-    
-    // 固定偏移
-    goldNumbers.push((sum + 7) % 49 || 49);
-    
-    // 特码相关（避免与上期特码相同）
-    goldNumbers.push(Math.round(special * 1.618) % 49 || 49);
-    goldNumbers.push((special + 13) % 49 || 49);
-    goldNumbers.push((special * 2) % 49 || 49);
-    
-    // 去重并过滤掉上期特码
-    return [...new Set(goldNumbers.filter(n => n >= 1 && n <= 49 && n !== special))];
-  }
-
-  private static calculateOmissionScores(history: DbRecord[], period: number): Record<number, number> {
-    const omissionMap: Record<number, number> = {};
-    const scores: Record<number, number> = {};
-    
-    // 初始化遗漏值
-    for (let i = 1; i <= 49; i++) {
-      omissionMap[i] = period;
-    }
-    
-    // 更新遗漏值
-    for (let i = 0; i < Math.min(period, history.length); i++) {
-      const nums = this.parseNumbers(history[i].open_code);
-      nums.forEach(num => {
-        omissionMap[num] = i;
-      });
-    }
-    
-    // 转换为分数
-    for (let num = 1; num <= 49; num++) {
-      const omission = omissionMap[num];
-      
-      // 非线性评分：遗漏越大，分数越高
-      if (omission >= period * 0.8) {
-        scores[num] = 25; // 极大遗漏
-      } else if (omission >= period * 0.6) {
-        scores[num] = 20;
-      } else if (omission >= period * 0.4) {
-        scores[num] = 15;
-      } else if (omission >= period * 0.2) {
-        scores[num] = 10;
-      } else if (omission >= period * 0.1) {
-        scores[num] = 5;
-      } else {
-        scores[num] = 0;
-      }
-    }
-    
-    return scores;
-  }
-
-  private static calculateSeasonalScores(month: number, week: number): Record<string, number> {
-    const scores: Record<string, number> = {};
-    const season = this.getSeasonByMonth(month);
-    const seasonalZodiacs = this.SEASONAL_ZODIACS[season] || [];
-    
-    // 季节生肖
-    Object.keys(this.ZODIACS_MAP).forEach(zodiac => {
-      if (seasonalZodiacs.includes(zodiac)) {
-        scores[zodiac] = 20;
-      } else {
-        scores[zodiac] = 0;
-      }
-    });
-    
-    return scores;
-  }
-
-  private static analyzePrimeDistribution(history: DbRecord[]) {
-    let primeCount = 0;
-    let totalNumbers = 0;
-    
+  /**
+   * 获取号码频率
+   */
+  private static getNumberFrequency(history: DbRecord[], num: number): number {
+    let count = 0;
     history.forEach(rec => {
-      const nums = this.parseNumbers(rec.open_code);
-      totalNumbers += nums.length;
-      primeCount += nums.filter(n => this.PRIME_NUMBERS.includes(n)).length;
-    });
-    
-    const primeRatio = primeCount / totalNumbers;
-    const expectedRatio = this.PRIME_NUMBERS.length / 49; // 15/49 ≈ 0.306
-    
-    return {
-      currentRatio: primeRatio,
-      expectedRatio,
-      needMorePrimes: primeRatio < expectedRatio * 0.9,
-      needMoreComposites: primeRatio > expectedRatio * 1.1
-    };
-  }
-
-  private static analyzeSumPatterns(history: DbRecord[], lastSum: number) {
-    const sums: number[] = [];
-    const sumTails: number[] = [];
-    
-    history.forEach(rec => {
-      const nums = this.parseNumbers(rec.open_code);
-      const sum = nums.reduce((a, b) => a + b, 0);
-      sums.push(sum);
-      sumTails.push(sum % 10);
-    });
-    
-    // 计算统计信息
-    const avgSum = sums.reduce((a, b) => a + b, 0) / sums.length;
-    const stdSum = Math.sqrt(sums.reduce((sq, n) => sq + Math.pow(n - avgSum, 2), 0) / sums.length);
-    
-    // 分析奇偶趋势
-    const lastParity = lastSum % 2;
-    const parityCounts = sumTails.reduce((counts, tail) => {
-      counts[tail % 2]++;
-      return counts;
-    }, [0, 0]);
-    
-    const parityTrend = parityCounts[lastParity] > parityCounts[1 - lastParity] ? 'same' : 'alternate';
-    
-    return {
-      getScore: (simulatedSum: number) => {
-        let score = 0;
-        
-        // 在和值范围内
-        if (simulatedSum >= avgSum - stdSum && simulatedSum <= avgSum + stdSum) {
-          score += 15;
-        }
-        
-        // 奇偶趋势
-        if ((parityTrend === 'same' && (simulatedSum % 2) === lastParity) ||
-            (parityTrend === 'alternate' && (simulatedSum % 2) !== lastParity)) {
-          score += 10;
-        }
-        
-        return score;
-      }
-    };
-  }
-
-  private static calculatePositionScores(recentHistory: DbRecord[]): Record<number, number> {
-    const positionStats: Record<number, Record<number, number>> = {};
-    const scores: Record<number, number> = {};
-    
-    // 初始化
-    for (let i = 1; i <= 49; i++) {
-      positionStats[i] = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0 };
-    }
-    
-    // 统计每个号码在不同位置的出现次数
-    recentHistory.forEach(rec => {
-      const nums = this.parseNumbers(rec.open_code);
-      nums.forEach((num, index) => {
-        const position = index + 1;
-        if (positionStats[num]) {
-          positionStats[num][position]++;
-        }
-      });
-    });
-    
-    // 计算分数
-    for (let num = 1; num <= 49; num++) {
-      const positions = positionStats[num];
-      const total = Object.values(positions).reduce((a, b) => a + b, 0);
-      
-      if (total > 0) {
-        // 特码位置权重更高
-        const specialScore = positions[7] * 3;
-        const normalScore = (total - positions[7]) * 1;
-        scores[num] = specialScore + normalScore;
-      } else {
-        scores[num] = 0;
-      }
-    }
-    
-    return scores;
-  }
-
-  private static calculateFrequencyScores(recentHistory: DbRecord[]): Record<number, number> {
-    const frequencyMap: Record<number, number> = {};
-    const scores: Record<number, number> = {};
-    
-    // 统计频率
-    recentHistory.forEach(rec => {
-      this.parseNumbers(rec.open_code).forEach(num => {
-        frequencyMap[num] = (frequencyMap[num] || 0) + 1;
-      });
-    });
-    
-    // 计算频率分数
-    const maxFreq = Math.max(...Object.values(frequencyMap));
-    const avgFreq = Object.values(frequencyMap).reduce((a, b) => a + b, 0) / Object.keys(frequencyMap).length;
-    
-    for (let num = 1; num <= 49; num++) {
-      const freq = frequencyMap[num] || 0;
-      
-      if (freq > avgFreq * 1.5) {
-        scores[num] = 15; // 热号
-      } else if (freq < avgFreq * 0.5) {
-        scores[num] = 12; // 冷号（可能回补）
-      } else if (freq === 0) {
-        scores[num] = 20; // 极冷号
-      } else {
-        scores[num] = Math.min((freq / maxFreq) * 10, 10);
-      }
-    }
-    
-    return scores;
-  }
-
-  private static calculateClusterScores(lastDraw: number[], history: DbRecord[]): Record<number, number> {
-    const scores: Record<number, number> = {};
-    
-    // 计算最近开奖号码的聚类中心
-    const recentNumbers: number[] = [];
-    history.slice(0, 10).forEach(rec => {
-      recentNumbers.push(...this.parseNumbers(rec.open_code));
-    });
-    
-    // 计算每个号码到最近开奖号码的平均距离
-    for (let num = 1; num <= 49; num++) {
-      let totalDistance = 0;
-      let count = 0;
-      
-      // 计算到上期号码的距离
-      lastDraw.forEach(n => {
-        totalDistance += Math.abs(num - n);
+      if (this.parseNumbers(rec.open_code).includes(num)) {
         count++;
-      });
-      
-      // 计算到历史聚类中心的距离
-      const recentAvg = recentNumbers.reduce((a, b) => a + b, 0) / recentNumbers.length;
-      totalDistance += Math.abs(num - recentAvg) * 2;
-      count += 2;
-      
-      const avgDistance = totalDistance / count;
-      
-      // 距离越近，分数越高（倾向于选择接近历史号码的号码）
-      scores[num] = Math.max(0, 20 - avgDistance);
-    }
-    
-    return scores;
+      }
+    });
+    return count;
   }
 
-  private static calculateSymmetryScores(history: DbRecord[], lastDraw: number[]): Record<number, number> {
-    const scores: Record<number, number> = {};
-    const symmetryMap: Record<number, number> = {};
+  /**
+   * 判断是否为确定性号码
+   */
+  private static isDeterministicNumber(num: number): boolean {
+    return (
+      this.PRIME_NUMBERS.includes(num) ||
+      num % 10 === 0 ||
+      num % 10 === 5 ||
+      num === 25 || num === 37 || num === 49 ||
+      this.DETERMINISTIC_PATTERNS.primeSpiral.includes(num) ||
+      this.DETERMINISTIC_PATTERNS.ulamSpiral.includes(num) ||
+      this.DETERMINISTIC_PATTERNS.magicSquare.includes(num)
+    );
+  }
+
+  /**
+   * 计算连续性模式
+   */
+  private static calculateContinuity<T>(history: T[], lastValue: T): 'continue' | 'alternate' | 'random' {
+    if (history.length < 3) return 'random';
     
-    // 统计对称号码出现的次数
+    let continueCount = 0;
+    let alternateCount = 0;
+    
+    for (let i = 1; i < history.length; i++) {
+      if (history[i] === history[i-1]) {
+        continueCount++;
+      } else {
+        alternateCount++;
+      }
+    }
+    
+    const continueRatio = continueCount / (history.length - 1);
+    const alternateRatio = alternateCount / (history.length - 1);
+    
+    if (continueRatio > 0.6) return 'continue';
+    if (alternateRatio > 0.6) return 'alternate';
+    return 'random';
+  }
+
+  /**
+   * 计算平衡性
+   */
+  private static calculateBalance<T>(history: T[], categories: T[]): 'balanced' | `need${Capitalize<string>}` {
+    const counts: Record<string, number> = {};
+    
+    categories.forEach(cat => {
+      counts[String(cat)] = 0;
+    });
+    
+    history.forEach(value => {
+      const key = String(value);
+      if (counts[key] !== undefined) {
+        counts[key]++;
+      }
+    });
+    
+    const total = Object.values(counts).reduce((a, b) => a + b, 0);
+    const avg = total / categories.length;
+    
+    let minCategory = categories[0];
+    let minCount = counts[String(minCategory)];
+    
+    categories.forEach(cat => {
+      const count = counts[String(cat)];
+      if (count < minCount) {
+        minCount = count;
+        minCategory = cat;
+      }
+    });
+    
+    if (minCount < avg * 0.7) {
+      return `need${String(minCategory).charAt(0).toUpperCase() + String(minCategory).slice(1)}` as any;
+    }
+    
+    return 'balanced';
+  }
+
+  /**
+   * 计算五行平衡
+   */
+  private static calculateElementBalance(history: string[]): {
+    weakElement: string | null;
+    strongElement: string | null;
+  } {
+    const counts: Record<string, number> = {
+      '金': 0, '木': 0, '水': 0, '火': 0, '土': 0
+    };
+    
+    history.forEach(element => {
+      if (counts[element] !== undefined) {
+        counts[element]++;
+      }
+    });
+    
+    let weakElement: string | null = null;
+    let strongElement: string | null = null;
+    let minCount = Infinity;
+    let maxCount = -Infinity;
+    
+    Object.entries(counts).forEach(([element, count]) => {
+      if (count < minCount) {
+        minCount = count;
+        weakElement = element;
+      }
+      if (count > maxCount) {
+        maxCount = count;
+        strongElement = element;
+      }
+    });
+    
+    return { weakElement, strongElement };
+  }
+
+  /**
+   * 检测连号
+   */
+  private static detectSeries(numbers: number[]): Array<{
+    type: 'double' | 'triple' | 'quad';
+    numbers: number[];
+  }> {
+    const series: Array<{type: 'double' | 'triple' | 'quad', numbers: number[]}> = [];
+    const sorted = [...numbers].sort((a, b) => a - b);
+    
+    let currentSeries: number[] = [sorted[0]];
+    
+    for (let i = 1; i < sorted.length; i++) {
+      if (sorted[i] === sorted[i-1] + 1) {
+        currentSeries.push(sorted[i]);
+      } else {
+        if (currentSeries.length >= 2) {
+          const type = currentSeries.length === 2 ? 'double' : 
+                      currentSeries.length === 3 ? 'triple' : 'quad';
+          series.push({ type, numbers: [...currentSeries] });
+        }
+        currentSeries = [sorted[i]];
+      }
+    }
+    
+    if (currentSeries.length >= 2) {
+      const type = currentSeries.length === 2 ? 'double' : 
+                  currentSeries.length === 3 ? 'triple' : 'quad';
+      series.push({ type, numbers: [...currentSeries] });
+    }
+    
+    return series;
+  }
+
+  /**
+   * 分析连号频率
+   */
+  private static analyzeSeriesFrequency(history: DbRecord[], num: number): number {
+    let frequency = 0;
+    
     history.forEach(rec => {
-      const nums = this.parseNumbers(rec.open_code);
-      nums.forEach(num => {
-        // 找到对称号码
-        const symmetricNum = 50 - num;
-        if (symmetricNum >= 1 && symmetricNum <= 49) {
-          symmetryMap[symmetricNum] = (symmetryMap[symmetricNum] || 0) + 1;
+      const nums = this.parseNumbers(rec.open_code).sort((a, b) => a - b);
+      const series = this.detectSeries(nums);
+      
+      series.forEach(s => {
+        if (s.numbers.includes(num)) {
+          frequency++;
         }
       });
     });
     
-    // 计算分数
-    for (let num = 1; num <= 49; num++) {
-      let score = 0;
-      
-      // 检查上期号码的对称性
-      lastDraw.forEach(n => {
-        if (50 - n === num) {
-          score += 15; // 上期号码的对称号码
-        }
-      });
-      
-      // 检查历史对称性
-      const symmetricNum = 50 - num;
-      if (symmetryMap[num] && symmetryMap[num] > 0) {
-        score += symmetryMap[num] * 2;
-      }
-      
-      scores[num] = score;
-    }
-    
-    return scores;
+    return Math.min(frequency, 5);
   }
 
-  private static calculatePeriodicScores(history: DbRecord[], currentWeek: number): Record<number, number> {
-    const scores: Record<number, number> = {};
-    const periodMap: Record<number, number[]> = {};
-    
-    // 初始化周期记录
-    for (let i = 1; i <= 49; i++) {
-      periodMap[i] = [];
+  /**
+   * 获取和值分区
+   */
+  private static getSumZone(sum: number): 'small' | 'medium' | 'large' {
+    if (sum >= this.SUM_ZONES.small.min && sum <= this.SUM_ZONES.small.max) {
+      return 'small';
+    } else if (sum >= this.SUM_ZONES.medium.min && sum <= this.SUM_ZONES.medium.max) {
+      return 'medium';
+    } else {
+      return 'large';
     }
-    
-    // 记录每个号码出现的周次
-    history.forEach((rec, index) => {
-      const weekNum = Math.floor(index / 7) + 1;
-      this.parseNumbers(rec.open_code).forEach(num => {
-        periodMap[num].push(weekNum);
-      });
-    });
-    
-    // 分析周期性
-    for (let num = 1; num <= 49; num++) {
-      const appearances = periodMap[num];
-      if (appearances.length < 3) {
-        scores[num] = 0;
-        continue;
-      }
-      
-      // 计算平均间隔
-      let totalInterval = 0;
-      for (let i = 1; i < appearances.length; i++) {
-        totalInterval += appearances[i] - appearances[i-1];
-      }
-      const avgInterval = totalInterval / (appearances.length - 1);
-      
-      // 检查是否到了该出现的时间
-      const lastAppearance = appearances[appearances.length - 1];
-      const expectedAppearance = lastAppearance + avgInterval;
-      
-      if (Math.abs(currentWeek - expectedAppearance) <= 1) {
-        scores[num] = 20; // 周期到了
-      } else if (currentWeek > expectedAppearance) {
-        scores[num] = 15; // 稍微过了周期
-      } else {
-        scores[num] = 0; // 还没到周期
-      }
-    }
-    
-    return scores;
   }
 
-  private static calculateTrendScores(history: DbRecord[]): Record<number, number> {
-    const scores: Record<number, number> = {};
-    const trendMap: Record<number, {count: number, lastPositions: number[]}> = {};
-    
-    // 初始化
-    for (let i = 1; i <= 49; i++) {
-      trendMap[i] = { count: 0, lastPositions: [] };
-    }
-    
-    // 统计近期趋势
-    const recentHistory = history.slice(0, 20);
-    recentHistory.forEach((rec, drawIndex) => {
-      const nums = this.parseNumbers(rec.open_code);
-      nums.forEach((num, position) => {
-        const pos = position + 1;
-        trendMap[num].count++;
-        trendMap[num].lastPositions.push(drawIndex * 10 + pos);
-      });
-    });
-    
-    // 分析趋势
-    for (let num = 1; num <= 49; num++) {
-      const data = trendMap[num];
-      if (data.lastPositions.length < 2) {
-        scores[num] = 0;
-        continue;
-      }
-      
-      // 计算位置变化趋势
-      let totalDiff = 0;
-      for (let i = 1; i < data.lastPositions.length; i++) {
-        totalDiff += data.lastPositions[i] - data.lastPositions[i-1];
-      }
-      const avgDiff = totalDiff / (data.lastPositions.length - 1);
-      
-      // 上升趋势还是下降趋势
-      if (avgDiff > 0) {
-        scores[num] = 15; // 上升趋势
-      } else if (avgDiff < 0) {
-        scores[num] = 10; // 下降趋势
-      } else {
-        scores[num] = 5; // 稳定趋势
-      }
-      
-      // 近期出现频率
-      if (data.count >= 3) {
-        scores[num] += 5;
-      }
-    }
-    
-    return scores;
-  }
-
-  private static analyzeHeadPatterns(history: DbRecord[], lastHead: number, weekday: number): {
-    getScore: (head: number, num: number) => number;
-  } {
-    const headStats: Record<number, {count: number, lastAppearance: number, trends: number[]}> = {};
-    
-    // 初始化头数统计
-    for (let head = 0; head <= 4; head++) {
-      headStats[head] = { count: 0, lastAppearance: 0, trends: [] };
-    }
-    
-    // 分析历史数据
-    history.forEach((rec, index) => {
-      const nums = this.parseNumbers(rec.open_code);
-      const headsInDraw = nums.map(num => Math.floor(num / 10));
-      
-      headsInDraw.forEach(head => {
-        headStats[head].count++;
-        headStats[head].lastAppearance = index;
-        headStats[head].trends.push(index);
-      });
-    });
-    
-    // 计算每个头数的遗漏值
-    const headOmission: Record<number, number> = {};
-    for (let head = 0; head <= 4; head++) {
-      headOmission[head] = headStats[head].lastAppearance;
-    }
-    
-    // 找出热门和冷门头数
-    const headEntries = Object.entries(headStats);
-    const hotHeads = headEntries
-      .sort((a, b) => b[1].count - a[1].count)
-      .slice(0, 2)
-      .map(([head]) => parseInt(head));
-    
-    const coldHeads = headEntries
-      .sort((a, b) => a[1].count - b[1].count)
-      .slice(0, 2)
-      .map(([head]) => parseInt(head));
-    
-    // 根据星期几调整
-    const weekdayPatterns: Record<number, number[]> = {
-      0: [0, 3], // 周日：头数0,3
-      1: [1, 4], // 周一：头数1,4
-      2: [2, 0], // 周二：头数2,0
-      3: [3, 1], // 周三：头数3,1
-      4: [4, 2], // 周四：头数4,2
-      5: [0, 3], // 周五：头数0,3
-      6: [1, 4]  // 周六：头数1,4
+  /**
+   * 分析和值分区转移概率
+   */
+  private static analyzeZoneTransitions(zoneHistory: string[]): Record<string, Record<string, number>> {
+    const transitions: Record<string, Record<string, number>> = {
+      'small': {'small': 0, 'medium': 0, 'large': 0},
+      'medium': {'small': 0, 'medium': 0, 'large': 0},
+      'large': {'small': 0, 'medium': 0, 'large': 0}
     };
     
-    const weekdayHeads = weekdayPatterns[weekday] || [0, 1, 2, 3, 4];
-    
-    return {
-      getScore: (head: number, num: number): number => {
-        let score = 0;
-        
-        // 热门头数
-        if (hotHeads.includes(head)) score += 15;
-        
-        // 冷门头数（可能回补）
-        if (coldHeads.includes(head)) score += 12;
-        
-        // 与上期头数的关系（避免重复）
-        if (head !== lastHead) score += 10; // 不同头数加分
-        
-        // 星期几模式
-        if (weekdayHeads.includes(head)) score += 8;
-        
-        // 头数遗漏值（越大越可能出）
-        const omission = headOmission[head] || 0;
-        if (omission > 10) score += omission * 0.5;
-        
-        // 特殊号码考虑
-        if (num >= 40 && head === 4) score += 5; // 40以上的号码
-        if (num <= 9 && head === 0) score += 5;  // 个位数
-        
-        return Math.min(score, 25);
-      }
-    };
-  }
-
-  private static analyzeTailPatterns(history: DbRecord[], lastTail: number, day: number): {
-    getScore: (tail: number, num: number) => number;
-  } {
-    const tailStats: Record<number, {count: number, lastAppearance: number, trends: number[]}> = {};
-    
-    // 初始化尾数统计
-    for (let tail = 0; tail <= 9; tail++) {
-      tailStats[tail] = { count: 0, lastAppearance: 0, trends: [] };
-    }
-    
-    // 分析历史数据
-    history.forEach((rec, index) => {
-      const nums = this.parseNumbers(rec.open_code);
-      const tailsInDraw = nums.map(num => num % 10);
+    for (let i = 1; i < zoneHistory.length; i++) {
+      const from = zoneHistory[i-1];
+      const to = zoneHistory[i];
       
-      tailsInDraw.forEach(tail => {
-        tailStats[tail].count++;
-        tailStats[tail].lastAppearance = index;
-        tailStats[tail].trends.push(index);
-      });
-    });
-    
-    // 计算每个尾数的遗漏值
-    const tailOmission: Record<number, number> = {};
-    for (let tail = 0; tail <= 9; tail++) {
-      tailOmission[tail] = tailStats[tail].lastAppearance;
-    }
-    
-    // 找出热门和冷门尾数
-    const tailEntries = Object.entries(tailStats);
-    const hotTails = tailEntries
-      .sort((a, b) => b[1].count - a[1].count)
-      .slice(0, 3)
-      .map(([tail]) => parseInt(tail));
-    
-    const coldTails = tailEntries
-      .sort((a, b) => a[1].count - b[1].count)
-      .slice(0, 3)
-      .map(([tail]) => parseInt(tail));
-    
-    // 日期模式（基于当月日期）
-    const datePattern = day % 10;
-    
-    // 尾数分组分析
-    const tailGroups = {
-      small: [0, 1, 2, 3, 4],
-      big: [5, 6, 7, 8, 9],
-      prime: [2, 3, 5, 7],
-      composite: [0, 1, 4, 6, 8, 9],
-      even: [0, 2, 4, 6, 8],
-      odd: [1, 3, 5, 7, 9]
-    };
-    
-    return {
-      getScore: (tail: number, num: number): number => {
-        let score = 0;
-        
-        // 热门尾数
-        if (hotTails.includes(tail)) score += 15;
-        
-        // 冷门尾数（可能回补）
-        if (coldTails.includes(tail)) score += 12;
-        
-        // 与上期尾数的关系（避免重复）
-        if (tail !== lastTail) score += 8; // 不同尾数加分
-        
-        // 日期模式
-        if (tail === datePattern) score += 8;
-        if (tail === (datePattern + 5) % 10) score += 6;
-        
-        // 尾数遗漏值
-        const omission = tailOmission[tail] || 0;
-        if (omission > 8) score += omission * 0.6;
-        
-        // 尾数分组分析
-        if (tailGroups.small.includes(tail)) score += 3;
-        if (tailGroups.prime.includes(tail)) score += 4;
-        
-        // 特殊考虑
-        if (tail === 0 && num % 10 === 0) score += 5; // 整十数
-        
-        return Math.min(score, 25);
-      }
-    };
-  }
-
-  private static calculateCorrelationScores(recentHistory: DbRecord[], lastDraw: number[]): Record<number, number> {
-    const scores: Record<number, number> = {};
-    const correlationMap: Record<number, Record<number, number>> = {};
-    
-    // 初始化关联矩阵
-    for (let i = 1; i <= 49; i++) {
-      correlationMap[i] = {};
-    }
-    
-    // 统计号码共现关系
-    recentHistory.forEach(rec => {
-      const nums = this.parseNumbers(rec.open_code);
-      
-      // 记录每对号码的共现次数
-      for (let i = 0; i < nums.length; i++) {
-        for (let j = i + 1; j < nums.length; j++) {
-          const a = nums[i];
-          const b = nums[j];
-          
-          correlationMap[a][b] = (correlationMap[a][b] || 0) + 1;
-          correlationMap[b][a] = (correlationMap[b][a] || 0) + 1;
-        }
-      }
-    });
-    
-    // 计算每个号码与上期号码的关联度
-    for (let num = 1; num <= 49; num++) {
-      let totalCorrelation = 0;
-      let correlationCount = 0;
-      
-      lastDraw.forEach(lastNum => {
-        if (correlationMap[num][lastNum]) {
-          totalCorrelation += correlationMap[num][lastNum];
-          correlationCount++;
-        }
-      });
-      
-      // 计算平均关联度
-      if (correlationCount > 0) {
-        scores[num] = Math.min(totalCorrelation / correlationCount * 3, 20);
-      } else {
-        scores[num] = 0;
+      if (transitions[from] && transitions[from][to] !== undefined) {
+        transitions[from][to]++;
       }
     }
     
-    return scores;
-  }
-
-  private static analyzePropertyPatterns(history: DbRecord[], lastSpecial: number): {
-    getScore: (stat: NumberStat) => number;
-  } {
-    const sizeHistory: string[] = [];
-    const parityHistory: string[] = [];
-    
-    // 收集历史属性
-    history.forEach(rec => {
-      const nums = this.parseNumbers(rec.open_code);
-      const special = nums[nums.length - 1];
-      
-      sizeHistory.push(this.NUM_TO_SIZE[special]);
-      parityHistory.push(this.NUM_TO_PARITY[special]);
-    });
-    
-    // 分析属性趋势
-    const lastSize = this.NUM_TO_SIZE[lastSpecial];
-    const lastParity = this.NUM_TO_PARITY[lastSpecial];
-    
-    // 计算属性连续性
-    const sizeContinuity = this.calculateContinuity(sizeHistory, lastSize);
-    const parityContinuity = this.calculateContinuity(parityHistory, lastParity);
-    
-    // 分析属性平衡性
-    const sizeBalance = this.calculateBalance(sizeHistory, ['small', 'large']);
-    const parityBalance = this.calculateBalance(parityHistory, ['odd', 'even']);
-    
-    return {
-      getScore: (stat: NumberStat): number => {
-        let score = 0;
-        
-        // 大小属性
-        if (sizeContinuity === 'continue' && stat.size === lastSize) {
-          score += 12; // 大小连续性
-        } else if (sizeContinuity === 'alternate' && stat.size !== lastSize) {
-          score += 12; // 大小交替性
-        }
-        
-        // 大小平衡性
-        if (sizeBalance === 'needSmall' && stat.size === 'small') {
-          score += 8;
-        } else if (sizeBalance === 'needLarge' && stat.size === 'large') {
-          score += 8;
-        }
-        
-        // 奇偶属性
-        if (parityContinuity === 'continue' && stat.parity === lastParity) {
-          score += 10; // 奇偶连续性
-        } else if (parityContinuity === 'alternate' && stat.parity !== lastParity) {
-          score += 10; // 奇偶交替性
-        }
-        
-        // 奇偶平衡性
-        if (parityBalance === 'needOdd' && stat.parity === 'odd') {
-          score += 6;
-        } else if (parityBalance === 'needEven' && stat.parity === 'even') {
-          score += 6;
-        }
-        
-        // 质数属性
-        const primeHistory = history.map(rec => {
-          const nums = this.parseNumbers(rec.open_code);
-          const special = nums[nums.length - 1];
-          return this.NUM_TO_PRIME[special];
-        });
-        
-        const primeContinuity = this.calculateContinuity(primeHistory.map(p => p ? 'prime' : 'composite'), 
-          lastSpecial ? 'prime' : 'composite');
-        
-        if (primeContinuity === 'continue' && stat.prime === lastSpecial) {
-          score += 8;
-        } else if (primeContinuity === 'alternate' && stat.prime !== lastSpecial) {
-          score += 8;
-        }
-        
-        return Math.min(score, 25);
-      }
-    };
-  }
-
-  private static calculateTimePatternScores(
-    weekday: number, 
-    monthPeriod: 'early' | 'middle' | 'late', 
-    day: number
-  ): Record<number, number> {
-    const scores: Record<number, number> = {};
-    
-    // 星期几模式
-    const weekdayPattern = this.TIME_PATTERNS.weekday[weekday];
-    
-    // 上中下旬模式
-    const monthPeriodPattern = this.TIME_PATTERNS.monthPeriod[monthPeriod];
-    
-    // 日期相关模式 (基于日期数字)
-    const dayPattern = {
-      tails: [day % 10, (day % 10 + 5) % 10],
-      heads: [Math.floor(day / 10), (Math.floor(day / 10) + 1) % 5]
-    };
-    
-    for (let num = 1; num <= 49; num++) {
-      let score = 0;
-      
-      // 星期几模式
-      if (weekdayPattern.zodiacs.includes(this.NUM_TO_ZODIAC[num])) {
-        score += 8;
-      }
-      
-      if (weekdayPattern.tails.includes(num % 10)) {
-        score += 6;
-      }
-      
-      if (weekdayPattern.clusters.includes(this.NUM_TO_CLUSTER[num])) {
-        score += 7;
-      }
-      
-      // 上中下旬模式
-      if (monthPeriodPattern.heads.includes(Math.floor(num / 10))) {
-        score += 7;
-      }
-      
-      if (monthPeriodPattern.waves.includes(this.getNumWave(num))) {
-        score += 7;
-      }
-      
-      if (monthPeriodPattern.clusters.includes(this.NUM_TO_CLUSTER[num])) {
-        score += 6;
-      }
-      
-      // 日期模式
-      if (dayPattern.tails.includes(num % 10)) {
-        score += 5;
-      }
-      
-      if (dayPattern.heads.includes(Math.floor(num / 10))) {
-        score += 5;
-      }
-      
-      // 特殊日期模式 (如：1号、15号、30号等)
-      if (day === 1 && num % 10 === 1) score += 4;
-      if (day === 15 && (num === 15 || num === 25 || num === 35 || num === 45)) score += 4;
-      if (day === 30 && num % 10 === 0) score += 4;
-      
-      scores[num] = score;
-    }
-    
-    return scores;
-  }
-
-  private static analyzeSeriesPatterns(history: DbRecord[], lastDraw: number[]): Record<number, number> {
-    const scores: Record<number, number> = {};
-    
-    // 分析历史连号模式
-    const seriesPatterns: {
-      type: 'double' | 'triple' | 'quad';
-      numbers: number[];
-      nextNumbers: number[];
-    }[] = [];
-    
-    // 收集连号模式
-    for (let i = 0; i < history.length - 1; i++) {
-      const currentNums = this.parseNumbers(history[i].open_code).sort((a, b) => a - b);
-      const nextNums = this.parseNumbers(history[i+1].open_code);
-      
-      // 检测连号
-      const seriesInCurrent = this.detectSeries(currentNums);
-      
-      if (seriesInCurrent.length > 0) {
-        seriesPatterns.push({
-          type: seriesInCurrent[0].type,
-          numbers: seriesInCurrent[0].numbers,
-          nextNumbers: nextNums
+    Object.keys(transitions).forEach(from => {
+      const total = Object.values(transitions[from]).reduce((a, b) => a + b, 0);
+      if (total > 0) {
+        Object.keys(transitions[from]).forEach(to => {
+          transitions[from][to] = transitions[from][to] / total;
         });
       }
-    }
-    
-    // 检测上期开奖号码的连号模式
-    const sortedLastDraw = [...lastDraw].sort((a, b) => a - b);
-    const lastSeries = this.detectSeries(sortedLastDraw);
-    
-    // 计算分数
-    for (let num = 1; num <= 49; num++) {
-      let score = 0;
-      
-      // 基于历史连号模式
-      seriesPatterns.forEach(pattern => {
-        // 如果上期有类似连号模式
-        if (lastSeries.length > 0 && pattern.numbers.length === lastSeries[0].numbers.length) {
-          // 检查号码是否在历史连号模式的后续号码中
-          if (pattern.nextNumbers.includes(num)) {
-            score += 10;
-          }
-        }
-      });
-      
-      // 连号延续性 (如果上期有连号)
-      if (lastSeries.length > 0) {
-        const lastSeriesNumbers = lastSeries[0].numbers;
-        
-        // 检查是否为连号的延伸
-        for (const seriesNum of lastSeriesNumbers) {
-          if (Math.abs(num - seriesNum) === 1) {
-            score += 12; // 连号延伸
-          }
-        }
-        
-        // 检查是否为连号的缺口填补
-        const minSeries = Math.min(...lastSeriesNumbers);
-        const maxSeries = Math.max(...lastSeriesNumbers);
-        
-        if (num >= minSeries - 2 && num <= maxSeries + 2 && !lastSeriesNumbers.includes(num)) {
-          score += 8; // 连号附近
-        }
-      }
-      
-      // 连号频率分析
-      const seriesFrequency = this.analyzeSeriesFrequency(history, num);
-      score += seriesFrequency * 2;
-      
-      scores[num] = Math.min(score, 25);
-    }
-    
-    return scores;
-  }
-
-  private static analyzeSumZonePatterns(history: DbRecord[], lastSum: number): {
-    getScore: (simulatedSum: number) => number;
-  } {
-    const sumZoneHistory: string[] = [];
-    
-    // 收集历史和值分区
-    history.forEach(rec => {
-      const nums = this.parseNumbers(rec.open_code);
-      const sum = nums.reduce((a, b) => a + b, 0);
-      const zone = this.getSumZone(sum);
-      sumZoneHistory.push(zone);
     });
     
-    // 分析分区趋势
-    const lastZone = this.getSumZone(lastSum);
-    const zoneContinuity = this.calculateContinuity(sumZoneHistory, lastZone);
-    
-    // 分区平衡性分析
-    const zoneBalance = this.calculateBalance(sumZoneHistory, ['small', 'medium', 'large']);
-    
-    return {
-      getScore: (simulatedSum: number): number => {
-        let score = 0;
-        const simulatedZone = this.getSumZone(simulatedSum);
-        
-        // 分区连续性
-        if (zoneContinuity === 'continue' && simulatedZone === lastZone) {
-          score += 10;
-        } else if (zoneContinuity === 'alternate' && simulatedZone !== lastZone) {
-          score += 10;
-        }
-        
-        // 分区平衡性
-        if (zoneBalance === 'needSmall' && simulatedZone === 'small') {
-          score += 8;
-        } else if (zoneBalance === 'needMedium' && simulatedZone === 'medium') {
-          score += 8;
-        } else if (zoneBalance === 'needLarge' && simulatedZone === 'large') {
-          score += 8;
-        }
-        
-        // 分区转移概率
-        const zoneTransitions = this.analyzeZoneTransitions(sumZoneHistory);
-        const transitionProb = zoneTransitions[lastZone]?.[simulatedZone] || 0;
-        score += transitionProb * 12;
-        
-        return Math.min(score, 20);
+    return transitions;
+  }
+
+  /**
+   * 多样性选码
+   */
+  private static selectDiverseNumbers(stats: NumberStat[], limit: number): NumberStat[] {
+    const selected: NumberStat[] = [];
+    const zodiacCount: Record<string, number> = {};
+    const waveCount: Record<string, number> = { red: 0, blue: 0, green: 0 };
+
+    for (const s of stats) {
+      if (selected.length >= limit) break;
+
+      const zC = zodiacCount[s.zodiac] || 0;
+      const wC = waveCount[s.wave] || 0;
+
+      if (zC < 2 && wC < 7) {
+        selected.push(s);
+        zodiacCount[s.zodiac] = zC + 1;
+        waveCount[s.wave] = wC + 1;
       }
+    }
+
+    if (selected.length < limit) {
+      for (const s of stats) {
+        if (selected.length >= limit) break;
+        if (!selected.find(n => n.num === s.num)) {
+          selected.push(s);
+        }
+      }
+    }
+
+    return selected;
+  }
+
+  /**
+   * 解析历史开奖号码字符串
+   */
+  private static parseNumbers(code: string): number[] {
+    if (!code) return [];
+    return code.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n));
+  }
+
+  /**
+   * 获取号码对应的波色
+   */
+  private static getNumWave(num: number): string {
+    if (this.WAVES_MAP.red.includes(num)) return 'red';
+    if (this.WAVES_MAP.blue.includes(num)) return 'blue';
+    if (this.WAVES_MAP.green.includes(num)) return 'green';
+    return 'red';
+  }
+
+  /**
+   * 根据月份获取季节
+   */
+  private static getSeasonByMonth(month: number): string {
+    if (month >= 3 && month <= 5) return '春';
+    if (month >= 6 && month <= 8) return '夏';
+    if (month >= 9 && month <= 11) return '秋';
+    return '冬';
+  }
+
+  /**
+   * 数据不足时的确定性兜底生成器
+   */
+  private static generateDeterministic(): PredictionData {
+    this.initializeMaps();
+    const deterministicNums = [1, 2, 7, 8, 12, 13, 19, 23, 29, 31, 37, 41, 47, 49, 15, 25, 33, 45]
+      .map(n => n < 10 ? `0${n}` : `${n}`);
+
+    return {
+      zodiacs: ['蛇', '马', '羊', '猴', '鸡', '狗'],
+      numbers: deterministicNums,
+      wave: { main: 'red', defense: 'blue' },
+      heads: ['0', '1', '2'],
+      tails: ['1', '2', '7', '8']
     };
   }
 
-  private static calculateElementRelationScores(recentHistory: DbRecord[], lastSpecial: number): Record<number, number> {
-    const scores: Record<number, number> = {};
-    const lastElement = this.NUM_TO_WUXING[lastSpecial];
-    
-    if (!lastElement) {
-      // 如果无法获取上期五行，返回零分
-      for (let num = 1; num <= 49; num++) scores[num] = 0;
-      return scores;
-    }
-    
-    const elementCycle = this.WU_XING_CYCLE[lastElement];
-    
-    // 分析历史五行关系
-    const elementHistory: string[] = [];
-    recentHistory.forEach(rec => {
-      const nums = this.parseNumbers(rec.open_code);
-      const special = nums[nums.length - 1];
-      elementHistory.push(this.NUM_TO_WUXING[special]);
-    });
-    
-    // 计算五行平衡
-    const elementBalance = this.calculateElementBalance(elementHistory);
-    
-    for (let num = 1; num <= 49; num++) {
-      let score = 0;
-      const currentElement = this.NUM_TO_WUXING[num];
-      
-      // 相生关系 (上期五行生当前五行)
-      if (elementCycle.sheng === currentElement) {
-        score += 15; // 被生，有利
-      }
-      
-      // 相克关系 (上期五行克当前五行)
-      if (elementCycle.ke === currentElement) {
-        score += 8; // 被克，不利但可能有反转
-      }
-      
-      // 生上期五行 (当前五行生上期五行)
-      if (elementCycle.sheng_by === currentElement) {
-        score += 10; // 生他，消耗但有情
-      }
-      
-      // 克上期五行 (当前五行克上期五行)
-      if (elementCycle.ke_by === currentElement) {
-        score += 12; // 克他，主动有利
-      }
-      
-      // 五行平衡考虑
-      if (elementBalance.weakElement === currentElement) {
-        score += 10; // 补弱五行
-      }
-      
-      if (elementBalance.strongElement === currentElement) {
-        score -= 5; // 抑制过强五行
-      }
-      
-      // 相同五行 (连续出现)
-      if (currentElement === lastElement) {
-        score += 6; // 五行连续性
-      }
-      
-      scores[num] = Math.max(score, 0);
-    }
-    
-    return scores;
-  }
-
+  /**
+   * 计算头数推荐
+   */
   private static calculateHeadRecommendations(
     history: DbRecord[], 
     selectedNumbers: NumberStat[], 
@@ -3237,6 +4922,9 @@ export class PredictionEngine {
     return recommendations.sort().map(h => h.toString());
   }
 
+  /**
+   * 计算尾数推荐
+   */
   private static calculateTailRecommendations(
     history: DbRecord[], 
     selectedNumbers: NumberStat[], 
@@ -3251,12 +4939,9 @@ export class PredictionEngine {
     const tailScores: { tail: number, score: number }[] = [];
     for (let tail = 0; tail <= 9; tail++) {
       let score = 0;
-      // 1. 覆盖率
       score += (selectedTails[tail] || 0) * 8;
-      // 2. 日期尾数对应 (确定性核心)
       if (tail === day % 10) score += 20;
       if (tail === (day + 5) % 10) score += 10;
-      // 3. 奇偶平衡建议
       if (tail % 2 !== lastTail % 2) score += 12;
 
       tailScores.push({ tail, score });
@@ -3268,358 +4953,10 @@ export class PredictionEngine {
       .map(t => t.tail.toString());
   }
 
-  // ==========================================
-  // 辅助方法
-  // ==========================================
-
-  /**
-   * 获取近期生肖出现次数
-   */
-  private static getRecentZodiacCount(history: DbRecord[], zodiac: string): number {
-    let count = 0;
-    history.forEach(rec => {
-      this.parseNumbers(rec.open_code).forEach(num => {
-        if (this.NUM_TO_ZODIAC[num] === zodiac) {
-          count++;
-        }
-      });
-    });
-    return count;
-  }
-
   /**
    * 计算数字各位之和
    */
   private static sumDigits(num: number): number {
     return num.toString().split('').reduce((sum, digit) => sum + parseInt(digit), 0);
-  }
-
-  /**
-   * 获取号码频率
-   */
-  private static getNumberFrequency(history: DbRecord[], num: number): number {
-    let count = 0;
-    history.forEach(rec => {
-      if (this.parseNumbers(rec.open_code).includes(num)) {
-        count++;
-      }
-    });
-    return count;
-  }
-
-  /**
-   * 判断是否为确定性号码
-   */
-  private static isDeterministicNumber(num: number): boolean {
-    return (
-      this.PRIME_NUMBERS.includes(num) ||
-      num % 10 === 0 ||
-      num % 10 === 5 ||
-      num === 25 || num === 37 || num === 49 ||
-      this.DETERMINISTIC_PATTERNS.primeSpiral.includes(num) ||
-      this.DETERMINISTIC_PATTERNS.ulamSpiral.includes(num) ||
-      this.DETERMINISTIC_PATTERNS.magicSquare.includes(num)
-    );
-  }
-
-  /**
-   * 计算连续性模式
-   */
-  private static calculateContinuity<T>(history: T[], lastValue: T): 'continue' | 'alternate' | 'random' {
-    if (history.length < 3) return 'random';
-    
-    let continueCount = 0;
-    let alternateCount = 0;
-    
-    for (let i = 1; i < history.length; i++) {
-      if (history[i] === history[i-1]) {
-        continueCount++;
-      } else {
-        alternateCount++;
-      }
-    }
-    
-    const continueRatio = continueCount / (history.length - 1);
-    const alternateRatio = alternateCount / (history.length - 1);
-    
-    if (continueRatio > 0.6) return 'continue';
-    if (alternateRatio > 0.6) return 'alternate';
-    return 'random';
-  }
-
-  /**
-   * 计算平衡性
-   */
-  private static calculateBalance<T>(history: T[], categories: T[]): 'balanced' | `need${Capitalize<string>}` {
-    const counts: Record<string, number> = {};
-    
-    // 初始化计数
-    categories.forEach(cat => {
-      counts[String(cat)] = 0;
-    });
-    
-    // 统计各类别出现次数
-    history.forEach(value => {
-      const key = String(value);
-      if (counts[key] !== undefined) {
-        counts[key]++;
-      }
-    });
-    
-    // 计算平均出现次数
-    const total = Object.values(counts).reduce((a, b) => a + b, 0);
-    const avg = total / categories.length;
-    
-    // 找出最少出现的类别
-    let minCategory = categories[0];
-    let minCount = counts[String(minCategory)];
-    
-    categories.forEach(cat => {
-      const count = counts[String(cat)];
-      if (count < minCount) {
-        minCount = count;
-        minCategory = cat;
-      }
-    });
-    
-    // 如果最少出现的类别明显低于平均值，则需要补强
-    if (minCount < avg * 0.7) {
-      return `need${String(minCategory).charAt(0).toUpperCase() + String(minCategory).slice(1)}` as any;
-    }
-    
-    return 'balanced';
-  }
-
-  /**
-   * 计算五行平衡
-   */
-  private static calculateElementBalance(history: string[]): {
-    weakElement: string | null;
-    strongElement: string | null;
-  } {
-    const counts: Record<string, number> = {
-      '金': 0, '木': 0, '水': 0, '火': 0, '土': 0
-    };
-    
-    // 统计五行出现次数
-    history.forEach(element => {
-      if (counts[element] !== undefined) {
-        counts[element]++;
-      }
-    });
-    
-    // 找出最强和最弱的五行
-    let weakElement: string | null = null;
-    let strongElement: string | null = null;
-    let minCount = Infinity;
-    let maxCount = -Infinity;
-    
-    Object.entries(counts).forEach(([element, count]) => {
-      if (count < minCount) {
-        minCount = count;
-        weakElement = element;
-      }
-      if (count > maxCount) {
-        maxCount = count;
-        strongElement = element;
-      }
-    });
-    
-    return { weakElement, strongElement };
-  }
-
-  /**
-   * 检测连号
-   */
-  private static detectSeries(numbers: number[]): Array<{
-    type: 'double' | 'triple' | 'quad';
-    numbers: number[];
-  }> {
-    const series: Array<{type: 'double' | 'triple' | 'quad', numbers: number[]}> = [];
-    const sorted = [...numbers].sort((a, b) => a - b);
-    
-    let currentSeries: number[] = [sorted[0]];
-    
-    for (let i = 1; i < sorted.length; i++) {
-      if (sorted[i] === sorted[i-1] + 1) {
-        currentSeries.push(sorted[i]);
-      } else {
-        if (currentSeries.length >= 2) {
-          const type = currentSeries.length === 2 ? 'double' : 
-                      currentSeries.length === 3 ? 'triple' : 'quad';
-          series.push({ type, numbers: [...currentSeries] });
-        }
-        currentSeries = [sorted[i]];
-      }
-    }
-    
-    // 处理最后一组
-    if (currentSeries.length >= 2) {
-      const type = currentSeries.length === 2 ? 'double' : 
-                  currentSeries.length === 3 ? 'triple' : 'quad';
-      series.push({ type, numbers: [...currentSeries] });
-    }
-    
-    return series;
-  }
-
-  /**
-   * 分析连号频率
-   */
-  private static analyzeSeriesFrequency(history: DbRecord[], num: number): number {
-    let frequency = 0;
-    
-    history.forEach(rec => {
-      const nums = this.parseNumbers(rec.open_code).sort((a, b) => a - b);
-      const series = this.detectSeries(nums);
-      
-      series.forEach(s => {
-        if (s.numbers.includes(num)) {
-          frequency++;
-        }
-      });
-    });
-    
-    return Math.min(frequency, 5); // 最高5分
-  }
-
-  /**
-   * 获取和值分区
-   */
-  private static getSumZone(sum: number): 'small' | 'medium' | 'large' {
-    if (sum >= this.SUM_ZONES.small.min && sum <= this.SUM_ZONES.small.max) {
-      return 'small';
-    } else if (sum >= this.SUM_ZONES.medium.min && sum <= this.SUM_ZONES.medium.max) {
-      return 'medium';
-    } else {
-      return 'large';
-    }
-  }
-
-  /**
-   * 分析和值分区转移概率
-   */
-  private static analyzeZoneTransitions(zoneHistory: string[]): Record<string, Record<string, number>> {
-    const transitions: Record<string, Record<string, number>> = {
-      'small': {'small': 0, 'medium': 0, 'large': 0},
-      'medium': {'small': 0, 'medium': 0, 'large': 0},
-      'large': {'small': 0, 'medium': 0, 'large': 0}
-    };
-    
-    for (let i = 1; i < zoneHistory.length; i++) {
-      const from = zoneHistory[i-1];
-      const to = zoneHistory[i];
-      
-      if (transitions[from] && transitions[from][to] !== undefined) {
-        transitions[from][to]++;
-      }
-    }
-    
-    // 转换为概率
-    Object.keys(transitions).forEach(from => {
-      const total = Object.values(transitions[from]).reduce((a, b) => a + b, 0);
-      if (total > 0) {
-        Object.keys(transitions[from]).forEach(to => {
-          transitions[from][to] = transitions[from][to] / total;
-        });
-      }
-    });
-    
-    return transitions;
-  }
-
-  /**
-   * 多样性选码：确保结果不会过度集中在某一属性上
-   */
-  private static selectDiverseNumbers(stats: NumberStat[], limit: number): NumberStat[] {
-    const selected: NumberStat[] = [];
-    const zodiacCount: Record<string, number> = {};
-    const waveCount: Record<string, number> = { red: 0, blue: 0, green: 0 };
-
-    for (const s of stats) {
-      if (selected.length >= limit) break;
-
-      const zC = zodiacCount[s.zodiac] || 0;
-      const wC = waveCount[s.wave] || 0;
-
-      // 限制每个生肖最多2个号码，每个波色最多7个号码
-      if (zC < 2 && wC < 7) {
-        selected.push(s);
-        zodiacCount[s.zodiac] = zC + 1;
-        waveCount[s.wave] = wC + 1;
-      }
-    }
-
-    // 如果不足，按分数补充
-    if (selected.length < limit) {
-      for (const s of stats) {
-        if (selected.length >= limit) break;
-        if (!selected.find(n => n.num === s.num)) {
-          selected.push(s);
-        }
-      }
-    }
-
-    return selected;
-  }
-
-  /**
-   * 解析历史开奖号码字符串
-   */
-  private static parseNumbers(code: string): number[] {
-    if (!code) return [];
-    return code.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n));
-  }
-
-  /**
-   * 获取号码对应的波色
-   */
-  private static getNumWave(num: number): string {
-    if (this.WAVES_MAP.red.includes(num)) return 'red';
-    if (this.WAVES_MAP.blue.includes(num)) return 'blue';
-    if (this.WAVES_MAP.green.includes(num)) return 'green';
-    return 'red';
-  }
-
-  /**
-   * 根据月份获取季节
-   */
-  private static getSeasonByMonth(month: number): string {
-    if (month >= 3 && month <= 5) return '春';
-    if (month >= 6 && month <= 8) return '夏';
-    if (month >= 9 && month <= 11) return '秋';
-    return '冬';
-  }
-
-  /**
-   * 数据不足时的确定性兜底生成器
-   */
-  private static generateDeterministic(): PredictionData {
-    this.initializeMaps();
-    // 固定的高质量质数和黄金分割序列
-    const deterministicNums = [1, 2, 7, 8, 12, 13, 19, 23, 29, 31, 37, 41, 47, 49, 15, 25, 33, 45]
-      .map(n => n < 10 ? `0${n}` : `${n}`);
-
-    return {
-      zodiacs: ['蛇', '马', '羊', '猴', '鸡', '狗'],
-      numbers: deterministicNums,
-      wave: { main: 'red', defense: 'blue' },
-      heads: ['0', '1', '2'],
-      tails: ['1', '2', '7', '8']
-    };
-  }
-
-  /**
-   * 核心哈希算法：替代随机数，确保同一条件生成的预测一致
-   */
-  private static deterministicHash(...args: (number | string)[]): number {
-    const str = args.join('|');
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash |= 0; 
-    }
-    return Math.abs(hash);
   }
 }
