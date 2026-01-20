@@ -10,17 +10,17 @@ interface NumberStat {
 
 interface StrategyResult {
   name: string;
-  score: number; // 0-1, 准确率
-  weight: number; // 动态权重
+  score: number; // 加权得分
+  weight: number; // 最终影响权重
 }
 
 /**
- * 🌌 Nebula Self-Correcting Engine v13.0 (Quantum Core)
+ * 🌌 Nebula Self-Correcting Engine v14.0 (Singularity)
  * 
  * 核心特性：
- * 1. 12大确定性算法矩阵：包含传统的规律映射和高阶统计学模型。
- * 2. 纯数学模型引入：马尔可夫链、泊松分布、线性回归趋势。
- * 3. 零随机性：所有降级和兜底逻辑均基于热度统计。
+ * 1. 15大确定性算法矩阵：覆盖规律、统计学、几何学、计算机位运算、金融动量指标。
+ * 2. 时间衰减回测 (Time-Decay Backtesting)：最近的回测结果权重更高，能更快适应变盘。
+ * 3. 复杂算法引入：k-NN (模式匹配), Bitwise (位运算), Momentum (动量指标)。
  */
 export class PredictionEngine {
 
@@ -79,7 +79,9 @@ export class PredictionEngine {
     
     // 获取当前表现最好的策略名称
     const bestStrategy = strategies.sort((a, b) => b.weight - a.weight)[0];
-    const analysisText = `${bestStrategy.name} (30期准确率: ${(bestStrategy.score * 100).toFixed(0)}%)`;
+    // 归一化显示准确率 (近似值)
+    const displayScore = Math.min(bestStrategy.score * 2.5, 100).toFixed(0); 
+    const analysisText = `${bestStrategy.name} (加权强度: ${displayScore})`;
 
     // 2. 综合打分 (Composite Scoring)
     // ------------------------------------------------
@@ -126,7 +128,8 @@ export class PredictionEngine {
   }
 
   /**
-   * 自动回测内核
+   * 自动回测内核 v2.0
+   * 引入时间衰减：最近的验证结果权重更高
    */
   static runBacktest(history: DbRecord[], windowSize: number): StrategyResult[] {
     const strategyDefinitions = [
@@ -142,45 +145,54 @@ export class PredictionEngine {
       // 规则映射类
       { name: '五行相生 (Element)', func: this.strategyFiveElements.bind(this) },
       { name: '三合六合 (Harmony)', func: this.strategyZodiacHarmony.bind(this) },
-      // 统计学类 (New)
+      // 统计学类
       { name: '马尔可夫链 (Markov)', func: this.strategyMarkovChain.bind(this) },
       { name: '泊松分布 (Poisson)', func: this.strategyPoisson.bind(this) },
-      { name: '回归趋势 (Regression)', func: this.strategyRegression.bind(this) }
+      { name: '回归趋势 (Regression)', func: this.strategyRegression.bind(this) },
+      // 高阶算法类 (New)
+      { name: 'k-近邻 (k-NN)', func: this.strategyKNN.bind(this) },
+      { name: '位运算漩涡 (Bitwise)', func: this.strategyBitwiseVortex.bind(this) },
+      { name: '动量震荡 (Momentum)', func: this.strategyMomentum.bind(this) }
     ];
 
-    const results = strategyDefinitions.map(s => ({ name: s.name, hits: 0 }));
+    const results = strategyDefinitions.map(s => ({ name: s.name, score: 0 }));
 
     // 回测循环
     for (let i = 0; i < windowSize; i++) {
       const targetRecord = history[i];
       const trainingData = history.slice(i + 1);
       
-      if (trainingData.length < 50) break; // 训练数据不足
+      if (trainingData.length < 50) break; 
 
       const targetNum = this.parseNumbers(targetRecord.open_code).pop();
       if (!targetNum) continue;
 
+      // 时间衰减因子：i=0 (最新) 权重最大，i=29 (最旧) 权重最小
+      // 公式：Weight = 1 + (1 - i / windowSize)
+      // 例如：最新一期权重 2.0，最老一期权重 1.0
+      const timeWeight = 1 + (1 - i / windowSize);
+
       strategyDefinitions.forEach((strat, idx) => {
         const scores = strat.func(trainingData);
-        // 取该策略推荐的前 12 码进行验证
         const topPicked = Object.keys(scores)
           .map(Number)
           .sort((a, b) => scores[b] - scores[a])
-          .slice(0, 12);
+          .slice(0, 12); // 取前12码验证
         
         if (topPicked.includes(targetNum)) {
-          results[idx].hits++;
+          results[idx].score += timeWeight; // 命中加分
         }
       });
     }
 
-    // 计算权重
+    // 计算最终权重
     return results.map(r => {
-      const accuracy = r.hits / windowSize;
+      // 归一化处理，防止权重过大
+      const normalizedScore = r.score / windowSize; 
       return {
         name: r.name,
-        score: accuracy,
-        weight: 1.0 + (accuracy * 6.0) 
+        score: normalizedScore,
+        weight: 1.0 + (normalizedScore * 8.0) // 动态调整放大倍数
       };
     });
   }
@@ -208,7 +220,10 @@ export class PredictionEngine {
       '合数走势 (DigitSum)': this.strategyDigitSum.bind(this),
       '马尔可夫链 (Markov)': this.strategyMarkovChain.bind(this),
       '泊松分布 (Poisson)': this.strategyPoisson.bind(this),
-      '回归趋势 (Regression)': this.strategyRegression.bind(this)
+      '回归趋势 (Regression)': this.strategyRegression.bind(this),
+      'k-近邻 (k-NN)': this.strategyKNN.bind(this),
+      '位运算漩涡 (Bitwise)': this.strategyBitwiseVortex.bind(this),
+      '动量震荡 (Momentum)': this.strategyMomentum.bind(this)
     };
 
     strategies.forEach(strat => {
@@ -223,98 +238,136 @@ export class PredictionEngine {
       }
     });
     
-    // 确定性微扰动 (非随机)，防止死锁
+    // 确定性微扰动
     for (let n = 1; n <= 49; n++) stats[n].totalScore += (n * 0.0001); 
 
     return stats;
   }
 
   // ==========================================
-  // 核心确定性算法库 (Deterministic Strategies)
+  // 高阶确定性算法库 (Advanced Deterministic)
   // ==========================================
 
-  // 10. 马尔可夫链 (Markov Chain) [New]
-  // 基于条件概率：当特码为 X 时，历史上紧接着出现 Y 的概率
-  static strategyMarkovChain(history: DbRecord[]): Record<number, number> {
+  // 13. k-近邻算法 (k-Nearest Neighbors) [New]
+  // 将最近 5 期的特码视为一个向量，在历史数据中寻找欧几里得距离最近的 K 个向量
+  static strategyKNN(history: DbRecord[]): Record<number, number> {
       const scores: Record<number, number> = {};
-      const lastNum = this.parseNumbers(history[0].open_code).pop() || 1;
-      const transitionCounts: Record<number, number> = {};
+      const k = 5; // 寻找前5个相似历史
+      const vectorSize = 5; // 向量维度：最近5期
 
-      // 统计转移矩阵
-      for (let i = 1; i < history.length; i++) {
-          const prevNum = this.parseNumbers(history[i].open_code).pop();
-          if (prevNum === lastNum) {
-              const nextNum = this.parseNumbers(history[i - 1].open_code).pop();
-              if (nextNum) {
-                  transitionCounts[nextNum] = (transitionCounts[nextNum] || 0) + 1;
-              }
+      if (history.length < vectorSize * 2) return scores;
+
+      const currentVector = [];
+      for(let i=0; i<vectorSize; i++) {
+         currentVector.push(this.parseNumbers(history[i].open_code).pop() || 0);
+      }
+
+      const distances: { dist: number, nextNum: number }[] = [];
+
+      // 遍历历史 (跳过最近 vectorSize 期)
+      for(let i = vectorSize; i < Math.min(history.length - vectorSize - 1, 200); i++) {
+          let dist = 0;
+          let valid = true;
+          for(let j=0; j<vectorSize; j++) {
+             const histNum = this.parseNumbers(history[i+j].open_code).pop() || 0;
+             if (histNum === 0) valid = false;
+             dist += Math.pow(currentVector[j] - histNum, 2);
+          }
+          if (valid) {
+             const nextNum = this.parseNumbers(history[i-1].open_code).pop() || 0; // 向量结束后的下一期
+             distances.push({ dist: Math.sqrt(dist), nextNum });
           }
       }
-      Object.entries(transitionCounts).forEach(([num, count]) => {
-          scores[parseInt(num)] = count * 5; 
+
+      // 排序取前 k 个相似
+      distances.sort((a,b) => a.dist - b.dist);
+      const topK = distances.slice(0, k);
+
+      topK.forEach(item => {
+          if(item.nextNum > 0 && item.nextNum <= 49) {
+              // 距离越小，相似度越高，得分越高
+              scores[item.nextNum] = (scores[item.nextNum] || 0) + (100 / (item.dist + 1));
+          }
       });
+
       return scores;
   }
 
-  // 11. 泊松分布 (Poisson Distribution) [New]
-  // 基于平均出现频率计算下期出现的概率
-  static strategyPoisson(history: DbRecord[]): Record<number, number> {
+  // 14. 位运算漩涡 (Bitwise Vortex) [New]
+  // 利用二进制位运算寻找数字间的逻辑关系 (XOR)
+  static strategyBitwiseVortex(history: DbRecord[]): Record<number, number> {
       const scores: Record<number, number> = {};
-      const freq: Record<number, number> = {};
-      const n = Math.min(history.length, 50);
-      
-      for(let i=0; i<n; i++) {
-          const num = this.parseNumbers(history[i].open_code).pop();
-          if(num) freq[num] = (freq[num] || 0) + 1;
-      }
+      const n1 = this.parseNumbers(history[0].open_code).pop() || 0;
+      const n2 = this.parseNumbers(history[1].open_code).pop() || 0;
+      const n3 = this.parseNumbers(history[2].open_code).pop() || 0;
 
-      // Poisson formula: P(k=1; lambda) = lambda^1 * e^-lambda / 1!
-      // lambda = 平均每期出现的次数 (这里简化为 50 期内的频率/50)
-      for(let num=1; num<=49; num++) {
-          const k = (freq[num] || 0);
-          const lambda = k / n * 7; // *7 归一化到特码周期
-          // 我们寻找最接近 lambda=1 (即下期期望出现1次) 的号码，或者简单地寻找热度
-          // 这里使用 lambda * e^-lambda 作为权重
-          const prob = lambda * Math.exp(-lambda);
-          scores[num] = prob * 100;
+      // 逻辑1: 异或趋势 (XOR Trend)
+      // 如果 n1 ^ n2 = x, 那么下期可能是 n1 ^ x
+      const xorDiff = n1 ^ n2;
+      let nextXor = (n1 ^ xorDiff) % 49 || 49;
+      scores[nextXor] = 5;
+
+      // 逻辑2: 循环位移模拟 (Circular Shift Simulation)
+      // 简单的位操作模拟混沌
+      let chaos = (n1 & n2) | (n2 & n3); 
+      chaos = chaos % 49 || 49;
+      scores[chaos] = (scores[chaos] || 0) + 5;
+
+      // 逻辑3: 高位与低位平衡
+      // 检查 n1 二进制中 1 的个数
+      const countBits = (n: number) => n.toString(2).split('1').length - 1;
+      const bits = countBits(n1);
+      // 推荐同样 bits 数量的号码
+      for(let i=1; i<=49; i++) {
+          if (countBits(i) === bits) {
+              scores[i] = (scores[i] || 0) + 2;
+          }
       }
       return scores;
   }
 
-  // 12. 线性回归趋势 (Linear Regression Gap) [New]
-  // 分析每个号码的遗漏值变化趋势，如果遗漏值在缩小，说明越来越热
-  static strategyRegression(history: DbRecord[]): Record<number, number> {
+  // 15. 动量震荡指标 (Momentum Oscillator) [New]
+  // 类似于 RSI，计算号码近期是“超买”还是“超卖”
+  // 如果一个号码最近出现频率远高于平均值，可能会冷却 (Mean Reversion)
+  // 如果一个号码长期未出但近期开始活跃，可能会爆发 (Momentum)
+  static strategyMomentum(history: DbRecord[]): Record<number, number> {
       const scores: Record<number, number> = {};
-      
-      for(let num=1; num<=49; num++) {
-          // 获取该号码最近 3 次出现的间隔 (Gap)
-          const gaps: number[] = [];
-          let lastIndex = -1;
-          for(let i=0; i<Math.min(history.length, 100); i++) {
+      const shortTerm = 10;
+      const longTerm = 50;
+
+      const getFreq = (period: number) => {
+          const f: Record<number, number> = {};
+          for(let i=0; i<Math.min(history.length, period); i++) {
               const nums = this.parseNumbers(history[i].open_code);
-              if (nums.includes(num)) {
-                  if (lastIndex !== -1) {
-                      gaps.push(i - lastIndex);
-                  }
-                  lastIndex = i;
-                  if (gaps.length >= 3) break;
-              }
+              nums.forEach(n => f[n] = (f[n]||0)+1);
+          }
+          return f;
+      };
+
+      const shortFreq = getFreq(shortTerm);
+      const longFreq = getFreq(longTerm);
+
+      for(let n=1; n<=49; n++) {
+          const sf = (shortFreq[n] || 0) / shortTerm;
+          const lf = (longFreq[n] || 0) / longTerm;
+          
+          // 动量公式: 短期频率 - 长期频率
+          // 正值表示正在变热 (追热)
+          const momentum = sf - lf;
+          
+          if (momentum > 0.05) { // 显著变热
+              scores[n] = momentum * 100;
           }
           
-          if (gaps.length >= 2) {
-              // 简单趋势：如果间隔在变小 (gap[0] < gap[1])，加分
-              if (gaps[0] < gaps[1]) {
-                  scores[num] = 5;
-                  if (gaps.length >=3 && gaps[1] < gaps[2]) {
-                      scores[num] += 3; // 连续缩短
-                  }
-              }
+          // 如果短期极热 (例如出现3次以上)，可能是强弩之末，稍微减分 (通过不加分实现)
+          if ((shortFreq[n] || 0) >= 3) {
+              scores[n] = 0; 
           }
       }
       return scores;
   }
 
-  // --- 原有算法保留 ---
+  // --- 原有算法保留 (1-12) ---
 
   static strategyOffset(history: DbRecord[]): Record<number, number> {
     const scores: Record<number, number> = {};
@@ -488,6 +541,66 @@ export class PredictionEngine {
       return scores;
   }
 
+  static strategyMarkovChain(history: DbRecord[]): Record<number, number> {
+      const scores: Record<number, number> = {};
+      const lastNum = this.parseNumbers(history[0].open_code).pop() || 1;
+      const transitionCounts: Record<number, number> = {};
+      for (let i = 1; i < history.length; i++) {
+          const prevNum = this.parseNumbers(history[i].open_code).pop();
+          if (prevNum === lastNum) {
+              const nextNum = this.parseNumbers(history[i - 1].open_code).pop();
+              if (nextNum) {
+                  transitionCounts[nextNum] = (transitionCounts[nextNum] || 0) + 1;
+              }
+          }
+      }
+      Object.entries(transitionCounts).forEach(([num, count]) => {
+          scores[parseInt(num)] = count * 5; 
+      });
+      return scores;
+  }
+
+  static strategyPoisson(history: DbRecord[]): Record<number, number> {
+      const scores: Record<number, number> = {};
+      const freq: Record<number, number> = {};
+      const n = Math.min(history.length, 50);
+      
+      for(let i=0; i<n; i++) {
+          const num = this.parseNumbers(history[i].open_code).pop();
+          if(num) freq[num] = (freq[num] || 0) + 1;
+      }
+      for(let num=1; num<=49; num++) {
+          const k = (freq[num] || 0);
+          const lambda = k / n * 7; 
+          const prob = lambda * Math.exp(-lambda);
+          scores[num] = prob * 100;
+      }
+      return scores;
+  }
+
+  static strategyRegression(history: DbRecord[]): Record<number, number> {
+      const scores: Record<number, number> = {};
+      for(let num=1; num<=49; num++) {
+          const gaps: number[] = [];
+          let lastIndex = -1;
+          for(let i=0; i<Math.min(history.length, 100); i++) {
+              const nums = this.parseNumbers(history[i].open_code);
+              if (nums.includes(num)) {
+                  if (lastIndex !== -1) gaps.push(i - lastIndex);
+                  lastIndex = i;
+                  if (gaps.length >= 3) break;
+              }
+          }
+          if (gaps.length >= 2) {
+              if (gaps[0] < gaps[1]) {
+                  scores[num] = 5;
+                  if (gaps.length >=3 && gaps[1] < gaps[2]) scores[num] += 3;
+              }
+          }
+      }
+      return scores;
+  }
+
   static strategyTailTrend(history: DbRecord[]): Record<number, number> {
     const scores: Record<number, number> = {};
     for (let i = 0; i < Math.min(history.length, 15); i++) {
@@ -501,17 +614,15 @@ export class PredictionEngine {
     return scores;
   }
 
-  // 纯热度统计兜底 (去除了 Math.random)
   private static generateFallback(history: DbRecord[]): PredictionData {
     const freq: Record<number, number> = {};
     history.forEach(rec => {
         this.parseNumbers(rec.open_code).forEach(n => freq[n] = (freq[n]||0)+1);
     });
-    // 纯按热度排序
     const hotNums = Object.keys(freq).map(Number).sort((a,b)=>freq[b]-freq[a]).slice(0, 18);
     const resultNums = hotNums.sort((a,b)=>a-b).map(n => n < 10 ? `0${n}` : `${n}`);
     return {
-        zodiacs: ['鼠','牛','虎','兔','龙','蛇'], // 固定默认
+        zodiacs: ['鼠','牛','虎','兔','龙','蛇'],
         numbers: resultNums,
         wave: {main:'red', defense:'blue'},
         heads: ['0','1','2'],
