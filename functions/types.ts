@@ -34,7 +34,8 @@ export interface PredictionData {
   };
   heads: string[];       // 推荐三个头
   tails: string[];       // 推荐五个尾
-  strategy_analysis?: string; // 策略分析报告 (AI Decision)
+  ai_eight_codes?: string[]; // 综合精选 8 码 (原 AI)
+  strategy_analysis?: string; // 策略分析报告
 }
 
 export interface DbPrediction {

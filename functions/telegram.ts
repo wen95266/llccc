@@ -2,6 +2,7 @@
 // File: functions/telegram.ts
 import { Env, LotteryType } from './types';
 import { PredictionEngine } from './lib/prediction';
+import { getZodiac, getZodiacMode } from './lib/zodiac';
 
 type PagesFunction<T = unknown> = (context: {
   request: Request;
@@ -17,7 +18,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   const status = {
      status: "Active",
      message: "Telegram Bot Function is running.",
-     version: "v19.0 Omniscient Core (29-Strategy Matrix)",
+     version: "v20.6 NoAI (CNY)",
      timestamp: new Date().toISOString()
   };
   return new Response(JSON.stringify(status, null, 2), {
@@ -37,7 +38,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const chatId = body.message.chat.id;
     let text = (body.message.text || '').trim();
 
-    // 兼容旧版中文命令，映射到新版下划线命令
+    // 兼容旧版中文命令
     if (text.includes('同步') && text.includes('香港')) text = '/sync_HK';
     else if (text.includes('预测') && text.includes('香港')) text = '/predict_HK';
     else if (text.includes('列表') && text.includes('香港')) text = '/list_HK';
@@ -52,34 +53,25 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     
     else if (text.includes('删除记录')) text = '/del_help';
 
-    // 解析命令: /cmd 或 /cmd_TYPE
+    // 解析命令
     let command = '';
     let targetTypeStr = '';
     
     if (text.startsWith('/')) {
-        // 移除 /
         const raw = text.substring(1); 
-        // 尝试按第一次出现的下划线分割
         const parts = raw.split('_');
         command = '/' + parts[0];
         if (parts.length > 1) {
-            // 重新组合剩余部分作为类型 (防止类型本身有下划线，虽然目前类型如 MO_NEW 也有下划线)
-            // 简单处理：MO_NEW -> NEW, MO_OLD -> OLD
-            // 更好的方式：
-            // /predict_HK -> command=/predict, type=HK
-            // /predict_MO_NEW -> command=/predict, type=MO_NEW
             targetTypeStr = raw.substring(parts[0].length + 1);
         } else {
-            // 处理空格分隔: /predict HK
             const spaceParts = raw.split(/\s+/);
             command = '/' + spaceParts[0];
             targetTypeStr = spaceParts[1] || '';
         }
     } else {
-        return new Response('OK'); // 忽略非命令文本
+        return new Response('OK');
     }
     
-    // 类型映射标准化
     const resolveType = (t: string): LotteryType | null => {
       if (!t) return null;
       t = t.toUpperCase();
@@ -96,31 +88,31 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if (command === '/start' || command === '/id' || command === '/menu' || command === '/help') {
       const isAdmin = String(chatId) === String(env.ADMIN_CHAT_ID);
       
-      let msg = `🌌 <b>全知核心 v19.0 (Omniscient Core)</b>\n`;
+      let msg = `🌌 <b>双子觉醒 v20.6 (NoAI CNY)</b>\n`;
       msg += `━━━━━━━━━━━━━━━━━━\n`;
       
       if (isAdmin) {
-        msg += `请点击下方命令进行操作：\n\n`;
+        msg += `纯数学概率与混沌算法引擎。\n请点击下方命令进行操作：\n\n`;
         
         msg += `🇭🇰 <b>香港 (HK)</b>\n`;
-        msg += `/sync_HK  🔄 同步数据\n`;
-        msg += `/predict_HK  🔮 智能预测\n`;
-        msg += `/list_HK  📂 历史记录\n\n`;
+        msg += `/sync_HK  🔄 同步\n`;
+        msg += `/predict_HK  🔮 预测\n`;
+        msg += `/list_HK  📂 记录\n\n`;
         
         msg += `🇲🇴 <b>新澳 (MO_NEW)</b>\n`;
-        msg += `/sync_NEW  🔄 同步数据\n`;
-        msg += `/predict_NEW  🔮 智能预测\n`;
-        msg += `/list_NEW  📂 历史记录\n\n`;
+        msg += `/sync_NEW  🔄 同步\n`;
+        msg += `/predict_NEW  🔮 预测\n`;
+        msg += `/list_NEW  📂 记录\n\n`;
         
         msg += `👴 <b>老澳 (MO_OLD)</b>\n`;
-        msg += `/sync_OLD  🔄 同步数据\n`;
-        msg += `/predict_OLD  🔮 智能预测\n`;
-        msg += `/list_OLD  📂 历史记录\n\n`;
+        msg += `/sync_OLD  🔄 同步\n`;
+        msg += `/predict_OLD  🔮 预测\n`;
+        msg += `/list_OLD  📂 记录\n\n`;
 
         msg += `🌙 <b>老澳 22:30</b>\n`;
-        msg += `/sync_OLD_2230  🔄 同步数据\n`;
-        msg += `/predict_OLD_2230  🔮 智能预测\n`;
-        msg += `/list_OLD_2230  📂 历史记录\n\n`;
+        msg += `/sync_OLD_2230  🔄 同步\n`;
+        msg += `/predict_OLD_2230  🔮 预测\n`;
+        msg += `/list_OLD_2230  📂 记录\n\n`;
         
         msg += `⚙️ <b>系统</b>\n`;
         msg += `/del_help  🗑 删除指南\n`;
@@ -129,7 +121,6 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         msg += `⚠️ 访客模式 (只读)\nID: <code>${chatId}</code>`;
       }
       
-      // 移除 reply_markup，使用纯文本命令
       await sendMessage(env.TELEGRAM_TOKEN, chatId, msg, { parse_mode: 'HTML', reply_markup: { remove_keyboard: true } });
       return new Response('OK');
     }
@@ -158,7 +149,6 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         return new Response('OK');
       }
       
-      // 获取 300 条记录以支持统计学算法
       const { results } = await env.DB.prepare(
         "SELECT * FROM lottery_records WHERE lottery_type = ? ORDER BY expect DESC LIMIT 300"
       ).bind(targetType).all();
@@ -168,7 +158,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         return new Response('OK');
       }
 
-      const predictionData = PredictionEngine.generate(results as any[], targetType);
+      await sendMessage(env.TELEGRAM_TOKEN, chatId, `🤖 正在深度分析 ${targetType} 历史数据 (马年排位)...`);
+
+      // 异步调用预测引擎 (纯算法)
+      const predictionData = await PredictionEngine.generate(results as any[], targetType);
       
       const lastExpect = (results[0] as any).expect;
       const nextExpect = String(BigInt(lastExpect) + 1n);
@@ -179,9 +172,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
       const waveName = (w: string) => w === 'red' ? '🟥红' : w === 'blue' ? '🟦蓝' : '🟩绿';
       
-      // 构建精简美观的预测消息
-      const msg = `🔮 <b>${targetType} 第 ${nextExpect} 期</b>\n` +
+      const msg = `🔮 <b>${targetType} 第 ${nextExpect} 期 (马年)</b>\n` +
                   `━━━━━━━━━━━━━━━━━━\n` +
+                  `🤖 <b>精选 8码:</b>\n` + 
+                  `<code>${predictionData.ai_eight_codes?.join(' ') || '计算中...'}</code>\n\n` +
                   `🔢 <b>18码推荐:</b>\n` +
                   `<code>${predictionData.numbers.join(' ')}</code>\n\n` +
                   `🐹 <b>六肖:</b> ${predictionData.zodiacs.join(' ')}\n` +
@@ -200,7 +194,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         return new Response('OK');
       }
       const { results } = await env.DB.prepare(
-        "SELECT expect, open_code FROM lottery_records WHERE lottery_type = ? ORDER BY expect DESC LIMIT 10"
+        "SELECT expect, open_code, open_time FROM lottery_records WHERE lottery_type = ? ORDER BY expect DESC LIMIT 10"
       ).bind(targetType).all();
 
       if (!results.length) {
@@ -208,14 +202,17 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       } else {
         let msg = `📂 <b>${targetType} 近10期:</b>\n\n`;
         results.forEach((r: any) => {
-           msg += `<code>${r.expect}期: ${r.open_code}</code>\n`;
+           const nums = r.open_code.split(',');
+           const special = nums[nums.length - 1];
+           // 动态判断生肖模式：传入 open_time 进行精确判定 (CNY Logic)
+           const z = getZodiac(special, r.expect, r.open_time);
+           msg += `<code>${r.expect}: ${r.open_code} + [${z}]</code>\n`;
         });
         await sendMessage(env.TELEGRAM_TOKEN, chatId, msg, { parse_mode: 'HTML' });
       }
     }
 
     else if (command === '/del') {
-      // /del HK 123
       const args = text.split(/\s+/);
       if (!args[1] || !args[2]) { 
           await sendMessage(env.TELEGRAM_TOKEN, chatId, "❌ 格式: /del [彩种] [期号]"); 
